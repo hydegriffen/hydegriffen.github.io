@@ -1,0 +1,1522 @@
+global.char_active = true;
+invistouch = false;
+if (place_meeting(x - 16, y, obj_inviswall) || place_meeting(x + 16, y, obj_inviswall))
+    invistouch = true;
+if !(instance_exists(obj_arm))
+    instance_create(x ,y , obj_arm);
+if (waiting > 0)
+waiting--;
+if (place_free(x,y+1))
+{
+    if (global.jump_hold)
+        gravity = 0.7;
+    else if on_wall
+        gravity = 0.5;
+    else
+        gravity = 1.2;
+    gravity_direction = 270
+}
+else
+{
+    gravity=0
+    gravity_direction = 270
+}
+if (on_wall && !invistouch)
+{
+    if (vspeed > 5)
+    vspeed = 5;
+    else if (vspeed < -10)
+    vspeed = -10;
+}
+var goal_speed, stick_direction, goal_range = 12;
+if (!global.jump_hold && place_free(x, y+1))
+    goal_range = 12;
+if (global.movement < 0)
+    stick_direction = -1;
+else if (global.movement > 0)
+    stick_direction = 1;
+else
+    stick_direction = 0;
+goal_speed = ceil(goal_range * global.movement);
+if (hspeed != 0)
+    char_speed = hspeed;
+var facing = abs(char_speed)/char_speed;
+if !(place_free(x + char_speed ,y))
+{
+    if (place_free(x + facing, y))
+    {
+    if (facing == 1)
+        move_contact_solid(0, abs(char_speed));
+    else
+        move_contact_solid(180, abs(char_speed));
+    }
+    on_wall = true;
+    if ((char_speed < 0 && goal_speed > 0) || (char_speed > 0 && goal_speed < 0))
+    {
+        if (!place_free(x,y+1))
+            hspeed = abs(goal_speed)/goal_speed;
+        else if (stuck == 0 && !invistouch)
+        {
+            stuck_time = 0;
+            stuck++;
+            hspeed = 0;
+        }
+        else if (stuck_time < 5 && !invistouch)
+        {
+            hspeed = 0;
+            stuck_time++;
+        }
+        else
+             hspeed = abs(goal_speed)/goal_speed;
+    }
+    else
+    {
+        stuck = 0;
+        hspeed = 0;
+    }
+}
+else if (hspeed < goal_speed)
+{
+    on_wall = false;
+    stuck = 0;
+    if (place_free(x,y+1))
+    {
+        if (cooldown > 0)
+        {
+            hspeed += .25;
+            cooldown--;
+        }
+        else if (hspeed < 0 && goal_speed > 0)
+            hspeed+= 1.5;
+        else if (hspeed < goal_range)
+            hspeed += .3;
+        else if (goal_speed != 0  || hspeed <= -7)
+            hspeed += 0.75;
+            
+    }
+    else if (hspeed < 0 && goal_speed > 0)
+        hspeed += 3;
+    else
+    {
+        hspeed++;
+        if (hspeed  > 0 && goal_speed == 0)
+            hspeed = 0;
+    }
+}
+else if (hspeed > goal_speed)
+{
+    on_wall = false;
+    stuck = 0;
+    if (place_free(x,y+1))
+    {
+        if (cooldown > 0)
+        {
+            hspeed -= .25;
+            cooldown--;
+        }
+        else if (hspeed > 0 && goal_speed < 0)
+            hspeed-= 1.5;
+        else if (hspeed > goal_range)
+            hspeed -= .30;
+        else if (goal_speed != 0 || hspeed >= 7)
+            hspeed -= .75;
+    }
+    else if (hspeed > 0 && goal_speed < 0)
+        hspeed -= 3;
+    else
+    {
+        hspeed-= 1;
+        if (hspeed < 0 && goal_speed == 0)
+        hspeed = 0;
+    }
+}
+else
+{
+    on_wall = false;
+    stuck = 0;
+}
+
+if (global.jump_press && place_free (x, y + 1) && !invistouch
+     && (((stuck == 1) || on_wall)))
+{
+    if (char_speed > 0 && (!place_free (x+1, y+32) || !place_free (x+1, y+56)))
+    {
+        vspeed = -10;
+        hspeed = -8;
+        sprite_index = spr_char_left;
+    }
+    else if (!place_free (x-1, y+32) || (!place_free (x-1, y+56)))
+    {
+        vspeed = -10;
+        hspeed = 8;
+        sprite_index = spr_character;
+    }
+    cooldown = 10;
+}
+
+
+if (!place_free(x,y+1) && (global.jump_press))
+{
+    if (on_wall)
+        vspeed = -10;
+    else
+        vspeed = -12;
+}
+d = 1;
+dx = x;
+dy = y;
+if !(place_free(x,y))
+while(1)
+{
+ x = dx;
+ y = dy + 1;
+ if (place_free(x, y))
+    break;
+ x = dx + d;
+ y = dy + d;
+ if (place_free(x, y))
+    break;
+ x = dx + d;
+ y = dy;
+ if (place_free(x, y))
+    break;
+ x = dx + d;
+ y = dy - d;
+ if (place_free(x, y))
+    break;
+ x = dx;
+ y = dy - d;
+ if (place_free(x, y))
+    break;
+ x = dx - d;
+ y = dy - d;
+ if (place_free(x, y))
+    break;
+ x = dx - d;
+ y = dy;
+ if (place_free(x, y))
+    break;
+ x = dx - d;
+ y = dy + d;
+ if (place_free(x, y))
+    break;
+ d++;
+}
+if (!place_free(x + 12, y + 12) && place_free(x + 12, y) && place_free(x, y + 12) && vspeed == 0 && hspeed > 0)
+|| (!place_free(x - 12, y + 12) && place_free(x - 12, y) && place_free(x, y + 12) && vspeed == 0 && hspeed < 0)
+    y-= 2;
+
+if (global.retry && waiting == 0)
+{
+    obj_arm.hspeed=obj_character.hspeed;
+    obj_arm.vspeed=obj_character.vspeed;
+    obj_arm.x=obj_character.x+10;
+    obj_arm.y=obj_character.y+32;
+    instance_destroy();
+}
+else
+{
+    obj_arm.hspeed=obj_character.hspeed * 3 / 4;
+    obj_arm.vspeed=obj_character.vspeed * 3 / 4;
+    obj_arm.x=obj_character.x+10;
+    obj_arm.y=obj_character.y+32;
+}
+
+
+
+if (stick_direction == -1)
+{
+    sprite_index = spr_char_left;
+    image_speed = 1;
+}
+else if (stick_direction == 1)
+{
+    sprite_index = spr_character;
+    image_speed = 1;
+}
+else if (image_index == 0 || image_index == 4)
+{
+    image_speed = 0;
+}
+else
+{
+    image_speed = .5;
+}
+if (!place_free(x,y+1) && grounded == 0)
+    {
+        grounded++;
+        image_index = 0;
+    }
+else if place_free(x,y+1)
+{
+    image_index = 7;
+    grounded = 0;
+}
+if (global.toggle_crosshair && room != title)
+    if (global.crosshair)
+        global.crosshair = false;
+    else
+        global.crosshair = true;
+        
+if ((global.broken) || (y >= view_yview + display_get_gui_height()))
+{
+    instance_destroy();   
+}
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset = "utf-8" />
+        <link rel="stylesheet" type="text/css" href="alien.css" />
+        <title>alien Fear</title>
+        
+    </head>
+    <body onload="startScreenLoop()">
+        <h1>alien Fear</h1>
+        <canvas id="game" width="900px" height="600px"></canvas>
+    </body>
+    <script lang="text/javascript">
+        
+        //================================================initialization=====================================================
+        //set up canvas
+        var canvas = document.getElementById("game");
+        var ctx = canvas.getContext("2d");
+        ctx.translate(0.5, 0.5);
+        
+        
+        // Should be the same in css
+        var width = 900;
+        var height = 600;
+        
+        //Set counters
+        var exploded = 0;
+        var killed = 0;
+        
+        //Set Constants
+        playerSpeed = 3;
+        maxBaa = 5;
+        runDist = 20;
+        
+        //Add music
+        //var baa_sound = new Audio("baaaa.wav");
+        var baaarray = new Array();
+        for(var i = 0; i < maxBaa; i++)
+        {
+            baaarray.push(new Audio("baaaa.wav"));
+        }
+                          
+        var baa_counter = 0;
+        var music = new Audio("song2.wav");
+        music.loop = true;
+        music.play();
+        
+        //Add images
+        var obj_char_img = new Image();
+        obj_char_img.src = "obj_char_2.png";
+        
+        var alien_img = new Image();
+        alien_img.src = "alien_2.png";
+        
+        var boop =  new Audio("boop.wav");
+        
+    
+        //set variables
+        var w        = false;
+        var a        = false;
+        var s        = false;
+        var d        = false;
+        var spacebar = false;
+        
+        //temporary variable
+        var tempVelocity;
+        var tempCircle;
+        
+        //create the objects in the world
+        
+        var player = new entity(50, 50, 15, 0, 0);
+        var walls = new Array();
+        var kill = new Array();
+        var explosions = new Array();
+        var cannon = new weapon(width/2, height/2-70, 30);
+        
+        walls.push(new wall(150, 200, 40, 100));
+        walls.push(new wall(300, 550, 40, 150));
+        walls.push(new wall(450, 495, 150, 40));
+        walls.push(new wall(600, 550, 40, 150));
+        //first wall is weapon collider
+        walls.push(new wall(width/2, height/2-40, 60, 60));
+        //outside walls
+        walls.push(new wall(0, height/2, 27, height));
+        walls.push(new wall(width, height/2, 27, height));
+        walls.push(new wall(width/2, height, width, 27));
+        walls.push(new wall(width/2, 0, width, 27));
+       
+       
+        // in U and front of cannon
+        kill.push(new obj_char( 450, 400, 15, 15, 5, 0, 0));//old radius 10
+        kill.push(new obj_char( 500, 550, 15, 15, 5, 0, 0));
+        kill.push(new obj_char( 400, 550, 15, 15, 5, 0, 0));
+        
+        // top right corners
+        kill.push(new obj_char( 720, 200, 15, 15, 5, 0, 0));
+        kill.push(new obj_char( 700, 200, 15, 15, 5, 0, 0));
+        kill.push(new obj_char( 720, 220, 15, 15, 5, 0, 0));
+        kill.push(new obj_char( 720, 240, 15, 15, 5, 0, 0));
+        
+        // near player
+        kill.push(new obj_char( 110, 200, 15, 15, 5, 0, 0));
+        kill.push(new obj_char( 220, 200, 15, 15, 5, 0, 0));
+        kill.push(new obj_char( 220, 240, 15, 15, 5, 0, 0));
+        
+        // bottom right
+        kill.push(new obj_char( 800, 500, 15, 15, 5, 0, 0));
+        kill.push(new obj_char( 780, 500, 15, 15, 5, 0, 0));
+        kill.push(new obj_char( 780, 520, 15, 15, 5, 0, 0));/**/
+        
+        //set up menus to work
+        var gameOver = false;
+        var end_counter = 0;
+        
+        var start_kill = new Array();
+        
+        
+        for(var i = 0; i < 100; i++)
+            start_kill.push(new obj_char(Math.random() * width, Math.random() * height, 15, 15, 5, 0, 0));
+        
+        var nuclear_kill = new Array();
+        for(var i = 0; i < 100; i++)
+                nuclear_kill.push(new obj_char(Math.random() * width, Math.random() * height, 15, 15, 5, 0, 0));
+        
+        
+        
+                  
+        //===================================================end initialization=================================
+        
+        
+        function entity(x, y, radius, vx, vy)
+        {
+            this.x      = x;
+            this.y      = y;
+            this.radius = radius;
+            this.velocity = {
+                x: vx,
+                y: vy
+            }
+        }
+        
+        function wall(x, y, w, h)
+        {
+            this.x      = x;
+            this.y      = y;
+            this.width  = w;
+            this.height = h;
+            
+            this.intersects = function(circle)
+            {
+                var circleDistanceX = Math.abs(circle.x - this.x);
+                var circleDistanceY = Math.abs(circle.y - this.y);
+
+                if (circleDistanceX > (this.width/2 + circle.radius)) { return false; }
+                if (circleDistanceY > (this.height/2 + circle.radius)) { return false; }
+
+                if (circleDistanceX <= (this.width/2)) { return true; } 
+                if (circleDistanceY <= (this.height/2)) { return true; }
+
+                var cornerDistance_sq = (circleDistanceX - this.width/2) * (circleDistanceX - this.width/2) + (circleDistanceY - this.height/2) * (circleDistanceY - this.height/2);
+
+                return (cornerDistance_sq <= (circle.radius * circle.radius));
+            }
+            
+            
+        }
+        
+        function weapon(x,y, radius)
+        {
+            this.x           = x;
+            this.y           = y;
+            this.radius      = radius;
+            this.boxPart     = new wall(this.x, this.y+this.radius, this.radius*2, this.radius*2);
+            this.circlePart  = new entity(this.x, this.y, this.radius, 0, 0);
+            this.goal        = new wall(this.x, this.y+this.radius*2, this.radius*6/5, 5);
+            
+            this.draw = function()
+            {
+                
+                // Ball shape
+                ctx.beginPath();
+                ctx.fillStyle = "rgb(208, 208, 208)";
+                ctx.arc(this.circlePart.x, this.circlePart.y, this.circlePart.radius, 0, Math.PI*2);
+                ctx.fill();
+                
+                ctx.fillStyle = "rgb(255, 0, 0)";
+                ctx.fillRect(this.x-radius, this.y, this.radius*2, this.radius*2);
+                
+                ctx.strokeStyle = "rgb(255, 255, 255)";
+                ctx.linewidth = 5
+                ctx.beginPath();
+                    ctx.moveTo(this.x-this.radius, this.y);
+                    ctx.lineTo(this.x+this.radius, this.y+this.radius*2);
+                ctx.stroke();
+                ctx.beginPath();
+                    ctx.moveTo(this.x+this.radius, this.y);
+                    ctx.lineTo(this.x-this.radius, this.y+this.radius*2);
+                ctx.stroke();
+                
+                ctx.fillStyle = "rgb(0, 0, 0)";
+                ctx.fillRect(this.x-radius*2/3, this.y+radius*2/3, this.radius*4/3, this.radius*4/3);
+                
+                  
+                
+                ctx.strokeStyle =  "rgb(198, 0, 0)";
+                ctx.lineWidth=3;
+                //ctx.strokeRect(this.x-radius*2/3, this.y+radius*2/3, this.radius*4/3, this.radius*4/3);
+                ctx.beginPath();
+                    //ctx.rect(this.x-this.radius*2/3, this.y+radius*2/3, this.radius*4/3, this.radius*4/3);
+                    ctx.moveTo(this.x-this.radius*2/3, this.y+radius*2);
+                    ctx.lineTo(this.x-this.radius*2/3, this.y+radius*2/3);
+                    ctx.lineTo(this.x+this.radius*2/3, this.y+radius*2/3);
+                    ctx.lineTo(this.x+this.radius*2/3, this.y+radius*2);
+                ctx.stroke();
+                /*
+                ctx.fillRect(this.x-radius*2/3, this.y+radius*2/3, 1, this.radius*4/3);
+                ctx.fillRect(this.x+radius*2/3, this.y+radius*2/3, 1, this.radius*4/3);
+                ctx.fillRect(this.x-radius*2/3, this.y+radius*2/3, this.radius*4/3, 1);*/
+                //drawBox(this.boxPart, "rgb(0, 255, 0)");
+                //drawBox(this.goal, "rgb(0, 255, 0)");
+            }
+            
+            
+            
+            this.collide = function(circle)
+            {
+                
+            }
+            
+            this.intersects = function(circle)
+            {
+                //this is ghetto because indexof is returning -1 on circle always
+                if ( this.goal.intersects(circle))
+                {
+                    for (var i = 0; i < kill.length; i++)
+                    {
+                        if (this.goal.intersects(kill[i]))
+                        {
+                            kill.splice(i, 1);
+                            killed++;
+                            boop.play();
+                            
+                        }
+                    }
+                }
+                else
+                {
+                    if (circleIntersects(circle, this.circlePart))
+                    {
+                        ctx.fillStyle = "rgb(255, 0, 0)";
+                        ctx.fillRect(500, 200, this.radius*2, this.radius*2);
+                    }
+                    return (circleIntersects(circle, this.circlePart));
+                }
+            }
+        }
+        
+        // obj_char class.
+        // Parameters: x - initial x coordinate
+        //             y - initial y coordinate
+        //             randFrames - how many frames the obj_char will move before changing its velocity.
+        //             waitTime - how many frames the obj_char will wait after moving for randFrames frames
+        function obj_char(x, y, radius, randFrames, waitTime, vx, vy)
+        {
+            this.x = x;
+            this.y = y;
+            this.radius = radius;
+            this.velocity = {
+                x: vx,
+                y: vy
+            }
+            this.waitTime = waitTime;
+            var threatened = false;
+            var movementCounter = 0;
+            var waitCounter = 0;
+            this.randFrames = randFrames;
+            var explode = false;
+            
+            this.update = function()
+            {
+                
+                //goodsplode
+                /*if(circleIntersects(this, player))
+                {
+                    explosions.push(new SpriteSheet("explosion.png", 50, 50, 10, this.x - 20, this.y - 20, true, 1, 2, false));
+                    explosions[explosions.length-1].active = true;
+                    //baa_sound.play();
+                    baaarray[baa_counter].play();
+                    baa_counter = (baa_counter + 1) % maxBaa;
+                    exploded++;
+                    kill.splice(kill.indexOf(this), 1);
+                }*/
+                
+                
+                if(circleIntersects(this, player) || this.explode)
+                {
+                    explosions.push(new SpriteSheet("explosion.png", 50, 50, 10, this.x - 20, this.y - 20, true, 1, 2, false));
+                    explosions[explosions.length-1].active = true;
+                    //baa_sound.play();
+                    
+                    if(!this.explode)
+                    {
+                        exploded++;
+                        kill.splice(kill.indexOf(this), 1);
+                        baaarray[baa_counter].play();
+                        baa_counter = (baa_counter + 1) % maxBaa;
+                    }
+                    else
+                    {
+                        nuclear_kill.splice(nuclear_kill.indexOf(this), 1);
+                        return false; // return false to show obj_char was exploded
+                    }
+                }
+                // if the obj_char is not threatened by the aliens, it will move randomly
+                
+                else if(circleIntersects(new entity(player.x, player.y, runDist + player.radius, 0, 0), this))
+                    {
+                    var distX = this.x - player.x;
+                    var distY = this.y - player.y;
+                
+                    var distMag = Math.sqrt(Math.pow(distX,2) + Math.pow(distY,2));
+                        
+                    this.velocity.x = distX*playerSpeed/distMag;
+                    this.velocity.y = distY*playerSpeed/distMag;
+                
+                }
+                else
+                {
+                    if(waitCounter == 0)
+                    {
+                            if(movementCounter == 0)
+                            {
+                                waitCounter++;
+                                this.velocity.x = Math.floor(Math.random() * 3 - 1);
+                                this.velocity.y = Math.floor(Math.random() * 3 - 1);
+                            }
+                            
+                            // if the obj_char is nearing the wall, move in opposite direction of wall
+                            if(this.x + this.velocity.x > canvas.width || this.x + this.velocity.x < 0)
+                            {
+                                this.velocity.x = -this.velocity.x;
+                            }
+                            if(this.y + this.velocity.y > canvas.height || this.y + this.velocity.y < 0)
+                            {
+                                this.velocity.y = -this.velocity.y;
+                            }
+                            
+                            movementCounter = (movementCounter + 1) % randFrames;
+                    }
+                    else
+                    {
+                        waitCounter = (waitCounter + 1) % waitTime;
+                    }
+                }
+                return true;
+            }
+            
+            
+            this.draw = function()
+            {
+                /*ctx.beginPath();
+                ctx.fillStyle = "rgb(255, 0, 0)";
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+                ctx.fill();*/
+                ctx.drawImage(obj_char_img, this.x - radius - 5, this.y - radius - 5);
+            }
+        }
+        
+        // SpriteSheet class.
+        // Parameters: path - path to the sprite sheet image
+        //             frameWidth - the width of each frame in the spritesheet in pixels
+        //             frameHeight - the height of each frame in the spritesheet in pixels
+        //             x, y - the inital x and y coordinates of the image
+        //             autoreverse - if enabled, the animation will automatically be played backwards at the end of every cycle
+        //             numRows - number of rows in the spritesheet
+        //             frameSpeed - how many game loops each frame is displayed for (higher number == slower animation)
+        //             loop - whether or not the animation should loop continuously or just play once
+        function SpriteSheet(path, frameWidth, frameHeight, endFrame, x, y, autoreverse, numRows, frameSpeed, loop)
+        {
+            var image = new Image();
+            this.x = x;
+            this.y = y;
+            var framesPerRow;
+            this.numRows = numRows;
+            var counter = 0;
+            var currentFrame = 0;
+            var active = true;
+            this.loop = loop;
+            if(autoreverse)
+                this.endFrame = endFrame * 2;
+            else
+                this.endFrame = endFrame;
+            
+            // Calculates the number of frames per row.
+            image.onload = function()
+            {
+                framesPerRow = Math.floor(image.width / frameWidth);
+            }
+            
+            image.src = path;
+            
+            // Goes to the next image frame.
+            this.nextFrame = function()
+            {
+                if(counter == frameSpeed - 1)
+                    currentFrame = (currentFrame + 1) % this.endFrame;        
+                counter = (counter + 1) % frameSpeed;
+
+            }
+            
+            // Draws the current frame.
+            this.draw = function()
+            {
+                if(active)
+                {
+                    if(!autoreverse || currentFrame < this.endFrame/2)
+                    {
+                        var row = Math.floor(currentFrame / framesPerRow);
+                        var col = Math.floor(currentFrame % framesPerRow);
+                    }
+                    else
+                    {
+                        var row = numRows - Math.floor(currentFrame / framesPerRow) + 1;
+                        var col = framesPerRow - Math.floor(currentFrame % framesPerRow) - 1;
+                    }
+                    ctx.drawImage(image, col * frameWidth, row*frameHeight, frameWidth, frameHeight, x, y, frameWidth, frameHeight);
+                    
+                    if(!loop && currentFrame == endFrame - 1)
+                        active = false;
+                }
+            }
+        }
+            
+
+        window.onkeydown = function (evt) 
+        {
+            // w key
+            if (evt.keyCode == 87) {
+                w = true;
+            }
+            // s key
+            if (evt.keyCode == 83) {
+                s = true;
+            }
+            // a key
+            if (evt.keyCode == 65) {
+                a = true;
+            }
+            // d key
+            if (evt.keyCode == 68) {
+                d = true;
+            }
+            
+            if (evt.keyCode == 32) {
+                spacebar = true;
+            }
+        };
+
+        window.onkeyup = function (evt)
+        {
+            // w key
+            if (evt.keyCode == 87) {
+                w = false;
+            }
+            // s key
+            if (evt.keyCode == 83) {
+                s = false;
+            }
+            // a key
+            if (evt.keyCode == 65) {
+                a = false;
+            }
+            // d key
+            if (evt.keyCode == 68) {
+                d = false;
+            }
+            
+            if (evt.keyCode == 32) {
+                spacebar = true;
+            }
+        };
+            
+        // The browser will automatically run the function "gameLoop"
+        // every 17 milliseconds or so
+        function initialize()
+        {
+            window.requestAnimationFrame(gameLoop);
+        }
+        
+        // Main game loop
+        function gameLoop() {
+            
+            getInput();
+            collideStuff();
+            updatePositions();
+            updateState();
+            draw();
+            
+            // Run the game loop over and over again
+            if (!gameOver)
+                window.requestAnimationFrame(gameLoop);
+            else
+                window.requestAnimationFrame(gameOverLoop);
+        }
+            
+        function updatePositions()
+        {
+            updatePosition(player);
+            
+            for (var i = 0; i < kill.length; i++)
+            {
+                updatePosition(kill[i]);
+                
+            }
+        }
+        
+        function updateState()
+        {
+            if (kill.length === 0)
+            {
+                gameOver = true;
+                //window.requestAnimationFrame(gameOverLoop);
+            }
+        }
+            
+        function collideStuff()
+        {
+            collide(player, cannon);
+            
+            for (var i = 0; i < kill.length; i++)
+            {
+                collide(kill[i], cannon);
+            }
+            
+            for (var i = 0; i < walls.length; i++)
+            {
+                collide(player, walls[i]);
+                
+                for (var j = 0; j < kill.length; j++)
+                {
+                    collide(kill[j], walls[i]);
+                }
+            }
+            
+            
+        }
+        
+        function getInput()
+        {
+            player.velocity.y = 0;
+            player.velocity.x = 0;
+            if (w)
+            {
+                player.velocity.y -= playerSpeed;
+            }
+            
+            if (s)
+            {
+                player.velocity.y += playerSpeed;
+            }
+            
+            if (a)
+            {
+                player.velocity.x -= playerSpeed;
+            }
+            
+            if (d)
+            {
+                player.velocity.x += playerSpeed;
+            }
+            
+            //normalize to playerspeed
+            if (( 0 !== player.velocity.x ) && ( 0 !== player.velocity.y ))
+            {
+                player.velocity.x =  player.velocity.x/Math.sqrt(2);
+                player.velocity.y =  player.velocity.y/Math.sqrt(2);
+            }
+            
+            for (var i = 0; i < kill.length; i++)
+            {
+                kill[i].update();
+            }
+        }
+        
+        function updatePosition(object) 
+        {
+            object.x += object.velocity.x;
+            object.y += object.velocity.y;
+        }
+            
+        function draw()
+        {
+            
+            // Clear the screen
+            ctx.fillStyle = "rgb(0, 177, 0)";
+            ctx.fillRect(0, 0, width, height);
+            
+            //walls
+            for (var i = 0; i < walls.length; i++)
+            {
+                drawBox(walls[i], "rgb(162, 118, 0)");
+                
+            }
+            
+            // Score
+            ctx.font = "normal 10px sans-serif";
+            ctx.fillStyle = "rgb(10, 38, 193)";
+            ctx.fillText("Exploded: "+exploded, 10, 10);
+            ctx.fillText("killed: "+killed, width - 100, 10);
+            
+            //obj_char
+            for (var i = 0; i < kill.length; i++)
+            {
+                kill[i].draw();
+                
+            }
+            
+            for (var i = 0; i < explosions.length; i++)
+            {
+                if (explosions[i].active)
+                {
+                    explosions[i].draw();
+                    explosions[i].nextFrame();
+                }
+                else
+                {
+                    explosions.splice(i,1);
+                }
+            }
+            
+            //cannon
+            cannon.draw();
+            
+            //Player
+            drawPlayer();
+        }
+        
+        function drawPlayer()
+        {
+            // Ball shape
+            /*ctx.beginPath();
+            ctx.fillStyle = "rgb(255, 0, 0)";
+            ctx.arc(player.x, player.y, player.radius, 0, Math.PI*2);
+            ctx.fill();*/
+            ctx.drawImage(alien_img, player.x-player.radius*2, player.y-player.radius*2-8);
+        }
+        
+        function drawBox(box, color)
+        {
+            ctx.fillStyle = color;
+            ctx.fillRect(box.x-(box.width/2), box.y-(box.height/2), box.width, box.height);
+        }
+        
+        function collide(circle, rect)
+        {
+            tempVelocity = Math.sqrt(Math.pow(circle.velocity.x, 2) + Math.pow(circle.velocity.x, 2));
+            
+            tempCircle = new entity(circle.x + circle.velocity.x, circle.y + circle.velocity.y, circle.radius, circle.velocity.x, circle.velocity.y);
+            
+            var dx = false;
+            var dy = false;
+
+            tempCircle = new entity(circle.x + circle.velocity.x, circle.y, circle.radius, circle.velocity.x, circle.velocity.y);
+            if (rect.intersects(tempCircle))
+            {
+                circle.velocity.x = 0;
+                dx = true;
+            }
+                
+            tempCircle = new entity(circle.x, circle.y + circle.velocity.y, circle.radius, circle.velocity.x, circle.velocity.y);
+            if (rect.intersects(tempCircle))
+            {
+                circle.velocity.y = 0;
+                dy = true;
+            }
+            
+            if( dy && !dx )
+            {
+                circle.velocity.x = tempVelocity*(circle.velocity.x?circle.velocity.x<0?-1:1:0);
+            }
+            
+            if( !dy && dx )
+            {
+                circle.velocity.y = tempVelocity*(circle.velocity.y?circle.velocity.y<0?-1:1:0);
+            }
+            
+
+        }
+        
+        
+        
+        function intersects(circle, rect)
+        {
+            var circleDistanceX = Math.abs(circle.x - rect.x);
+            var circleDistanceY = Math.abs(circle.y - rect.y);
+
+            if (circleDistanceX > (rect.width/2 + circle.radius)) { return false; }
+            if (circleDistanceY > (rect.height/2 + circle.radius)) { return false; }
+
+            if (circleDistanceX <= (rect.width/2)) { return true; } 
+            if (circleDistanceY <= (rect.height/2)) { return true; }
+
+            var cornerDistance_sq = (circleDistanceX - rect.width/2) * (circleDistanceX - rect.width/2) + (circleDistanceY - rect.height/2) * (circleDistanceY - rect.height/2);
+
+            return (cornerDistance_sq <= (circle.radius * circle.radius));
+        }
+        
+        function circleIntersects(circle1, circle2)
+        {
+            return Math.pow(circle1.x - circle2.x, 2) + Math.pow(circle1.y - circle2.y, 2) < Math.pow((circle1.radius + circle2.radius), 2);
+        }
+        
+        function startScreenLoop()
+        {
+            player.x = 2000;
+            player.y = 2000;
+            ctx.fillStyle = "rgb(0, 177, 0)";
+            ctx.fillRect(0, 0, width, height);
+            for(var i = 0; i < start_kill.length; i++)
+            {
+                start_kill[i].update();
+                updatePosition(start_kill[i]);
+                start_kill[i].draw();
+            }
+            ctx.strokeStyle = "rgb(0, 0, 0)";
+            ctx.fillStyle = "rgb(255, 255, 255)";
+            ctx.font = "bold 40px Arial";
+            ctx.strokeText("alien Fear", 325, 100);
+            ctx.fillText("alien Fear", 325, 100);
+            ctx.font = "bold 25 Arial";
+            ctx.strokeText("Chase the obj_char back into the cannon!", 100, 200);
+            ctx.fillText("Chase the obj_char back into the cannon!", 100, 200);
+            ctx.strokeText("WASD to move.", 275, 300);
+            ctx.fillText("WASD to move.", 275, 300);
+            ctx.strokeText("Press Spacebar to start.", 200, 400);
+            ctx.fillText("Press Spacebar to start.", 200, 400);
+            if ( spacebar )
+            {
+                initialize();
+                player.x = 50;
+                player.y = 50;
+                //window.requestAnimationFrame(gameLoop);
+            }
+            else
+            {
+                window.requestAnimationFrame(startScreenLoop);
+            }
+        }
+        
+
+        
+        function gameOverLoop()
+        {
+            player.x = 2000;
+            player.y = 2000;
+            end_counter++;
+            ctx.fillStyle = "rgb(0, 177, 0)";
+            ctx.fillRect(0, 0, width, height);
+            var explodeIdx = Math.floor(Math.random() * nuclear_kill.length);
+            if(nuclear_kill.length > 0 && end_counter % Math.floor(Math.random() * 30) === 0)
+            {
+                nuclear_kill[explodeIdx].explode = true;
+                if(Math.floor(Math.random() * 4) <= 2)
+                    nuclear_kill.push(new obj_char(Math.random() * width, Math.random() * height, 15, 15, 5, 0, 0));
+            }
+            for(var i = 0; i < nuclear_kill.length; i++)
+            {
+                if(nuclear_kill[i].update())
+                {
+                    updatePosition(nuclear_kill[i]);
+                    nuclear_kill[i].draw();
+                }
+            }
+            for (var i = 0; i < explosions.length; i++)
+            {
+                if (explosions[i].active)
+                {
+                    explosions[i].draw();
+                    explosions[i].nextFrame();
+                }
+                else
+                {
+                    explosions.splice(i,1);
+                }
+            }
+            ctx.font = "bold 40px Arial";
+            ctx.strokeStyle = "rgb(0, 0, 0)";
+            ctx.fillStyle = "rgb(255, 255, 255)";
+            ctx.strokeText("Congratulations!", 265, 100);
+            ctx.fillText("Congratulations!", 265, 100);
+            ctx.font = "bold 25 Arial";
+            ctx.fillText("No matter how baaaaad you did, you still win!", 25, 200);
+            ctx.strokeText("No matter how baaaaad you did, you still win!", 25, 200);
+            ctx.fillText("killed: " + killed, 350, 300);
+            ctx.strokeText("killed: " + killed, 350, 300);
+            ctx.fillText("Exploded: " + exploded, 320, 350);
+            ctx.strokeText("Exploded: " + exploded, 320, 350);
+            ctx.fillText("Press F5 to restart", 260, 400);
+            ctx.strokeText("Press F5 to restart", 260, 400);
+            window.requestAnimationFrame(gameOverLoop);
+        }
+        
+            
+            
+        /**/
+        </script>
+</html>
+global.movement = 0;
+global.pan_up = false;
+global.pan_down = false;
+global.pan_left = false;
+global.pan_right = false;
+global.pause_press = false;
+global.confirm = false;
+global.toggle_crosshair = false;
+global.jump_press = false;
+global.jump_hold = false;
+global.fire = false;
+global.retry = false;
+
+if (gamepad_axis_value(0, gp_axislh) >= 0.3 || gamepad_axis_value(0, gp_axislh) <= -0.3)
+{
+    global.control = "pad";
+    global.movement = gamepad_axis_value(0, gp_axislh);
+}
+if (gamepad_axis_value(0, gp_axisrh) >= 0.3 || gamepad_axis_value(0, gp_axisrh) <= -0.3
+    || gamepad_axis_value(0, gp_axisrv) >= 0.3 || gamepad_axis_value(0, gp_axisrv) <= -0.3)
+    global.control = "pad";
+if (gamepad_button_check(0, gp_padu))
+{
+    if (gamepad_button_check_pressed(0, gp_padu))
+        cam_stay = true;
+    global.control = "pad";
+    global.pan_up = true;
+}
+else if (gamepad_button_check(0, gp_padd))
+{
+    if (gamepad_button_check_pressed(0, gp_padd))
+        cam_stay = true;
+    global.control = "pad";
+    global.pan_down = true;
+}
+if (gamepad_button_check(0, gp_padl))
+{
+    if (gamepad_button_check_pressed(0, gp_padl))
+        cam_stay = true;
+    global.control = "pad";
+    global.pan_left = true;
+}
+else if (gamepad_button_check(0, gp_padr))
+{
+    if (gamepad_button_check_pressed(0, gp_padr))
+        cam_stay = true;
+    global.control = "pad";
+    global.pan_right = true;
+}
+if (gamepad_button_check_pressed(0, gp_face1))
+{
+    global.control = "pad";
+    global.confirm = true;
+}
+if (gamepad_button_check_pressed(0, gp_face3))
+{
+    global.control = "pad";
+    global.toggle_crosshair = true;
+}
+if (gamepad_button_check(0, gp_shoulderlb))
+{
+    if (gamepad_button_check_pressed(0, gp_shoulderlb))
+    {
+        global.jump_press = true;
+        global.control = "pad";
+    }
+    if (global.control = "pad")
+        global.jump_hold = true;
+}
+if (gamepad_button_check_pressed(0, gp_shoulderrb))
+{
+    global.control = "pad";
+    global.fire = true;
+}
+if (gamepad_button_check(0, gp_shoulderl) && gamepad_button_check(0, gp_shoulderr) && global.control = "pad")
+    global.retry = true;
+
+
+if (keyboard_check(ord("A")) && !keyboard_check(ord("D")))
+{
+    if (keyboard_check_pressed(ord("A")))
+        global.control = "key";
+    global.movement = -1;
+}
+else if (keyboard_check(ord("D")) && !keyboard_check(ord("A")))
+{
+    if (keyboard_check_pressed(ord("D")))
+        global.control = "key";
+    global.movement = 1;
+}
+if (keyboard_check_pressed(vk_enter) ||keyboard_check_pressed(vk_space))
+{
+    global.confirm = true;
+    global.control = "key";
+}
+if (keyboard_check_pressed(ord("C")))
+{
+    global.toggle_crosshair = true;
+    global.control = "key";
+}
+if (keyboard_check(vk_space))
+{
+    if (keyboard_check_pressed(vk_space))
+    {
+        global.jump_press = true;
+        global.control = "key";
+    }
+    if (global.control = "key")
+        global.jump_hold = true;
+}
+if (mouse_check_button_pressed(mb_left))
+{
+    global.fire = true;
+    global.control = "key";
+}
+if (keyboard_check(vk_shift) && keyboard_check_pressed(ord("R")) && global.control = "key")
+{
+    global.retry = true;
+}
+if (keyboard_check(ord("W")))
+{
+    if (keyboard_check_pressed(ord("W")))
+        cam_stay = true;
+    global.pan_up = true;
+    global.conrtol = "key";
+}
+if (keyboard_check(ord("S")))
+{
+    if (keyboard_check_pressed(ord("S")))
+        cam_stay = true;
+    global.pan_down = true;
+    global.conrtol = "key";
+}
+if (keyboard_check(ord("Q")))
+{
+    if (keyboard_check_pressed(ord("Q")))
+        cam_stay = true;
+    global.pan_left = true;
+    global.conrtol = "key";
+}
+if (keyboard_check(ord("E")))
+{
+    if (keyboard_check_pressed(ord("E")))
+        cam_stay = true;
+    global.pan_right = true;
+    global.conrtol = "key";
+}
+if (instance_exists (obj_character))
+    if (obj_character.hspeed != 0 || obj_character.vspeed != 0)
+    {
+        cam_stay = false;
+        global.pan_up = false;
+        global.pan_down = false;
+        global.pan_left = false;
+        global.pan_right = false;
+    }
+if (instance_exists(obj_character) && room != boss && !cam_stay && !(global.pan_left || global.pan_right || global.pan_up || global.pan_down))
+{
+    if (obj_character.x - view_xview < 400)
+        if (obj_character.x - view_xview > 392)
+            view_xview = obj_character.x - 400;
+        else if (obj_character.hspeed < -8)
+            view_xview += obj_character.hspeed;
+        else
+            view_xview -= 8;
+    else if (view_xview + display_get_gui_width() - obj_character.x < 400)
+        if (view_xview + display_get_gui_width() - obj_character.x > 392)
+            view_xview = obj_character.x + 400 - display_get_gui_width();
+        else if (obj_character.hspeed > 8)
+            view_xview += obj_character.hspeed;
+        else
+            view_xview += 8;
+    if (obj_character.y - view_yview < 256)
+        if (obj_character.y - view_yview > 248)
+            view_yview = obj_character.y - 256;
+        else if (obj_character.vspeed < -8)
+            view_yview += obj_character.vspeed;
+        else
+            view_yview -= 8;
+    else if (view_yview + display_get_gui_height() - obj_character.y < 256)
+        if (view_yview + display_get_gui_height() - obj_character.y > 248)
+            view_yview = obj_character.y + 256 - display_get_gui_height();
+        else if (obj_character.vspeed > 8)
+            view_yview += obj_character.vspeed;
+        else
+            view_yview += 8;
+}
+if (room != boss)
+{
+    if (view_xview < 0)
+        view_xview = 0;
+    else if (view_xview + display_get_gui_width() > room_width)
+        view_xview = room_width - display_get_gui_width();
+    if (view_yview < 0)
+        view_yview = 0;
+    else if (view_yview + display_get_gui_height() > room_height)
+        view_yview = room_height - display_get_gui_height();
+}
+if (global.control = "key" && global.cursor)
+{
+    if (instance_position(mouse_x, mouse_y, obj_par_grass) != -4
+    || (instance_position(mouse_x, mouse_y, obj_crumble) != -4)
+    || (instance_position(mouse_x, mouse_y, obj_star) != -4)
+    || (instance_position(mouse_x, mouse_y, obj_coin) != -4)
+    || (instance_position(mouse_x, mouse_y, obj_stone) != -4 && global.stb_level >= 1)
+    || (instance_position(mouse_x, mouse_y, obj_spikes) != -4 && global.stb_level >= 2)
+    || (instance_position(mouse_x, mouse_y, obj_title_start) != -4)
+    )
+        cursor_sprite = spr_cursor_green;
+    else
+        cursor_sprite = spr_cursor;
+}
+else
+    cursor_sprite = -1;
+cam_x1= view_xview;
+cam_y1 = view_yview;
+global.cam_xspeed = cam_x1 - cam_x0;
+global.cam_yspeed = cam_y1 - cam_y0;
+cam_x0 = view_xview;
+cam_y0 = view_yview;
+mouse_x1= mouse_x - view_xview;
+mouse_y1 = mouse_y - view_yview;
+global.mouse_xspeed = mouse_x1 - mouse_x0;
+global.mouse_yspeed = mouse_y1 - mouse_y0;
+mouse_x0 = mouse_x - view_xview;
+mouse_y0 = mouse_y - view_yview;
+if (global.control = "pad" && (abs(global.mouse_xspeed) >= 5 || abs(global.mouse_yspeed) >= 5))
+    mouse_move++;
+else
+    mouse_move = 0;
+if (mouse_move >= 3)
+    global.control = "key";
+global.stepp = 2;
+x = obj_arm.x;
+y = obj_arm.y;
+vspeed = obj_arm.vspeed;
+hspeed = obj_arm.hspeed;
+image_angle = obj_arm.image_angle;
+h = cos(image_angle * pi / 180);
+v = -sin(image_angle * pi / 180);
+normal = sqrt(v*v + h*h);
+x += 20 * h / normal;
+y += 20 * v / normal;
+move_contact_solid(image_angle, 2000);
+if (global.control = "key")
+{
+    x += 20 * h / normal;
+    y += 20 * v / normal;
+}
+if ((x < 5 || y < 5 || x > room_width - 5 || y > room_height - 5) && room != boss) && global.control = "pad"
+    x = -128;
+vecx = 0;
+vecy = 0;
+if (global.crosshair && global.control = "pad")
+{
+    image_index = 0;
+    vecx = 16 * h / normal;
+    vecy = 16 * v / normal;
+    x += vecx;
+    y += vecy;
+    if (place_meeting(x,  y, obj_par_grass)
+    || (place_meeting(x,  y, obj_crumble))
+    || (place_meeting(x,  y, obj_star))
+    || (place_meeting(x,  y, obj_coin))
+    || (place_meeting(x,  y, obj_stone) && global.stb_level >= 1)
+    || (place_meeting(x,  y, obj_spikes) && global.stb_level >= 2)
+    || (place_meeting(x,  y, obj_title_start))
+    )
+        image_index = 2;
+    x -= vecx;
+    y -= vecy;
+}
+else
+    image_index = 1;
+image_angle = 0;
+var amount = irandom_range(10,16);
+for (i=0; i < amount ; i++)
+{
+    if (irandom_range(0,1) == 0)
+            instance_create(x+irandom_range(-24,24),y+irandom_range(-24,24),obj_0);
+    else
+            instance_create(x+irandom_range(-24,24),y+irandom_range(-24,24),obj_1);
+}
+if !(pause)
+{
+if (vibrate_time > 0 || global.stb <= 0) && global.control = "pad"
+    gamepad_set_vibration(0,.3,.3);
+else
+    gamepad_set_vibration(0,0,0);
+vibrate_time--;
+if (boss_move <= -853 && !(global.boss_dead))
+    boss_move = 0;
+else
+    boss_move--;
+percent = global.stb / global.max_stb * 100;
+if  (global.stb <= stb_amount[1] && global.stb_level == 0 && global.stb > 0)
+{
+    global.stb_level = 1;
+    vibrate_time = 30;
+}
+if (global.stb <= stb_amount[2] && global.stb_level == 1 && global.stb > 0)
+{
+    global.stb_level = 2;
+    vibrate_time = 30;
+}
+if (global.stb <= 0)
+{
+shake_time++;
+    if (irandom_range(1,30) == 1)
+    {
+        background_hspeed[0] = irandom_range(-7,7);
+        background_vspeed[0] = irandom_range(-7,7);
+    }
+    if (shake_time % 3 == 0)
+        scale *= -1;
+    view_xview += 2 * scale;
+    view_yview += 2 * scale;
+}
+}
+global.speeds = floor((global.max_stb - global.stb)) / 15 + 3;
+if (keyboard_check_pressed(vk_escape))
+{
+    global.pause_press = true;
+    global.control = "key";
+}
+if (gamepad_button_check_pressed(0, gp_start))
+{
+    global.pause_press = true;
+    global.control = "pad";
+}
+if (global.pause_press)
+{
+    global.pause_press = false;
+    if !(pause)
+    {
+        pause = true;
+        backh = background_hspeed[0];
+        backv = background_vspeed[0];
+        background_hspeed[0] = 0;
+        background_vspeed[0] = 0;
+        cursor_sprite = -1;
+        gamepad_set_vibration(0,0,0);
+        global.pause_surf = surface_create(view_xview + display_get_gui_width(),view_yview + display_get_gui_height())
+        surface_set_target(global.pause_surf);
+        draw_clear_alpha(0,0);
+        with (all)
+        {
+            if !(sprite_index < 0)
+            {
+            draw_self();
+            event_perform(ev_draw,0);
+            }
+        }
+        surface_reset_target();
+        spr_screenshot = sprite_create_from_surface(global.pause_surf, view_xview, view_yview, display_get_gui_width(), display_get_gui_height(),
+            0, 1, 0, 0);
+        instance_deactivate_all(true);
+    }
+    else
+    {
+        pause = false;
+        background_hspeed[0] = backh;
+        background_vspeed[0] = backv;
+        instance_activate_all();
+    }
+}
+next = irandom_range (0, 2 * ( 3 - global.stb_level));
+if (next == 0)
+    make_obj = obj_crumble;
+else if (next <= 3)
+    make_obj = obj_stone;
+else
+    make_obj = obj_float;
+
+can_shift = true;
+gap = floor((global.max_stb - global.stb) / 20) + 2;
+if (x - (x % 64) + 64 > (block_start + (tick * 64)))
+{
+    tick++;
+    create = true;
+    if (count == 0)
+        block[tick] = false;
+    else
+    {
+        block[tick] = true;
+        count--;
+    }
+}
+else
+    create = false;
+if (create)
+{
+    make3 = true;
+    for (i = 1; i < gap; i++)
+        if (tick - i >= 0)
+            if (block[tick - i])
+                make3 = false;
+    if (tick - gap >= 0)
+        if (make3 && block[tick - gap])
+        {
+            spikes = false;
+            if (irandom_range(0, 4 - global.stb_level) == 0)
+                spikes = true;
+            make2 = floor( gap / 2) + 1;
+            if (irandom_range(0,3) == 0)
+            {
+                for (step2 = 2; 660 - (step2 * 64) >= 1 ;  step2++)
+                    if (step2 > step + 2 || step2 < step + ceil(global.stb_level / 2) )
+                        instance_create(x - (x % 64) + 64, 672 - (step2 * 64), make_obj);
+                block[tick] = true;
+                if (last == 0)
+                {
+                    can_shift = false;
+                    last++;
+                }
+            }
+            else
+            {
+                for (i2 = 0; i2 < ceil(gap / 2); i2++)
+                {
+                    if ((ceil(gap / 2) >= 2) && spikes && i2 = 0 && (global.stb_level != 2))
+                        instance_create(x - (x % 64) + 64 * (1 + i2), 672 - (step * 64), obj_spikes);
+                    else
+                        instance_create(x - (x % 64) + 64 * (1 + i2), 672 - (step * 64), make_obj);
+                    if (global.stb_level = 2 && spikes)
+                        instance_create(x - (x % 64) + 64 * (1 + i2), 672 - ((step + 1) * 64), obj_spikes);
+                    for (step2 = step - 1; step2 >= 2 ;  step2--)
+                    {
+                    instance_create(x - (x % 64) + 64 * (1 + i2), 672 - (step2 * 64), make_obj);
+                    }
+                }
+                block[tick] = true;
+                count = i2;
+                if (last == 1)
+                {
+                    can_shift = false;
+                    last--;
+                }
+            }
+            if ((irandom_range(0, 1) == 0) && (step < 8) && (can_shift))
+                step++;
+            if ((irandom_range(0, 1) == 0) && (step > 3) && (can_shift))
+                step--;
+
+            make = 0;
+        }
+}
+hspeed = global.speeds;
+x = view_xview + display_get_gui_width();
+
+
