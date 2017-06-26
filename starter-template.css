@@ -9,8 +9,8 @@ body {
 
 .wrap
 {
-    width: 356px;
-    height: 634px;
+    width: 270px;
+    height: 480px;
     padding: 0;
     overflow: hidden;
 }
@@ -18,13 +18,13 @@ body {
 {
     width: 1080px;
     height: 1920px;
-    border: 0;
+    border: 1px solid black;
 
-    -ms-transform: scale(0.33);
-    -moz-transform: scale(0.33);
-    -o-transform: scale(0.33);
-    -webkit-transform: scale(0.33);
-    transform: scale(0.33);
+    -ms-transform: scale(0.25);
+    -moz-transform: scale(0.25);
+    -o-transform: scale(0.25);
+    -webkit-transform: scale(0.25);
+    transform: scale(0.25);
 
     -ms-transform-origin: 50 50;
     -moz-transform-origin: 50 50;
