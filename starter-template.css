@@ -8,9 +8,9 @@ body {
 }
 
 
-#wrap { width: 270px; height: 480px; padding: 0; overflow: hidden; }
-#frame { width: 1080px; height: 1920px; border: 1px solid black; }
-#frame {
+.wrap { width: 270px; height: 480px; padding: 0; overflow: hidden; }
+.frame { width: 1080px; height: 1920px; border: 1px solid black; }
+.frame {
     -ms-zoom: 0.25;
     -moz-transform: scale(0.25);
     -moz-transform-origin: 0 0;
