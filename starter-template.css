@@ -9,16 +9,16 @@ body {
 
 .wrap
 {
-    width: 378px;
-    height: 672px;
+    width: 252px;
+    height: 448px;
     padding: 0;
     overflow: hidden;
 }
 .frame
 {
-    width: 1080px;
-    height: 1920px;
-    border: 0;
+    width: 720px;
+    height: 1280px;
+    border: 1px auto black;
 
     -ms-transform: scale(0.35);
     -moz-transform: scale(0.35);
