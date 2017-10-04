@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tweet Frequency</title>
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
+        <script src="http://malsup.github.com/jquery.form.js"></script> 
+    </head>
+
+    <body>
+        <form id="tweetForm">
+            <label for="pw">Access Key</label>
+            <input type="password" name="pw" id="pw" />
+            <br />
+
+            <label for="user">Twitter Handle (no @)</label>
+            <input type="text" name="user" id="user" />
+            <br />
+
+            <label for="replies">Include Replies?</label>
+            <input type="checkbox" name="replies" id="replies" />
+            <br />
+
+            <label for="rts">Include Retweets?</label>
+            <input type="checkbox" name="rts" id="rts" />
+            <br />
+
+            <button type="submit" id="tweetSubmit">Submit</button>
+        </form>
+
+        <section id="error"><h1 id="errorDesc"></h1></section>
+        <section id="tweetResults">
+            <h1><span id="userSpan"></span> Recent Tweet Stats</h1>
+            <h3>Sample size: <span id="sampleSize"></span></h3>
+            <h3>Sample average frequency: <span id="perDay"></span> Tweets/Day</h3>
+            <h3>Sample average time between Tweets: <span id="averageHoursBetween"></span> hours</h3>
+            <h3>Days since last tweet: <span id="daysSince"></span> days</h2>
+            <h3>List of times tweeted</h3>
+            <ul id="timestamps"></ul>
+        </section>
+    </body>
+
+    <script>
+        $(document).ready(function() {
+            $("#tweetForm").ajaxForm({
+                //url: 'http://tweetgettimestamps.herokuapp.com/?' + $('#tweetForm').serialize(),
+                url: 'http://tweetgettimestamps.herokuapp.com/?pw=' + $('#pw').val() + '&user=' + $('#user').val() + ($('#replies').is(":checked") ? '&replies=1' : '') + ($('#rts').is(":checked") ? '&rts=1' : ''),
+                type: 'get', 
+                beforeSend: function() {
+                    $('#tweetSubmit').attr("disabled",true);
+                    $('#tweetSubmit').html("Loading");  
+                    $("#tweetResults").hide();
+                    $("#error").hide();
+                    console.log('http://tweetgettimestamps.herokuapp.com/?pw=' + $('#pw').val() + '&user=' + $('#user').val() + ($('#replies').is(":checked") ? '&replies=1' : '') + ($('#rts').is(":checked") ? '&rts=1' : ''));
+                },
+                success: function(responseText, statusText, xhr, $form) {
+                    console.log(responseText);
+                    console.log("succ");
+                    $('#tweetSubmit').attr("disabled",false);
+                    $('#tweetSubmit').html("Submit");
+                    
+                    $("#userSpan").html("@" + responseText.name)
+                    $("#sampleSize").html(responseText.sampleSize);
+                    $("#perDay").html(responseText.perDay.toFixed(4));
+                    $("#averageHoursBetween").html(responseText.avgHoursBetween.toFixed(4));
+                    let timeList = "";
+                    for (var i = 0; i < responseText.dates.length; i++) {
+                        timeList += "<li>" + responseText.dates[i].substring(0, 10) + " " + responseText.dates[i].substring(11, 19) + "</li>";
+                    }
+                    $("#timestamps").html(timeList);
+                    if (responseText.error) {
+                        $("#errorDesc").html(responseText.error);
+                        if (Array.isArray(responseText.error))
+                            $("#errorDesc").html(responseText.error[0].message);
+                        $("#error").show();
+                    } else
+                        $("#tweetResults").show();
+                }
+            });
+            $("#tweetResults").hide();
+            $("#error").hide();
+        });
+    </script>
+</html>
