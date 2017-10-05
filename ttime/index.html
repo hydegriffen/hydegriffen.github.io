@@ -60,18 +60,13 @@
                     $('#tweetSubmit').attr("disabled",false);
                     $('#tweetSubmit').html("Submit");
                     
-                    try
-                    {
+                    
                         $("#userSpan").html("@" + responseText.name)
                         $("#sampleSize").html(responseText.sampleSize);
                         $("#perDay").html(responseText.perDay.toFixed(4));
                         $("#averageHoursBetween").html(responseText.avgHoursBetween.toFixed(4));
                         $("#daysSince").html(responseText.daysSince.toFixed(4));
-                    }
-                    catch(e)
-                    {
-                        console.log(e);
-                    }
+                    
                     
                     let timeList = "";
                     for (var i = 0; i < responseText.dates.length; i++) {
