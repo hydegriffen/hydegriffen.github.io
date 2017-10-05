@@ -62,11 +62,7 @@
                     
                     try
                     {
-                        $("#userSpan").html("@" + responseText.name)
-                        $("#sampleSize").html(responseText.sampleSize);
-                        $("#perDay").html(responseText.perDay.toFixed(4));
-                        $("#averageHoursBetween").html(responseText.avgHoursBetween.toFixed(4));
-                        $("#daysSince").html(responseText.daysSince.toFixed(4));
+                        
                     }
                     catch(e)
                     {
@@ -84,6 +80,12 @@
                             $("#errorDesc").html(responseText.error[0].message);
                         $("#error").show();
                     } else{
+                        $("#userSpan").html("@" + responseText.name)
+                        $("#sampleSize").html(responseText.sampleSize);
+                        $("#perDay").html(responseText.perDay.toFixed(4));
+                        $("#averageHoursBetween").html(responseText.avgHoursBetween.toFixed(4));
+                        $("#daysSince").html(responseText.daysSince.toFixed(4));
+
                         $("#tweetResults").show();}
                 }
             });
