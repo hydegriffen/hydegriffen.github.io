@@ -35,7 +35,7 @@
             <h3>Sample size: <span id="sampleSize"></span></h3>
             <h3>Sample average frequency: <span id="perDay"></span> Tweets/Day</h3>
             <h3>Sample average time between Tweets: <span id="averageHoursBetween"></span> hours</h3>
-            <h3>Days since last tweet: <span id="daysSince"></span> days</h3>
+            <h3>Time since last tweet: <span id="daysSince"></span> days</h3>
             <h3>List of times tweeted</h3>
             <ul id="timestamps"></ul>
         </section>
@@ -64,7 +64,7 @@
                     $("#sampleSize").html(responseText.sampleSize);
                     $("#perDay").html(responseText.perDay.toFixed(4));
                     $("#averageHoursBetween").html(responseText.avgHoursBetween.toFixed(4));
-                    $("#daysSince").html(responseText.daysSince);
+                    $("#daysSince").html(responseText.daysSince.toFixed(4));
                     let timeList = "";
                     for (var i = 0; i < responseText.dates.length; i++) {
                         timeList += "<li>" + responseText.dates[i].substring(0, 10) + " " + responseText.dates[i].substring(11, 19) + "</li>";
