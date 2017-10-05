@@ -60,32 +60,46 @@
                     $('#tweetSubmit').attr("disabled",false);
                     $('#tweetSubmit').html("Submit");
                     
-                    try
-                    {
-                        $("#userSpan").html("@" + responseText.name)
+                    if (responseText.name)
+                        $("#userSpan").html("@" + responseText.name);
+                    else
+                        $("#userSpan").html("Name Not Found");
+                    
+                    if (responseText.sampleSize)
                         $("#sampleSize").html(responseText.sampleSize);
+                    else
+                        $("#sampleSize").html("0");
+
+                    if (responseText.perDay)
                         $("#perDay").html(responseText.perDay.toFixed(4));
+                    else 
+                        $("#perDay").html("0");
+
+                    if (responseText.avgHoursBetween)
                         $("#averageHoursBetween").html(responseText.avgHoursBetween.toFixed(4));
+                    else
+                        $("#averageHoursBetween").html("0");
+
+                    if (responseText.daysSince)
                         $("#daysSince").html(responseText.daysSince.toFixed(4));
-                    }
-                    catch(e)
-                    {
-                        console.log(e);
-                    }
+                    else
+                        $("#daysSince").html("0");
                     
                     let timeList = "";
-                    for (var i = 0; i < responseText.dates.length; i++) {
+                    for (var i = 0; responseText.dates && i < responseText.dates.length; i++) {
                         timeList += "<li>" + responseText.dates[i].substring(0, 10) + " " + responseText.dates[i].substring(11, 19) + "</li>";
                     }
                     $("#timestamps").html(timeList);
+
                     if (responseText.error) {
+                        console.log("We found an error");
                         $("#errorDesc").html(responseText.error);
                         if (Array.isArray(responseText.error))
                             $("#errorDesc").html(responseText.error[0].message);
                         $("#error").show();
                     } else{
                         $("#tweetResults").show();}
-                }
+                    }
             });
             $("#tweetResults").hide();
             $("#error").hide();
