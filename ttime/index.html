@@ -64,6 +64,7 @@
                     $("#sampleSize").html(responseText.sampleSize);
                     $("#perDay").html(responseText.perDay.toFixed(4));
                     $("#averageHoursBetween").html(responseText.avgHoursBetween.toFixed(4));
+                    $("#daysSince").html(responseText.daysSince);
                     let timeList = "";
                     for (var i = 0; i < responseText.dates.length; i++) {
                         timeList += "<li>" + responseText.dates[i].substring(0, 10) + " " + responseText.dates[i].substring(11, 19) + "</li>";
