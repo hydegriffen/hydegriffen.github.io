@@ -10,20 +10,24 @@
 
     <body>
         <form id="tweetForm">
-            <label for="pw">Access Key: </label>
+            <label for="pw">Access key: </label>
             <input type="password" name="pw" id="pw" />
             <br />
 
-            <label for="user">Twitter Handle (no @): </label>
+            <label for="user">Twitter handle: @</label>
             <input type="text" name="user" id="user" />
             <br />
 
-            <label for="replies">Include Replies?</label>
+            <label for="replies">Include replies?</label>
             <input type="checkbox" name="replies" id="replies" />
             <br />
 
-            <label for="rts">Include Retweets?</label>
+            <label for="rts">Include retweets?</label>
             <input type="checkbox" name="rts" id="rts" />
+            <br />
+
+            <label for="search">Count tweets including: </label>
+            <input type="text" name="search" id="search" />
             <br />
 
             <button type="submit" id="tweetSubmit">Submit</button>
@@ -35,6 +39,7 @@
             <h3>Sample size: <span id="sampleSize"></span></h3>
             <h3>Sample average frequency: <span id="perDay"></span> tweets/day</h3>
             <h3>Sample average time between tweets: <span id="averageHoursBetween"></span> hours</h3>
+            <h3 id="searchHitsLabel">Sample number of tweets including <span id="searchPhrase"></span>: <span id="searchHits"></span></h3>
             <h3>Time since last tweet: <span id="daysSince"></span> days</h3>
             <h3>List of times tweeted</h3>
             <ul id="timestamps"></ul>
@@ -45,7 +50,7 @@
         $(document).ready(function() {
             $("#tweetForm").ajaxForm({
                 //url: 'http://tweetgettimestamps.herokuapp.com/?' + $('#tweetForm').serialize(),
-                url: 'http://tweetgettimestamps.herokuapp.com/?pw=' + $('#pw').val() + '&user=' + $('#user').val() + ($('#replies').is(":checked") ? '&replies=1' : '') + ($('#rts').is(":checked") ? '&rts=1' : ''),
+                url: 'http://tweetgettimestamps.herokuapp.com/?pw=' + $('#pw').val() + '&user=' + $('#user').val() + ($('#replies').is(":checked") ? '&replies=1' : '') + ($('#rts').is(":checked") ? '&rts=1' : '') + ($('#search').val() != "" ? "&search=" + $("#search").val() : "" ),
                 type: 'get', 
                 beforeSend: function() {
                     $('#tweetSubmit').attr("disabled",true);
@@ -84,6 +89,14 @@
                         $("#daysSince").html(responseText.daysSince.toFixed(4));
                     else
                         $("#daysSince").html("0");
+
+                    if (responseText.searchHits !== undefined) {
+                        $("#searchHits").html(responseText.searchHits);
+                        $("#searchPhrase").html($("#search").val());
+                        $("#searchHitsLabel").show();
+                    } else {
+                        $("#searchHitsLabel").hide();
+                    }
                     
                     let timeList = "";
                     for (var i = 0; responseText.dates && i < responseText.dates.length; i++) {
