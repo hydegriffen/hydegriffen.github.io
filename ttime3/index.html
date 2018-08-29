@@ -42,6 +42,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
     <script src="http://malsup.github.com/jquery.form.js"></script>
 
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
 </head>
 
 <body>
@@ -116,6 +119,12 @@
     </table>
     <br><br>
     <label>Time Requested: </label><p id="currentDate"></p>
+
+    <div id="ByUsername"><!-- Plotly chart will be drawn inside this DIV --></div>
+    <br><br>
+    <div id="BySearch"><!-- Plotly chart will be drawn inside this DIV --></div>
+    <br><br>
+    <div id="ByFrequency"><!-- Plotly chart will be drawn inside this DIV --></div>
     
     <!-- Footer -->
     <footer>
@@ -168,6 +177,11 @@
   </script>
 
 <script>
+    var plotly_UNs = [];
+    var plotly_searchHits = [];
+    var plotly_searchTerms = [];
+    var plotly_frequencies = [];
+
     $(document).ready(function() {
         $("#tweetForm").ajaxForm({
             //url: 'http://tweetgettimestamps.herokuapp.com/?' + $('#tweetForm').serialize(),
@@ -186,9 +200,11 @@
                 console.log(responseText);
                 $('#tweetSubmit').attr("disabled",false);
                 $('#tweetSubmit').html("Submit");
+                                
                 let row = "<tr>";
-                if (responseText.name)
+                if (responseText.name){
                     row += "<td>" + responseText.name + "</td>";   //$("#userSpan").html("@" + responseText.name);
+                }
                 else
                     row += "<td>Name Not Found</td>";//$("#userSpan").html("Name Not Found");
 
@@ -201,7 +217,9 @@
                     row += "<td>0</td>"; //$("#sampleSize").html("0");
 
                 if (responseText.perDay)
+                {
                     row += "<td>" + responseText.perDay.toFixed(4).toString() + "</td>"; //$("#perDay").html(responseText.perDay.toFixed(4));
+                }
                 else 
                     row += "<td>0</td>"; //$("#perDay").html("0");
 
@@ -224,12 +242,15 @@
                 }*/
                 if (responseText.searchHits) {
                     row += "<td>" + responseText.searchHits.toString() + "</td>";
+                    plotly_UNs.push(responseText.name);
+                    plotly_searchHits.push(responseText.searchHits);
+                    plotly_searchTerms.push($('#search').val());
+                    plotly_frequencies.push(responseText.perDay);
                 } else {
                     row += "<td>0</td>";
                 }
 
                 row += "</tr>";
-
                 
                 /*let timeList = "";
                 for (var i = 0; responseText.dates && i < responseText.dates.length; i++) {
@@ -247,6 +268,43 @@
                     //$("#tweetResults").show();
                     document.getElementById("resultsTable").innerHTML = document.getElementById("resultsTable").innerHTML + row;
                 }
+
+                //Plotly JS goes here------------------------------------------------
+                var data = [{
+                    x: plotly_UNs, //[$('#user').val()]
+                    y: plotly_searchHits, //[responseText.searchHits]
+                    type: 'bar'
+                    }];
+
+                var layout = {
+                    title: 'Sample Number of Tweets Including "' + $('#search').val() + '" by Username'
+                    };
+
+                Plotly.newPlot('ByUsername', data, layout); //------------------------------
+
+                var data2 = [{
+                    x: plotly_searchTerms,
+                    y: plotly_searchHits, 
+                    type: 'bar'
+                    }];
+
+                var layout2 = {
+                    title: 'Sample Number of Tweets by @' + $('#user').val() + ' Including Search Terms'
+                    };
+
+                Plotly.newPlot('BySearch', data2, layout2); //------------------------------
+
+                var data3 = [{
+                    x: plotly_UNs, 
+                    y: plotly_frequencies, 
+                    type: 'bar'
+                    }];
+
+                var layout3 = {
+                    title: 'Sample Average Tweets / Day by Username'
+                    };
+
+                Plotly.newPlot('ByFrequency', data3, layout3); //------------------------------ NOTE: a flaw in the frequency, due to the placement of the plotly logic, is that a search term with hits must be entered
             }
         });
         $("#tweetResults").hide();
