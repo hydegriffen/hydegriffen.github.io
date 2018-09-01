@@ -245,7 +245,7 @@
                     plotly_UNs.push(responseText.name);
                     plotly_searchHits.push(responseText.searchHits);
                     plotly_searchTerms.push($('#search').val());
-                    plotly_frequencies.push(responseText.perDay);
+                    plotly_frequencies.push(responseText.perDay.toFixed(4));
                 } else {
                     row += "<td>0</td>";
                 }
