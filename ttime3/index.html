@@ -273,7 +273,9 @@
                 var data = [{
                     x: plotly_UNs, //[$('#user').val()]
                     y: plotly_searchHits, //[responseText.searchHits]
-                    type: 'bar'
+                    type: 'bar',
+                    text: plotly_searchHits,
+                    textposition: 'auto'
                     }];
 
                 var layout = {
@@ -285,7 +287,9 @@
                 var data2 = [{
                     x: plotly_searchTerms,
                     y: plotly_searchHits, 
-                    type: 'bar'
+                    type: 'bar',
+                    text: plotly_searchHits,
+                    textposition: 'auto'
                     }];
 
                 var layout2 = {
@@ -297,7 +301,9 @@
                 var data3 = [{
                     x: plotly_UNs, 
                     y: plotly_frequencies, 
-                    type: 'bar'
+                    type: 'bar',
+                    text: plotly_frequencies,
+                    textposition: 'auto'
                     }];
 
                 var layout3 = {
