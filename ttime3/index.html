@@ -301,7 +301,8 @@
                     }];
 
                 var layout_p = {
-                    title: 'Percentage of Sampled Tweets Including "' + $('#search').val() + '" by Username',
+                    //title: 'Percentage of Sampled Tweets Including "' + $('#search').val() + '" by Username',
+                    title: 'Prevalence of "' + $('#search').val() + '" in Tweets',
                     yaxis: {
                         title: '% of Sampled Tweets incl. "' + $('#search').val() + '"',
                         titlefont: {
@@ -341,15 +342,15 @@
                     }];
 
                 var layout2_p = {
-                    title: 'Percentage of Sampled Tweets by @' + $('#user').val() + ' Including Search Terms',
+                    title: 'Prevalence of Searched Terms in Tweets by @' + $('#user').val(),
                     yaxis: {
-                        title: '% of Sampled Tweets incl. Search Terms',
+                        title: '% of Sampled Tweets incl. Term',
                         titlefont: {
                             size: 12,
                             color: 'rgb(107, 107, 107)'},
                             },
                     xaxis: {
-                        title: 'Search Terms',
+                        title: 'Terms',
                         titlefont: {
                             size: 12,
                             color: 'rgb(107, 107, 107)'},
@@ -367,7 +368,19 @@
                     }];
 
                 var layout3 = {
-                    title: 'Sample Average Tweets / Day by Username'
+                    title: 'Tweet Frequency',
+                    yaxis: {
+                        title: 'Average Tweets per Day',
+                        titlefont: {
+                            size: 12,
+                            color: 'rgb(107, 107, 107)'},
+                            },
+                    xaxis: {
+                        title: 'Twitter Username',
+                        titlefont: {
+                            size: 12,
+                            color: 'rgb(107, 107, 107)'},
+                            }
                     };
 
                 Plotly.newPlot('ByFrequency', data3, layout3); //------------------------------ NOTE: a flaw in the frequency, due to the placement of the plotly logic, is that a search term with hits must be entered
