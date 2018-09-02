@@ -122,7 +122,11 @@
 
     <div id="ByUsername"><!-- Plotly chart will be drawn inside this DIV --></div>
     <br><br>
+    <div id="ByUsername_p"><!-- Plotly chart will be drawn inside this DIV --></div>
+    <br><br>
     <div id="BySearch"><!-- Plotly chart will be drawn inside this DIV --></div>
+    <br><br>
+    <div id="BySearch_p"><!-- Plotly chart will be drawn inside this DIV --></div>
     <br><br>
     <div id="ByFrequency"><!-- Plotly chart will be drawn inside this DIV --></div>
     
@@ -181,6 +185,8 @@
     var plotly_searchHits = [];
     var plotly_searchTerms = [];
     var plotly_frequencies = [];
+    var plotly_samplesize = [];
+    var plotly_searchPercent = [];
 
     $(document).ready(function() {
         $("#tweetForm").ajaxForm({
@@ -245,7 +251,9 @@
                     plotly_UNs.push(responseText.name);
                     plotly_searchHits.push(responseText.searchHits);
                     plotly_searchTerms.push($('#search').val());
-                    plotly_frequencies.push(responseText.perDay.toFixed(4));
+                    plotly_frequencies.push(responseText.perDay.toFixed(2));
+                    plotly_samplesize.push(responseText.sampleSize);
+                    plotly_searchPercent.push(((responseText.searchHits / responseText.sampleSize)*100).toFixed(2));
                 } else {
                     row += "<td>0</td>";
                 }
@@ -269,7 +277,7 @@
                     document.getElementById("resultsTable").innerHTML = document.getElementById("resultsTable").innerHTML + row;
                 }
 
-                //Plotly JS goes here------------------------------------------------
+                //Plotly JS goes here------------------------------------------------ 
                 var data = [{
                     x: plotly_UNs, //[$('#user').val()]
                     y: plotly_searchHits, //[responseText.searchHits]
@@ -284,6 +292,32 @@
 
                 Plotly.newPlot('ByUsername', data, layout); //------------------------------
 
+                var data_p = [{
+                    x: plotly_UNs, 
+                    y: plotly_searchPercent, 
+                    type: 'bar',
+                    text: plotly_searchPercent,
+                    textposition: 'auto'
+                    }];
+
+                var layout_p = {
+                    title: 'Percentage of Sampled Tweets Including "' + $('#search').val() + '" by Username',
+                    yaxis: {
+                        title: '% of Sampled Tweets incl. "' + $('#search').val() + '"',
+                        titlefont: {
+                            size: 12,
+                            color: 'rgb(107, 107, 107)'},
+                            },
+                    xaxis: {
+                        title: 'Twitter Username',
+                        titlefont: {
+                            size: 12,
+                            color: 'rgb(107, 107, 107)'},
+                            }
+                    };
+
+                Plotly.newPlot('ByUsername_p', data_p, layout_p); //------------------------------
+
                 var data2 = [{
                     x: plotly_searchTerms,
                     y: plotly_searchHits, 
@@ -297,6 +331,32 @@
                     };
 
                 Plotly.newPlot('BySearch', data2, layout2); //------------------------------
+
+                var data2_p = [{
+                    x: plotly_searchTerms,
+                    y: plotly_searchPercent, 
+                    type: 'bar',
+                    text: plotly_searchPercent,
+                    textposition: 'auto'
+                    }];
+
+                var layout2_p = {
+                    title: 'Percentage of Sampled Tweets by @' + $('#user').val() + ' Including Search Terms',
+                    yaxis: {
+                        title: '% of Sampled Tweets incl. Search Terms',
+                        titlefont: {
+                            size: 12,
+                            color: 'rgb(107, 107, 107)'},
+                            },
+                    xaxis: {
+                        title: 'Search Terms',
+                        titlefont: {
+                            size: 12,
+                            color: 'rgb(107, 107, 107)'},
+                            }
+                    };
+
+                Plotly.newPlot('BySearch_p', data2_p, layout2_p); //------------------------------
 
                 var data3 = [{
                     x: plotly_UNs, 
