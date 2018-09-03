@@ -278,7 +278,7 @@
                 }
 
                 //Plotly JS goes here------------------------------------------------ 
-                var data = [{
+                /*var data = [{
                     x: plotly_UNs, //[$('#user').val()]
                     y: plotly_searchHits, //[responseText.searchHits]
                     type: 'bar',
@@ -290,7 +290,7 @@
                     title: 'Sample Number of Tweets Including "' + $('#search').val() + '" by Username'
                     };
 
-                Plotly.newPlot('ByUsername', data, layout); //------------------------------
+                Plotly.newPlot('ByUsername', data, layout); //------------------------------*/
 
                 var data_p = [{
                     x: plotly_UNs, 
@@ -317,9 +317,10 @@
                             }
                     };
 
-                Plotly.newPlot('ByUsername_p', data_p, layout_p); //------------------------------
+                if(plotly_UNs[0] != plotly_UNs[1])
+                    Plotly.newPlot('ByUsername_p', data_p, layout_p); //------------------------------
 
-                var data2 = [{
+                /*var data2 = [{
                     x: plotly_searchTerms,
                     y: plotly_searchHits, 
                     type: 'bar',
@@ -331,7 +332,7 @@
                     title: 'Sample Number of Tweets by @' + $('#user').val() + ' Including Search Terms'
                     };
 
-                Plotly.newPlot('BySearch', data2, layout2); //------------------------------
+                Plotly.newPlot('BySearch', data2, layout2); //------------------------------*/
 
                 var data2_p = [{
                     x: plotly_searchTerms,
@@ -357,7 +358,8 @@
                             }
                     };
 
-                Plotly.newPlot('BySearch_p', data2_p, layout2_p); //------------------------------
+                if(plotly_searchTerms[0] != plotly_searchTerms[1])
+                    Plotly.newPlot('BySearch_p', data2_p, layout2_p); //------------------------------
 
                 var data3 = [{
                     x: plotly_UNs, 
@@ -383,7 +385,7 @@
                             }
                     };
 
-                Plotly.newPlot('ByFrequency', data3, layout3); //------------------------------ NOTE: a flaw in the frequency, due to the placement of the plotly logic, is that a search term with hits must be entered
+                Plotly.newPlot('ByFrequency', data3, layout3); //------------------------------ NOTE: due to the placement of the current logic, a search term with hits must be entered
             }
         });
         $("#tweetResults").hide();
