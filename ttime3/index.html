@@ -210,6 +210,12 @@
                 let row = "<tr>";
                 if (responseText.name){
                     row += "<td>" + responseText.name + "</td>";   //$("#userSpan").html("@" + responseText.name);
+                    plotly_UNs.push(responseText.name);
+                    plotly_searchHits.push(responseText.searchHits);
+                    plotly_searchTerms.push($('#search').val());
+                    plotly_frequencies.push(responseText.perDay.toFixed(2));
+                    plotly_samplesize.push(responseText.sampleSize);
+                    plotly_searchPercent.push(((responseText.searchHits / responseText.sampleSize)*100).toFixed(2));
                 }
                 else
                     row += "<td>Name Not Found</td>";//$("#userSpan").html("Name Not Found");
@@ -248,12 +254,12 @@
                 }*/
                 if (responseText.searchHits) {
                     row += "<td>" + responseText.searchHits.toString() + "</td>";
-                    plotly_UNs.push(responseText.name);
+                    /*plotly_UNs.push(responseText.name);
                     plotly_searchHits.push(responseText.searchHits);
                     plotly_searchTerms.push($('#search').val());
                     plotly_frequencies.push(responseText.perDay.toFixed(2));
                     plotly_samplesize.push(responseText.sampleSize);
-                    plotly_searchPercent.push(((responseText.searchHits / responseText.sampleSize)*100).toFixed(2));
+                    plotly_searchPercent.push(((responseText.searchHits / responseText.sampleSize)*100).toFixed(2));*/
                 } else {
                     row += "<td>0</td>";
                 }
