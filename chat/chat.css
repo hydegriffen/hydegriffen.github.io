@@ -71,6 +71,10 @@ img{
   font-size: 16px;
 }
 
+.search-input:focus{
+  outline: none;
+}
+
 .search-button {
   background-color: transparent;
   border: none;
