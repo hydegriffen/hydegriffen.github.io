@@ -18,8 +18,14 @@ async function generateText(prompt) {
     document.getElementById('sendButton').disabled = true;
     document.getElementById('sendButton').innerHTML = '<div id="spinner" class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>'
     document.getElementById('userInput').value = "";
+    if (navigator.userAgent.match(/(iPhone|Android|BlackBerry|Windows Phone)/)) {
+      document.getElementById('userInput').blur();
+    }
+    
     //document.getElementById("AIResponse").innerHTML += '<div class="user-message-card"><div class="sender-name">You</div><div class="message">' + prompt + '</div></div>';    
-    document.getElementById("AIResponse").innerHTML = '<div class="user-message-card"><div class="sender-name">You</div><div class="message">' + prompt + '</div></div>' + document.getElementById("AIResponse").innerHTML;    
+    //document.getElementById("AIResponse").innerHTML = '<div class="user-message-card"><div class="sender-name">You</div><div class="message">' + prompt + '</div></div>' + document.getElementById("AIResponse").innerHTML;    
+    document.getElementById("AIResponse").innerHTML = '<div class="user-message-card"><div class="message">' + prompt + '</div></div>' + document.getElementById("AIResponse").innerHTML;    
+
 
     messageArray.push({role: "user", content: prompt})
     encodedMessageArray = { promptText: messageArray, version: 5 };
@@ -37,7 +43,8 @@ async function generateText(prompt) {
         messageArray.push({role: "assistant", content: botResponse})
         botResponseCleaned = botResponse.replace(/\n/g, "<br />");
         //document.getElementById("AIResponse").innerHTML += '<div class="bot-message-card"><div class="sender-name">Q</div><div class="message">' + botResponseCleaned + '</div></div>';
-        document.getElementById("AIResponse").innerHTML = '<div class="bot-message-card"><div class="sender-name">AI Assistant</div><div class="message">' + botResponseCleaned + '</div></div>' + document.getElementById("AIResponse").innerHTML;
+        //document.getElementById("AIResponse").innerHTML = '<div class="bot-message-card"><div class="sender-name">AI Assistant</div><div class="message">' + botResponseCleaned + '</div></div>' + document.getElementById("AIResponse").innerHTML;
+        document.getElementById("AIResponse").innerHTML = '<div class="bot-message-card"><div class="message">' + botResponseCleaned + '</div></div>' + document.getElementById("AIResponse").innerHTML;
         document.getElementById('sendButton').disabled = false;
         document.getElementById('sendButton').innerHTML = '<i class="material-icons">send</i>'
 
