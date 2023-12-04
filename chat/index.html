@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Karla&family=Roboto:wght@300&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="chat.css">
+
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="chat.js"></script>
+
+        <title>Kevin Quigley</title>
+
+    </head>
+
+    <body class="all" onload="typeWriter()">
+
+        <div class="intro">
+            <img src="profile.jpg">
+            <h1 id="hi"> </h1>
+            <h2>I am a Computer Engineer overseeing Technology & Solutions under Wiley's Operations division.</h2>
+        </div>
+        <br>
+
+        <div class="search-bar">
+            <input id="userInput" class="search-input" type="text" placeholder="Get to know me by asking questions..." autocomplete="off">
+            <button id="sendButton" class="search-button" type="button" onclick="generateText(document.getElementById('userInput').value)">
+              <i class="material-icons">send</i>
+            </button>
+        </div>
+        <br>
+
+        <div id="AIResponse" class="chatContainer"></div>
+
+       
+    </body>
+
+</html>
