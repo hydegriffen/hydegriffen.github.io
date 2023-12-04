@@ -27,17 +27,27 @@ img{
 }
 
 .user-message-card{
-    padding: 8px;
+    /*padding: 8px;*/
+    padding: 12px;
     background-color: #D0E0E8;
-    border-radius: 4px;
+    /*border-color: #bdbdbd;
+    border-style: solid;
+    border-width: 1px;*/
+    /*border-radius: 4px;*/
+    border-radius: 24px;
     text-align: right;
     margin-bottom: 8px;
 }
 
 .bot-message-card{
-    padding: 8px;
+    /*padding: 8px;*/
+    padding: 12px;
     background-color: #F1F4F4;
-    border-radius: 4px;
+    /*border-color: #bdbdbd;
+    border-style: solid;
+    border-width: 1px;*/
+    /*border-radius: 4px;*/
+    border-radius: 24px;
     margin-bottom: 8px;
 }
 
@@ -57,7 +67,8 @@ img{
   display: flex;
   align-items: center;
   border: 1px solid #bdbdbd;
-  border-radius: 4px;
+  /*border-radius: 4px;*/
+  border-radius: 24px;
   overflow: hidden;
   max-width: 750px;
   margin: 0 auto;
