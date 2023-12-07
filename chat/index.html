@@ -24,10 +24,15 @@
         <br>
 
         <div class="search-bar">
-            <input id="userInput" class="search-input" type="text" placeholder="Ask questions about Kevin..." autocomplete="off">
+            <input id="userInput" class="search-input" type="text" placeholder="Ask a question about Kevin..." autocomplete="off">
             <button id="sendButton" class="search-button" type="button" onclick="generateText(document.getElementById('userInput').value)">
               <i class="material-icons">send</i>
             </button>
+        </div>
+        <br>
+
+        <div class="chatContainer" style="padding-bottom:6px;">
+            <button id="clearButton" onclick="clearConversation()" style="color:#bdbdbd;background-color: white;border:none;float:right;font-size: 14px;display:none;">Clear</button>
         </div>
         <br>
 
