@@ -57,7 +57,7 @@ async function generateText(prompt) {
 
 
     messageArray.push({role: "user", content: prompt})
-    encodedMessageArray = { promptText: messageArray, version: 5 };
+    encodedMessageArray = { promptText: messageArray, version: 3 };
     console.log(encodedMessageArray);
 
     try {
