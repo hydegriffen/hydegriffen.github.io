@@ -8,6 +8,14 @@
   <meta name="description" content="">
   <meta name="author" content="Kevin Quigley">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Karla&family=Roboto:wght@300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="chat.css">
+
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
   <title>Kevin Quigley</title>
 
   <!-- Bootstrap core CSS -->
@@ -76,9 +84,10 @@
     <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="about">
       <div class="w-100">
         <h1 class="mb-0">Kevin
-          <span class="text-primary">Quigley</span><br><br>
+          <span class="text-primary">Quigley</span>
         </h1>
         <!-- <p class="lead mb-5"><b>Leaders</b> inspire, <b>Thinkers</b> imagine, <b>Engineers</b> create.<br>Solutions are found when we <i>inspire</i> each other to <i>imagine</i> what we can <i>create</i>.</p> -->
+        <br><br>
         <p class="lead mb-5"><b>Computer Engineer<br>Applied AI Expert</b> | <a target="_blank" href="https://www.salesforce.com/plus/experience/World_Tour/series/best_of_world_tour_nyc_2024/episode/episode-s1e2">Watch</a><br><b>Data-Driven Leader</b> | <a target="_blank" href="https://www.salesforce.com/customer-stories/wiley/">Read</a></p>
         <div class="social-icons">
           <a href="https://www.linkedin.com/in/kevinquigley27/">
@@ -91,7 +100,25 @@
             <i class="fas fa-envelope"></i>
           </a>
         </div>
-        <br><br><p class="lead mb-5">Get to know me by <a href="https://kevinquigley.net/chat/" target = "_blank"><u><b>chatting with my AI assistant</u></b></a> or reading below.</p>
+        <br><br>
+
+        <div id="AISearch">
+            <div class="search-bar">
+              <input id="userInput" class="search-input" type="text" placeholder="Ask AI a question about Kevin" autocomplete="off">
+              <button id="sendButton" class="search-button" type="button" onclick="generateText(document.getElementById('userInput').value)">
+                <i class="material-icons">search</i>
+              </button>
+          </div>
+          <br>
+
+          <div class="chatContainer" style="padding-bottom:6px;">
+              <button id="clearButton" onclick="clearConversation()" style="color:#bdbdbd;background-color: white;border:none;float:right;font-size: 14px;display:none;">Clear</button>
+          </div>
+          <br>
+
+          <div id="AIResponse" class="chatContainer"></div>
+        </div>
+
       </div>
     </section>
 
@@ -223,49 +250,6 @@
       </div>
     </section>
 
-<!--     <hr class="m-0">
-
-    <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="skills">
-      <div class="w-100">
-        <h2 class="mb-5">Technical Skills</h2>
-
-        <div class="subheading mb-3">Programming</div>
-        <ul class="list-inline dev-icons">
-          <li class="list-inline-item">
-            <i class="fab fa-html5"></i>
-          </li>
-          <li class="list-inline-item">
-            <i class="fab fa-css3-alt"></i>
-          </li>
-          <li class="list-inline-item">
-            <i class="fab fa-js-square"></i>
-          </li>
-          <li class="list-inline-item">
-            <i class="fab fa-node-js"></i>
-          </li>
-          <li class="list-inline-item">
-            <i class="fab fa-python"></i>
-          </li>
-          <li class="list-inline-item">
-            <i class="fab fa-github"></i>
-          </li>
-        </ul>
-
-        <div class="subheading mb-3">Software</div>
-        <ul class="list-inline dev-icons">
-          <li class="list-inline-item">
-            <i class="fab fa-salesforce"></i>
-          </li>
-          <li class="list-inline-item">
-            <i class="fab fa-jira"></i>
-          </li>
-          <li class="list-inline-item">
-            <i class="fas fa-file-excel"></i>
-          </li>
-        </ul>
-      </div>
-    </section> -->
-
 
     <hr class="m-0">
 
@@ -380,4 +364,5 @@
   }
   </script>
 
+<script src="chat.js"></script>
 </html>
