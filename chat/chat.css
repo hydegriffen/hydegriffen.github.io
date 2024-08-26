@@ -105,6 +105,9 @@
 .search-input:focus{
   outline: none;
 }
+.search-input:disabled{
+  background-color: transparent;
+}
 
 .search-button {
   background-color: transparent;

@@ -4,7 +4,7 @@ messageArray = systemPrompt;
 
 function clearConversation(){
   messageArray = systemPrompt;
-  document.getElementById('userInput').placeholder = "Ask a question about Kevin...";
+  document.getElementById('userInput').placeholder = "Ask AI a question about Kevin";
   document.getElementById('clearButton').style.display = "none";
   fadeOut();
 }
@@ -31,7 +31,8 @@ async function generateText(prompt) {
     document.getElementById('sendButton').disabled = true;
     document.getElementById('sendButton').innerHTML = '<div id="spinner" class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>'
     document.getElementById('userInput').value = "";
-    document.getElementById('userInput').placeholder = "Follow-up or ask another question...";
+    document.getElementById('userInput').placeholder = "One moment please...";
+    document.getElementById('userInput').disabled = true;
     document.getElementById('clearButton').style.display = "block";
     document.getElementById('clearButton').disabled = true;
     if (navigator.userAgent.match(/(iPhone|Android|BlackBerry|Windows Phone)/)) {
@@ -45,11 +46,11 @@ async function generateText(prompt) {
 
 
     messageArray.push({role: "user", content: prompt})
-    encodedMessageArray = { promptText: messageArray, version: 3 };
+    encodedMessageArray = { promptText: messageArray};
     console.log(encodedMessageArray);
 
     try {
-        const response = await axios.post('https://gpt-test-app.herokuapp.com/generate-text', encodedMessageArray, {
+        const response = await axios.post('https://kqnai-5bb831d53c36.herokuapp.com/generate-text', encodedMessageArray, {
             headers: {
               'Content-Type': 'application/json'
             }
@@ -72,6 +73,8 @@ async function generateText(prompt) {
         document.getElementById('sendButton').disabled = false;
         document.getElementById('clearButton').disabled = false;
         document.getElementById('sendButton').innerHTML = '<i class="material-icons">send</i>'
+        document.getElementById('userInput').placeholder = "Follow-up or ask another question";
+        document.getElementById('userInput').disabled = false;
 
     } catch (error) {
         console.error(error);
