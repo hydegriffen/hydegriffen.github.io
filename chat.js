@@ -63,7 +63,7 @@ async function generateText(prompt) {
         // Bold and Italic
         botResponseCleaned = botResponseCleaned.replaceAll(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
         botResponseCleaned = botResponseCleaned.replaceAll(/___(.*?)___/g, '<strong><em>$1</em></strong>');
-        document.getElementById("AIResponse").innerHTML = '<div class="bot-message-card"><div class="sender-name">' + prompt + '</div><div class="message">' + botResponseCleaned + '\n\nNOTE: AI can hallucinate; verify responses.</div></div>' + document.getElementById("AIResponse").innerHTML;
+        document.getElementById("AIResponse").innerHTML = '<div class="bot-message-card"><div class="sender-name">' + prompt + '</div><div class="message">' + botResponseCleaned + '<br><br><i style="font-size:12px">AI can hallucinate; verify responses.</i></div></div>' + document.getElementById("AIResponse").innerHTML;
         document.getElementById('AIResponse').style.opacity = 1;
         document.getElementById('sendButton').disabled = false;
         document.getElementById('sendButton').innerHTML = '<i class="material-icons">search</i>';
