@@ -1,435 +1,1082 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
+  <meta name="description" content="Kevin Quigley - AI Solutions Director, Applied AI Expert, Data-Driven Leader">
   <meta name="author" content="Kevin Quigley">
-
+  <title>Kevin Quigley</title>
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Kevin Quigley">
+  <meta property="og:description" content="Computer engineer turned AI leader. Delivering results with applied AI.">
+  <meta property="og:image" content="https://kevinquigley.net/img/og-image.jpg">
+  <meta property="og:url" content="https://kevinquigley.net">
+  <meta property="og:type" content="website">
+  
+  <!-- Twitter/X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Kevin Quigley">
+  <meta name="twitter:description" content="Computer engineer turned AI leader. Delivering results with applied AI.">
+  <meta name="twitter:image" content="https://kevinquigley.net/img/og-image.jpg">
+  
+  <!-- Dependencies -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Karla&family=Roboto:wght@300&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="chat.css">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet">
+  
+  <!-- Google Tag Manager -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DGZKT3KB1J"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-DGZKT3KB1J');
+  </script>
 
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <style>
+    :root {
+      --color-bg: #FDFBF7;
+      --color-bg-alt: #F5F1EA;
+      --color-text: #2C3E50;
+      --color-text-light: #5D6D7E;
+      --color-accent: #1A4A5E;
+      --color-accent-light: #2980B9;
+      --color-warm: #C4A77D;
+      --color-border: #E8E2D9;
+      --font-display: 'Instrument Serif', Georgia, serif;
+      --font-body: 'DM Sans', -apple-system, sans-serif;
+    }
 
-  <title>Kevin Quigley</title>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  <!-- Bootstrap core CSS -->
-  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    html {
+      scroll-behavior: smooth;
+    }
 
-  <!-- Custom fonts for this template -->
-  <link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:500,700" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Muli:400,400i,800,800i" rel="stylesheet">
-  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    body {
+      font-family: var(--font-body);
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.7;
+      font-size: 16px;
+      font-weight: 300;
+    }
 
-  <!-- Custom styles for this template -->
-  <link href="css/resume.css" rel="stylesheet">
+    a {
+      color: var(--color-accent);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
 
+    a:hover {
+      color: var(--color-accent-light);
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(253, 251, 247, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--color-border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 0.3s forwards;
+    }
+
+    .nav-name {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      color: var(--color-text);
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 400;
+    }
+
+    .nav-links a:hover {
+      color: var(--color-accent);
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 7rem 2rem 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .hero-header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: slideUp 0.8s ease 0.1s forwards;
+    }
+
+    .hero-headshot {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--color-border);
+    }
+
+    .hero-name-block {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      color: var(--color-text);
+    }
+
+    .hero-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--color-warm);
+      font-weight: 500;
+      margin-top: 0.25rem;
+    }
+
+    .hero-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .hero-text {
+      opacity: 0;
+      animation: slideUp 0.8s ease 0.2s forwards;
+    }
+
+    .hero-headline {
+      font-family: var(--font-display);
+      font-size: clamp(2.25rem, 4vw, 3rem);
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.25rem;
+      color: var(--color-text);
+    }
+
+    .hero-headline span {
+      font-style: italic;
+      color: var(--color-accent);
+      white-space: nowrap;
+    }
+
+    .hero-subtitle {
+      font-size: 1.125rem;
+      color: var(--color-text-light);
+      margin-bottom: 2rem;
+      max-width: 480px;
+    }
+
+    /* AI Assistant - Clean Integration */
+    .ai-section {
+      opacity: 0;
+      animation: slideUp 0.8s ease 0.35s forwards;
+      margin-top: 2rem;
+    }
+
+    .ai-container {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    /* Hero Video */
+    .hero-video {
+      opacity: 0;
+      animation: slideUp 0.8s ease 0.4s forwards;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .hero-video .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    }
+
+    .hero-video .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .video-caption {
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+      margin-top: 0.75rem;
+      text-align: center;
+    }
+
+    .search-container {
+      position: relative;
+      padding: 1rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.875rem 3.5rem 0.875rem 1rem;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      background: var(--color-bg);
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--color-accent);
+      background: white;
+    }
+
+    .search-input::placeholder {
+      color: var(--color-text-light);
+    }
+
+    .search-button {
+      position: absolute;
+      right: 1.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--color-accent);
+      border: none;
+      border-radius: 4px;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .search-button:hover {
+      background: var(--color-text);
+    }
+
+    .search-button:disabled {
+      background: var(--color-text-light);
+      cursor: not-allowed;
+    }
+
+    .search-button svg {
+      width: 16px;
+      height: 16px;
+      color: white;
+    }
+
+    .ai-response {
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .bot-message-card {
+      background: var(--color-bg-alt);
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .sender-name {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--color-accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .message {
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    .ai-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.625rem 1rem;
+      border-top: 1px solid var(--color-border);
+      background: var(--color-bg);
+    }
+
+    .ai-footer-note {
+      font-size: 0.7rem;
+      color: var(--color-text-light);
+    }
+
+    .clear-btn {
+      font-size: 0.7rem;
+      color: var(--color-text-light);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .clear-btn:hover {
+      color: var(--color-accent);
+    }
+
+    /* Spinner */
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Section Styling */
+    section {
+      padding: 5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--color-warm);
+      margin-bottom: 0.75rem;
+      font-weight: 500;
+    }
+
+    h2 {
+      font-family: var(--font-display);
+      font-size: 2.25rem;
+      font-weight: 400;
+      margin-bottom: 2.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    /* Journey / Timeline Section */
+    .journey {
+      background: var(--color-bg-alt);
+      padding: 5rem 2rem;
+    }
+
+    .journey-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .journey h2 {
+      margin-bottom: 1rem;
+    }
+
+    .journey-subtitle {
+      color: var(--color-text-light);
+      font-size: 1.05rem;
+      margin-bottom: 3rem;
+      max-width: 600px;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: var(--color-border);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-bottom: 2.5rem;
+    }
+
+    .timeline-item:last-child {
+      padding-bottom: 0;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -2rem;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--color-bg-alt);
+      border: 2px solid var(--color-warm);
+      transform: translateX(-5px);
+    }
+
+    .timeline-item.highlight::before {
+      background: var(--color-warm);
+      border-color: var(--color-warm);
+    }
+
+    .timeline-year {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--color-warm);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+    }
+
+    .timeline-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .timeline-desc {
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+    }
+
+    /* Press Section */
+    .press {
+      background: var(--color-text);
+      padding: 5rem 2rem;
+    }
+
+    .press-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .press .section-label {
+      color: var(--color-warm);
+    }
+
+    .press h2 {
+      color: white;
+    }
+
+    .press-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .press-card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .press-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+
+    .press-card-logo {
+      height: 24px;
+      width: auto;
+      margin-bottom: 0.875rem;
+      object-fit: contain;
+      object-position: left;
+    }
+
+    .press-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .press-card p {
+      font-size: 0.85rem;
+      color: var(--color-text-light);
+      margin-bottom: 1rem;
+      flex-grow: 1;
+    }
+
+    .press-card-link {
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .press-card-link svg {
+      width: 12px;
+      height: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .press-card:hover .press-card-link svg {
+      transform: translateX(3px);
+    }
+
+    .press-also {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+    }
+
+    /* Contact Section */
+    .contact {
+      background: var(--color-bg);
+      padding: 5rem 2rem;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .contact-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .social-link {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--color-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text);
+      transition: all 0.2s ease;
+      background: white;
+    }
+
+    .social-link:hover {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      color: white;
+    }
+
+    .social-link svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 900px) {
+      .hero-content {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .press-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      nav {
+        padding: 0.875rem 1.25rem;
+      }
+
+      .hero {
+        padding: 5.5rem 1.25rem 2.5rem;
+        min-height: auto;
+      }
+
+      .hero-header {
+        gap: 1rem;
+      }
+
+      .hero-headshot {
+        width: 64px;
+        height: 64px;
+      }
+
+      .hero-name {
+        font-size: 1.75rem;
+      }
+
+      .hero-title {
+        font-size: 0.7rem;
+      }
+
+      .hero-headline {
+        font-size: 1.75rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+
+      section, .press {
+        padding: 3.5rem 1.25rem;
+      }
+
+      .journey, .contact {
+        padding: 3.5rem 1.25rem;
+      }
+
+      h2 {
+        font-size: 1.75rem;
+      }
+
+      .ai-section {
+        margin-top: 1.5rem;
+      }
+
+      .search-input {
+        font-size: 16px; /* Prevents iOS zoom */
+      }
+
+      .timeline {
+        padding-left: 1.5rem;
+      }
+
+      .timeline-item::before {
+        left: -1.5rem;
+      }
+    }
+  </style>
 </head>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DGZKT3KB1J"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-DGZKT3KB1J');
-</script>
-
-<body id="page-top">
-
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
-    <a class="navbar-brand js-scroll-trigger" href="#page-top">
-      <span class="d-block d-lg-none">Kevin Quigley</span>
-      <span class="d-none d-lg-block">
-        <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="img/profile.jpg" alt="">
-      </span>
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="#about">Contact</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="#highlights">Highlights</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="#publicity">Publicity</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="#experience">Experience</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="#education">Education</a>
-        </li>
-<!--         <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="#skills">Skills</a>
-        </li> -->
-        <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="#awards">Achievements</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="#interests">Projects</a>
-        </li>
-      </ul>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <a href="#" class="nav-name">Kevin Quigley</a>
+    <div class="nav-links">
+      <a href="#press">Press</a>
+      <a href="#journey">Journey</a>
+      <a href="#contact">Contact</a>
     </div>
   </nav>
 
-  <div class="container-fluid p-0">
+  <!-- Hero Section -->
+  <section class="hero">
+    <!-- Name + Headshot Header -->
+    <div class="hero-header">
+      <img src="img/profile.jpg" alt="Kevin Quigley" class="hero-headshot" onerror="this.style.display='none'">
+      <div class="hero-name-block">
+        <div class="hero-name">Kevin Quigley</div>
+        <div class="hero-title">AI Solutions Director</div>
+      </div>
+    </div>
 
-    <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="about">
-      <div class="w-100">
-        <h1 class="mb-0">Kevin
-          <span class="text-primary">Quigley</span>
-        </h1>
-        <!-- <p class="lead mb-5"><b>Leaders</b> inspire, <b>Thinkers</b> imagine, <b>Engineers</b> create.<br>Solutions are found when we <i>inspire</i> each other to <i>imagine</i> what we can <i>create</i>.</p> -->
-        <br><br>
-        <p class="lead mb-5"><b>Computer Engineer</b> | <a href="https://kevinquigley.net/demo/" target="_blank">Launch AI Demo</a><br><b>Applied AI Expert</b> | <a target="_blank" href="https://www.youtube.com/watch?v=5cHGtC_hjwE&t=1465s">Watch Interview</a><br><b>Data-Driven Leader</b> | <a target="_blank" href="https://www.salesforce.com/customer-stories/wiley/">Read Case Study</a></p>
-        <div class="social-icons">
-          <a href="https://www.linkedin.com/in/kevinquigley27/">
-            <i class="fab fa-linkedin-in"></i>
-          </a>
-          <a href="https://twitter.com/KGQuigley">
-            𝕏
-          </a>
-          <a href="mailto:contact@kevinquigley.net">
-            <i class="fas fa-envelope"></i>
-          </a>
-        </div>
-        <br><br>
-
-        <div id="AISearch">
-            <div class="search-bar">
-              <input id="userInput" class="search-input" type="text" placeholder="Ask AI a question about Kevin" autocomplete="off">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-headline">Delivering results with <span>applied AI</span></h1>
+        <p class="hero-subtitle">Computer engineer turned AI leader. I help organizations translate emerging technology into measurable impact.</p>
+        
+        <!-- AI Assistant -->
+        <div class="ai-section">
+          <div class="ai-container">
+            <div class="search-container">
+              <input id="userInput" class="search-input" type="text" placeholder="Ask about my work..." autocomplete="off">
               <button id="sendButton" class="search-button" type="button" onclick="generateText(document.getElementById('userInput').value)">
-                <i class="material-icons">search</i>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
               </button>
+            </div>
+            <div id="AIResponse" class="ai-response"></div>
+            <div id="aiFooter" class="ai-footer" style="display: none;">
+              <span class="ai-footer-note">AI responses may not be fully accurate</span>
+              <button id="clearButton" class="clear-btn" onclick="clearConversation()">Clear</button>
+            </div>
           </div>
-          <br>
-
-          <div class="chatContainer" style="padding-bottom:6px;">
-              <button id="clearButton" onclick="clearConversation()" style="color:#bdbdbd;background-color: white;border:none;float:right;font-size: 14px;display:none;">Clear</button>
-          </div>
-          <br>
-
-          <div id="AIResponse" class="chatContainer"></div>
-        </div>
-
-      </div>
-    </section>
-
-    <hr class="m-0">
-
-    <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="highlights">
-      <div class="w-100">
-        <h2 class="mb-5">Highlights</h2>
-        <h3>Upbringing & Early Career</h3>
-        <p>Growing up along the beautiful Jersey Shore, I attended the Marine Academy of Technology and Environmental Science (MATES), competed in robotics, and earned my Eagle Scout award. While at Stevens Institute of Technology, I led the Game Development Club, served on the student senate, and traveled to perform comedy. In my first few years with Wiley's CS Technology & Solutions team, we relaunched the Service Agent Console, integrated Cloud Telephony & Omni-Channel work management, and deployed several Help sites.</p>
-        <h3>AI & Automation</h3>
-        <p>As a member of Wiley's Customer Service Leadership Team, I sought to enable seamless customer experiences while optimizing efficiency. Starting in 2019, we deployed Deterministic AI tools to streamline agent workflows and provide basic self-service capabilities via chatbot. Similarly, our Personalized Embedded Support solution proactively suggests answers to common questions based on the customer's current circumstance. We also leveraged other technologies, such as Robotic Process Automation (RPA) and Optical Character Recognition (OCR), to reduce repetitive tasks and keep agents focused on helping customers. In 2023, we started using Generative AI to further optimize processes and create grounded, contextual interactions. In 2024, we launched our first AI Agent. Based on my history of driving improvement within Wiley's Customer Service organization, I am now leading a team focused on implementing these efficiencies across the company.</p>
-        <h3>Dreamforce 2024 Keynote</h3>
-        <iframe style="max-width: 100%;" width="560" height="315" src="https://www.youtube.com/embed/5cHGtC_hjwE?si=HUe37CDFxBBSErzD&amp;start=1465" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        <br><br>
-        <h3>Salesforce | Wiley Promo Video</h3>
-        <iframe style="max-width: 100%;" width="560" height="315" src="https://www.youtube.com/embed/mKKfSBVEIPk?si=6bjHikMEjtL9bU2W" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-      </div>
-    </section>
-
-    <hr class="m-0">
-
-    <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="publicity">
-      <div class="w-100">
-        <h2 class="mb-5">Publicity</h2>
-        <h3>Public Speaking</h3>
-          <p>
-            <b>Dreamforce (September 2024): </b><a href="https://www.youtube.com/watch?v=5cHGtC_hjwE&t=1465s" target="_blank">Agentforce Keynote: Build the Future with AI Agents</a>
-            <br><b>Dreamforce (September 2024): </b>3 Ways AI Makes Service Frictionless and Fun (x2)
-            <br><b>SOCAP International Spring Symposium (May 2024): </b><a href="https://socapsymposium.org/agenda#cf1f0279-5fcd-4a2e-9579-d9e63a986af2" target="_blank">AI in Customer Service</a>
-            <br><b>World Tour NYC (April 2024): </b>Learn How Wiley Partners with Salesforce
-            <br><b>World Tour NYC (April 2024): </b><a href="https://reg.salesforce.com/flow/plus/wtnyc24apr/sessioncatalog/page/Catalog?search=quigley" target="_blank">Your Guide to Become a Salesforce Expert</a>
-            <br><b>Wiley Webinar Series (January & February 2024): </b>Using AI to Improve the Customer Experience (Parts 1 & 2)
-            <br><b>Salesforce Webinar (August 2023): </b><a href="https://www.salesforce.com/form/events/webinars/form-rss/4283031/" target="_blank">The Next Frontier of Customer Service: Generative AI</a>
-            <br><b>World Tour NYC (December 2022): </b>Scale Service and Reduce Costs with Automation and AI
-            <br><b>Dreamforce (September 2022): </b><a href="https://reg.salesforce.com/flow/plus/dreamforce22/maincontentcatalog/page/Catalog/session/1657297469645001tRxy" target="_blank">Unlocking the Power of Conversational AI and Automation</a>
-            <br><b>Dreamforce (September 2022): </b><a href="https://reg.salesforce.com/flow/plus/dreamforce22/maincontentcatalog/page/Catalog/session/1656082501360001w39t" target="_blank">Smarter, More Proactive Service with Service Cloud Einstein</a>
-          </p>
-        <h3>Mentions</h3>
-        <p>
-          <b>Solutions Review (December 2025): </b><a href="https://solutionsreview.com/identity-management/identity-security-predictions-from-industry-experts-for-2026-and-beyond/" target="_blank">Identity Security Predictions from Industry Experts for 2026 and Beyond</a>
-          <br><b>Salesforce News (April 2025): </b><a href="https://www.salesforce.com/news/stories/agentic-maturity-model/" target="_blank">The Agentic Maturity Model: A 4-Step Roadmap for CIOs to Succeed in the Agentic Era</a>
-          <br><b>Techiexpert (December 2024): </b><a href="https://www.techiexpert.com/how-cutting-edge-ai-tools-set-to-transform-employee-productivity-in-2025/" target="_blank">How Cutting-Edge AI Tools Set to Transform Employee Productivity in 2025</a>
-          <br><b>CXOtoday (December 2024): </b><a href="https://cxotoday.com/story/how-ai-suite-enhances-employee-productivity-and-efficiency/" target="_blank">How AI Suite Enhances Employee Productivity and Efficiency</a>
-          <br><b>Salesforce Promo Video (December 2024): </b><a href="https://www.linkedin.com/posts/salesforce_we-want-to-be-the-first-to-welcome-you-into-activity-7269840543948398593-iXa5?utm_source=share" target="_blank">Agentforce: What AI Was Meant to Be</a>
-          <br><b>Salesforce Promo Video (November 2024): </b><a href="https://www.youtube.com/watch?v=mKKfSBVEIPk" target="_blank">Wiley improves case resolutions by over 40% using Agentforce</a>
-          <br><b>TechTarget (November 2024): </b><a href="https://www.techtarget.com/searchcustomerexperience/feature/Salesforce-Agentforce-An-answer-in-search-of-a-question" target="_blank">Salesforce Agentforce: An answer in search of a question?</a>
-          <br><b>Business Wire (October 2024): </b><a href="https://www.businesswire.com/news/home/20241029035498/en/Salesforce%E2%80%99s-Agentforce-Is-Here-Trusted-Autonomous-AI-Agents-to-Scale-Your-Workforce" target="_blank">Salesforce’s Agentforce Is Here: Trusted, Autonomous AI Agents to Scale Your Workforce</a>
-          <br><b>Mi3 (September 2024): </b><a href="https://www.mi-3.com.au/23-09-2024/first-ai-chatbots-copilots-now-autonomous-agents-and-end-customer-diy-ai-salesforce-big" target="_blank">Salesforce CEO Marc Benioff promises an end to ‘DIY AI,' taps frustrations over complexity. "You could feel customers exhale" says Constellation's Liz Miller, "Now he needs to deliver."</a>
-          <br><b>Diginomica (September 2024): </b><a href="https://diginomica.com/dreamforce-24-how-do-you-stop-your-ai-behaving-wayward-toddler-good-parenting-key" target="_blank">Dreamforce 24 - how do you stop your AI behaving like a wayward toddler? Good parenting is key!</a>
-          <br><b>Diginomica (September 2024): </b><a href="https://diginomica.com/dreamforce-24-wiley-turns-page-productivity-gains-agentforce" target="_blank">Dreamforce 24 - Wiley turns the page on productivity gains with Agentforce</a>
-          <br><b>Axios (September 2024): </b><a href="https://www.axios.com/2024/09/13/tech-industry-new-ai-models-reasoning" target="_blank">Tech industry rushes to give AI greater decision-making abilities</a>
-          <br><b>Enterprise Times (September 2024): </b><a href="https://www.enterprisetimes.co.uk/2024/09/13/salesforces-puts-the-ai-into-trailblazer-with-agentforce/" target="_blank">Salesforces puts the AI into TrAIlblazer with Agentforce</a>
-          <br><b>Salesforce Customer Story (Updated September 2024): </b><a href="https://www.salesforce.com/customer-stories/wiley/" target="_blank">Wiley sees 213% return on investment with Salesforce.</a>
-          <br><b>Salesforce Promo Video (August 2024): </b><a href="https://www.linkedin.com/posts/salesforce_if-ai-was-the-future-what-comes-next-activity-7234673914440773632-6o_z?utm_source=share&utm_medium=member_desktop" target="_blank">Humans with agents drive customer success</a>
-        </p>
-          <button class="accordion"><b>More</b></button>
-        <div class="panel">
-          <b>PortalGeek (November 2024): </b><a href="https://portalgeek.co/ti/salesforce-presenta-agentforce/" target="_blank">Salesforce presenta Agentforce: Inteligencia artificial independiente y confiable</a>
-          <br><b>IT Brief Australia (November 2024): </b><a href="https://itbrief.com.au/story/salesforce-unveils-agentforce-to-revolutionise-ai-agents" target="_blank">Salesforce unveils Agentforce to revolutionise AI agents</a>
-          <br><b>Pipeline Publishing (November 2024): </b><a href="https://pipelinepub.com/news/19863" target="_blank">Salesforce Releases Agentforce</a>
-          <br><b>Al Bawaba (October 2024): </b><a href="https://www.albawaba.com/business/pr/salesforce%E2%80%99s-agentforce-here-trusted-1591476#google_vignette" target="_blank">Salesforce’s Agentforce Is Here: Trusted, Autonomous AI Agents to Scale Your Workforce</a>
-          <br><b>Martech Cube (October 2024): </b><a href="https://www.martechcube.com/salesforce-announced-the-general-availability-of-agentforce/" target="_blank">Salesforce announced the general availability of Agentforce</a>
-          <br><b>Stock Titan (October 2024):  </b><a href="https://www.stocktitan.net/news/CRM/salesforce-s-agentforce-is-here-trusted-autonomous-ai-agents-to-52d13scwtes4.html" target="_blank">Salesforce’s Agentforce Is Here: Trusted, Autonomous AI Agents to Scale Your Workforce</a>
-          <br><b>Salesforce News (October 2024): </b><a href="https://www.salesforce.com/news/stories/inventing-future-of-ai-agents/" target="_blank">Inventing the Future of Agents</a>
-          <br><b>Retail Insider (September 2024): </b><a href="https://retail-insider.com/bulletin/2024/09/salesforces-agentforce-heralds-new-era-in-retail-ai-interview/" target="_blank">Salesforce’s Agentforce heralds new era in retail AI [Interview]</a>
-          <br><b>Business Today (September 2024): </b><a href="https://www.businesstoday.in/technology/news/story/salesforce-launches-ai-suite-agentforce-to-boost-employee-productivity-446203-2024-09-17" target="_blank">Salesforce launches AI suite Agentforce to boost employee productivity</a>
-          <br><b>CryptoSlate (September 2024): </b><a href="https://cryptoslate.com/salesforce-launches-proprietary-ai-agents-to-act-as-virtual-employees/" target="_blank">Salesforce launches proprietary AI agents to act as virtual employees</a>
-          <br><b>WebProNews (September 2024): </b><a href="https://www.webpronews.com/salesforce-bets-big-with-agentforce-its-third-wave-of-ai/" target="_blank">Salesforce Bets Big With Agentforce, Its 'Third Wave of AI'</a>
-          <br><b>National Computrade News (September 2024): </b><a href="https://www.ncnonline.net/salesforce-unveils-agentforce-what-ai-was-meant-to-be/" target="_blank">Salesforce Unveils Agentforce - What AI Was Meant to Be</a>
-          <br><b>Mi3 (September 2024): </b><a href="https://www.mi-3.com.au/16-09-2024/salesforce-unveils-agentforce-aim-empower-billion-ai-agents-2025" target="_blank">Salesforce unveils 'Agentforce' with aim to empower a billion AI agents by 2025</a>
-          <br><b>SMEStreet (September 2024): </b><a href="https://smestreet.in/technology/salesforce-unveils-agentforce-ai-agents-for-business-automation-7068162" target="_blank">Salesforce Unveils Agentforce AI Agents for Business Automation</a>
-          <br><b>Tech Edition (September 2024): </b><a href="https://www.techedt.com/salesforce-introduces-agentforce-ai-driving-customer-success" target="_blank">Salesforce introduces Agentforce: AI driving customer success</a>
-          <br><b>Channel Drive (September 2024): </b><a href="https://channeldrive.in/crm/salesforce-unveils-agentforce-suite-of-ai-agents/" target="_blank">Salesforce Unveils Agentforce Suite of AI Agents</a>
-          <br><b>01net (September 2024): </b><a href="https://www.01net.it/salesforce-unveils-agentforce-what-ai-was-meant-to-be/" target="_blank">Salesforce Unveils Agentforce–What AI Was Meant to Be</a>
-          <br><b>IT Brief Australia (September 2024): </b><a href="https://itbrief.com.au/story/salesforce-unveils-agentforce-autonomous-ai-for-productivity" target="_blank">Salesforce unveils Agentforce: autonomous AI for productivity</a>
-          <br><b>Axios (September 2024): </b><a href="https://www.axios.com/2024/09/12/salesforce-ai-agents-atlas-reasoning" target="_blank">Salesforce unleashes its first AI agents</a>
         </div>
       </div>
-    </section>
 
-    <hr class="m-0">
-
-    <section class="resume-section p-3 p-lg-5 d-flex justify-content-center" id="experience">
-      <div class="w-100">
-        <h2 class="mb-5">Experience</h2>
-
-        <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-          <div class="resume-content">
-            <h3 class="mb-0">Director, AI Solutions</h3>
-            <div class="subheading mb-3"><a href="https://www.wiley.com/en-us">Wiley</a></div>
-            <p>I lead the AI Solutions group under Wiley's new AI Center of Excellence, focused on driving a cross-functional roadmap of executive priorities, co-sponsored by the CFO/COO/CPO, that drive material impact. My responsibilities include developing and executing comprehensive strategies, delivering executive briefings, and researching emerging methods in the field. Our current projects feature an emphasis on leveraging agents both as a solution component and as a means to deliver faster. My hybrid team of product and technology experts prototype innovative applications, prioritize ROI-driven deliverables, and deploy scalable solutions. We also co-manage our Automation Community of Practice (in partnership with Technology).</p>
-          </div>
-          <div class="resume-date text-md-right">
-            <span class="text-primary">December 2025 - Present</span>
-          </div>
+      <!-- Featured Video -->
+      <div class="hero-video">
+        <div class="video-wrapper">
+          <iframe 
+            src="https://www.youtube.com/embed/5cHGtC_hjwE?start=1465" 
+            title="Kevin Quigley - Dreamforce 2024 Keynote Interview"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+          </iframe>
         </div>
+        <p class="video-caption">Dreamforce 2024 Keynote — Discussing Wiley's AI agent deployment</p>
+      </div>
+    </div>
+  </section>
 
-        <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-          <div class="resume-content">
-            <h3 class="mb-0">Director, Process Improvement</h3>
-            <div class="subheading mb-3"><a href="https://www.wiley.com/en-us">Wiley</a></div>
-            <p>Under Wiley's Process Excellence organization, I led the Productivity Solutions team focused on driving scalable impact by transforming processes and embedding AI & automation technology into core operational workflows. In this role, I delivered c-suite briefings, built a global team of product and technology experts, commissioned a "Flow Lab" to research emerging methods and prototype their applications, and launched an AI & Automation Community of Practice to increase the firm's automation capacity and foster best practices. Our team deployed several AI & automation solutions to production, including multiple AI agents that leveraged tools to enable dynamic capabilities.</p>
-          </div>
-          <div class="resume-date text-md-right">
-            <span class="text-primary">October 2024 - November 2025</span>
-          </div>
-        </div>
+  <!-- Press Section -->
+  <section class="press" id="press">
+    <div class="press-inner">
+      <div class="section-label">Recognition</div>
+      <h2>Press</h2>
+      <div class="press-grid">
+      <div class="press-card">
+        <img src="img/diginomica.webp" alt="Diginomica" class="press-card-logo">
+        <h3>AI Productivity Gains</h3>
+        <p>Coverage of Wiley's measurable productivity improvements through strategic AI implementation.</p>
+        <a href="https://diginomica.com/dreamforce-24-wiley-turns-page-productivity-gains-agentforce" target="_blank" class="press-card-link">
+          Read Article
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+        </a>
+      </div>
+      <div class="press-card">
+        <img src="img/axios.png" alt="Axios" class="press-card-logo">
+        <h3>AI Decision-Making</h3>
+        <p>Industry analysis on the shift toward autonomous AI agents and reasoning capabilities.</p>
+        <a href="https://www.axios.com/2024/09/13/tech-industry-new-ai-models-reasoning" target="_blank" class="press-card-link">
+          Read Article
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+        </a>
+      </div>
+      <div class="press-card">
+        <img src="img/salesforce.svg" alt="Salesforce" class="press-card-logo">
+        <h3>Wiley Customer Story</h3>
+        <p>Official Salesforce case study highlighting AI-driven transformation in customer service.</p>
+        <a href="https://www.salesforce.com/customer-stories/wiley/" target="_blank" class="press-card-link">
+          Read Article
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+        </a>
+      </div>
+      <div class="press-card">
+        <img src="img/solutionsreview.svg" alt="Solutions Review" class="press-card-logo">
+        <h3>2026 Industry Predictions</h3>
+        <p>Industry expert perspectives on the future of identity security and agentic AI.</p>
+        <a href="https://solutionsreview.com/identity-management/identity-security-predictions-from-industry-experts-for-2026-and-beyond/" target="_blank" class="press-card-link">
+          Read Article
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+        </a>
+      </div>
+    </div>
+      <p class="press-also">Also featured in: TechTarget, CXOtoday, Business Wire, Mi3, Business Today, and others</p>
+    </div>
+  </section>
 
-        <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-          <div class="resume-content">
-            <h3 class="mb-0">Senior Manager, PTCI</h3>
-            <div class="subheading mb-3"><a href="https://www.wiley.com/en-us">Wiley</a></div>
-            <p>During this transition period, I established the AI arm of Wiley's strategic new Process Transformation & Continuous Improvement organization while wrapping up ongoing efforts. Under my continued leadership, Wiley was among the first to deploy an AI Agent on the Agentforce platform, leading to an over 40% improvement in support case resolution compared to our old chatbot. To share the story behind this success, I represented Wiley as a featured customer at Dreamforce 2024 where I spoke at a keynote, sat on panels, and hosted roundtables. My new team also delivered RPA solutions and set the direction on various AI initiatives.</p>
-          </div>
-          <div class="resume-date text-md-right">
-            <span class="text-primary">July 2024 - October 2024</span>
-          </div>
+  <!-- Journey Section -->
+  <section class="journey" id="journey">
+    <div class="journey-inner">
+      <div class="section-label">Career</div>
+      <h2>Better Systems, Better Outcomes</h2>
+      <p class="journey-subtitle">Finding problems worth solving. Building solutions that last.</p>
+      
+      <div class="timeline">
+        <div class="timeline-item highlight">
+          <div class="timeline-year">2024</div>
+          <div class="timeline-title">AI Agent Launch & Dreamforce</div>
+          <div class="timeline-desc">Expanded to cross-functional AI role. Launched AI service agent—40%+ improvement in resolution. Featured in keynote.</div>
         </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2023</div>
+          <div class="timeline-title">First Generative AI Tools</div>
+          <div class="timeline-desc">Reply drafts, case summaries, translation.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2020</div>
+          <div class="timeline-title">First AI Features</div>
+          <div class="timeline-desc">Case predictions, knowledge recommendations, chatbot.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2019</div>
+          <div class="timeline-title">Platform Ownership</div>
+          <div class="timeline-desc">Took ownership of CRM and support platforms. Started building the systems I would later transform.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2016</div>
+          <div class="timeline-title">Joined Wiley</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-          <div class="resume-content">
-            <h3 class="mb-0">Senior Manager, CS Technology & Solutions</h3>
-            <div class="subheading mb-3"><a href="https://www.wiley.com/en-us">Wiley</a></div>
-            <p>As a member of the Leadership Team, I oversaw innovation strategy for Wiley's Global Customer Service organization (Customer Care, Technical Support, Sales Support). My distributed team owned product roadmaps and application support for CRM, Help, RPA, Survey, and QA technologies. In partnership with leaders across Research, Learning, and Operations, we designed solutions to improve customer experiences and optimize process efficiency. Generative AI projects included Reply Suggestions, Case Summarization, and Language Translation. Other project highlights included Order Entry Automation for multiple business streams, migration to a custom-built Quality Assurance Platform, and deployment of SMS support and blended-channel enhancements to our Omni-Channel system.</p>
-          </div>
-          <div class="resume-date text-md-right">
-            <span class="text-primary">November 2021 - June 2024</span>
-          </div>
-        </div>
+  <!-- Contact Section -->
+  <section class="contact" id="contact">
+    <div class="contact-inner">
+      <div class="section-label">Connect</div>
+      <p style="color: var(--color-text-light); max-width: 400px; margin: 0 auto 1.5rem;">Open to discussing AI strategy, leadership, or emerging technology opportunities.</p>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/in/kevinquigley27/" target="_blank" class="social-link" aria-label="LinkedIn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a href="https://x.com/KGQuigley" target="_blank" class="social-link" aria-label="X/Twitter">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="mailto:contact@kevinquigley.net" class="social-link" aria-label="Email">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chat Script -->
+  <script>
+    const systemPrompt = [{role: "system", content: `You are a helpful assistant answering questions about Kevin Quigley's background and experience. Be conversational but concise. Use the structured data below to give accurate answers. If asked something not covered here, say you don't have that information rather than guessing.
+
+=== PROFILE ===
+Name: Kevin Quigley
+Location: New Jersey
+Current Role: Director, AI Solutions at Wiley (Dec 2025–Present)
+Education: B.E. Computer Engineering with Honor, Stevens Institute of Technology (2016)
+Background: Computer engineer who transitioned into AI leadership through hands-on platform ownership and progressive responsibility
+
+=== CAREER TIMELINE (at Wiley) ===
+
+Director, AI Solutions (AI Center of Excellence) | Dec 2025–Present
+- Leads AI Solutions group under Wiley's AI Center of Excellence
+- Drives cross-functional roadmap of executive priorities, co-sponsored by CFO, CTO/COO, and CPO
+- Secured ELT (Executive Leadership Team) approval for priority AI initiatives after building proposal pipeline with functional leads
+- Leads hybrid AI product and technology team bridging emerging technology and fiscal impact
+- Focus on agentic AI solutions and accelerating delivery
+
+Director, Process Improvement & CI | Oct 2024–Nov 2025
+- Delivered C-suite briefings and led AI productivity strategy
+- Founded the "Flow Lab" to research emerging methods and develop prototypes to inform decision-making
+- Built global team to manage value-driven initiatives, design solutions, and run the automation community of practice
+- Deployed scalable AI & automation solutions, including multiple AI agents, to unlock operational efficiencies
+- Drove embedded impacts across the organization
+
+Senior Manager, Process Transformation & CI | Jul 2024–Oct 2024
+- Established and managed the AI Productivity Solutions arm of new Process Excellence organization
+- Launched Agentforce AI Service Agent: 40%+ improvement in case resolution vs. prior chatbot
+- Represented Wiley at Dreamforce 2024: keynote features, media engagements, breakout panels, roundtables
+- Delivered RPA solutions and set direction on various AI initiatives
+
+Senior Manager, CS Technology & Solutions | Nov 2021–Jun 2024
+- Member of Customer Service Leadership Team; developed and executed department innovation strategy
+- Led globally distributed team across 4 locations (US–NJ & IN, UK, Singapore)
+- As Product Manager, owned ROI-driven roadmaps and platform operations for CRM, Help, RPA, Survey, and QA
+- Implemented Generative AI tools: reply suggestions, case summarization, language translation
+- Oversaw delivery of critical capabilities: Personalized Embedded Support, SMS Support, QA platform migration, Order Entry Automation
+- Managed KPIs and measured outcomes to drive continuous improvement
+
+Manager, CS Technology & Solutions | Oct 2020–Oct 2021
+- First management role; managed analysts and led team improvement initiatives (reporting, process, communication)
+- Developed long-term and mid-term technology strategies with quarterly increments to optimize CSAT and CPI (cost per interaction)
+- Advanced Product Owner role to continuously improve capabilities and design solutions:
+  - AI case field predictions, reply template recommendations, knowledge article recommendations
+  - Chatbot iteration with high CSAT, healthy deflection rate, 3-point outcome measurement
+  - Embedded Support improvements: knowledge search, app data passing, post-chat survey, offline form
+  - Case-to-incident escalation workflows and supplier measurement tools
+  - Integrated remote technical support and screensharing for faster resolution
+  - Migrated 300 users from Salesforce Classic to Lightning (drove handle time reduction)
+
+Customer Solutions Lead | Jul 2019–Sep 2020
+- Served as Agile Product Owner for Salesforce Service Cloud and Support Sites
+- Collaborated with business and technology owners from problem definition to continuous improvement
+- Oversaw delivery of agile enhancements and acquisition integrations
+- Key initiatives:
+  - Support sites for 16 brands: knowledgebase, multi-channel contact flows, product SSO
+  - AI-augmented chat tools: suggested responses, trend detection, auto-coaching, live supervisor
+  - Chatbot and Embedded Chat launch
+  - Survey platform migration
+
+CS Technology Analyst | Oct 2016–Jun 2019
+- First role at Wiley (started as temp, offered permanent position)
+- Led CRM optimization as Business Lead to reduce technical debt and enable platform flexibility
+- Delivered Omni-Channel chat and Five9 softphone (CTI) integrations as business SME
+- Analyzed, visualized, and reported data to propose technology enhancements and process optimizations
+- Created UAT scripts and process documentation for technology projects
+- Served as escalation point for Salesforce, Five9, support sites, publishing systems, and launches (e.g., SAP ERP)
+- Promoted after leading softphone launch (traveled to Belize to oversee go-live)
+
+=== KEY ACHIEVEMENTS ===
+- Dreamforce 2024: Keynote speaker, featured customer for Agentforce launch
+- Dreamforce 2022: Speaker on AI validation and lessons learned
+- Salesforce World Tour NYC 2022 & 2024: Speaker
+- 40%+ improvement in case resolution with AI agent (vs. prior chatbot)
+- Press coverage: Axios, Diginomica, Salesforce customer story, Solutions Review
+- Awards: Gold Level STAR Award (x2) at Wiley
+
+=== CERTIFICATIONS ===
+- Certified Change Management Practitioner (Prosci)
+- Six Sigma Green Belt (Villanova University)
+- Certified Scrum Product Owner (CSPO) – inactive
+- Certified Salesforce Administrator
+- Certified Five9 Contact Center Administrator
+- 9x Google Cloud Gen AI badges
+
+=== EDUCATION ===
+- B.E. Computer Engineering with Honor, Stevens Institute of Technology (2012–2016)
+- Marine Academy of Technology and Environmental Science (STEM high school)
+- Eagle Scout
+
+=== PERSONAL PROJECTS ===
+Kevin builds side projects in his spare time, focusing on web development and AI. He was president of the Stevens Game Development Club and founded a small game studio (Shower Thoughts Development) during college.
+
+=== NARRATIVE GUIDANCE ===
+When describing Kevin's career arc:
+- Frame as "builder who kept getting promoted because he shipped things that worked"
+- Emphasize: identified problems, built solutions, measured results, earned trust, expanded scope
+- Not a ladder-climber—promotions were outcomes of delivering value
+- Technical foundation (computer engineer) combined with strategic thinking and executive communication
+- Comfortable in ambiguity; builds structure where none exists
+- Consistently served on leadership teams and drove department-level strategy, not just individual projects
+- Metrics-driven: CSAT, CPI, resolution rates, ROI—always measuring outcomes
+
+When asked "why should I hire Kevin" or similar:
+- Track record of shipping AI solutions with measurable impact
+- Rare combination: can talk to executives AND build prototypes
+- Experience scaling from IC to director across platform, AI, and process domains
+- Led distributed global teams and operated as part of senior leadership
+- Public validation: Dreamforce keynotes, press coverage, quantified results
+- Strategic thinker who builds proposals, secures executive buy-in, and delivers results`}];
+    let messageArray = [...systemPrompt];
+
+    function clearConversation() {
+      messageArray = [...systemPrompt];
+      document.getElementById('userInput').placeholder = "Ask about my work...";
+      document.getElementById('aiFooter').style.display = "none";
+      fadeOut();
+    }
+
+    function fadeOut() {
+      const el = document.getElementById('AIResponse');
+      let opacity = parseFloat(el.style.opacity) || 1;
+      const timer = setInterval(() => {
+        opacity -= 0.05;
+        el.style.opacity = opacity;
+        if (opacity <= 0) {
+          clearInterval(timer);
+          el.innerHTML = "";
+        }
+      }, 25);
+    }
+
+    async function generateText(prompt) {
+      if (!prompt.trim()) return;
+      
+      const sendBtn = document.getElementById('sendButton');
+      const input = document.getElementById('userInput');
+      const footer = document.getElementById('aiFooter');
+      
+      sendBtn.disabled = true;
+      sendBtn.innerHTML = '<div class="spinner"></div>';
+      input.value = "";
+      input.disabled = true;
+      input.placeholder = "One moment...";
+      
+      if (/iPhone|Android|BlackBerry|Windows Phone/i.test(navigator.userAgent)) {
+        input.blur();
+      }
+
+      messageArray.push({role: "user", content: prompt});
+
+      try {
+        const response = await axios.post('https://kqnai-5bb831d53c36.herokuapp.com/generate-text', 
+          { promptText: messageArray },
+          { headers: { 'Content-Type': 'application/json' } }
+        );
         
-        <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-          <div class="resume-content">
-            <h3 class="mb-0">CS Technology & Solutions Manager</h3>
-            <div class="subheading mb-3"><a href="https://www.wiley.com/en-us">Wiley</a></div>
-            <p>As the Product Manager for CRM, Help, and Contact Channel technologies, I crafted our vision and roadmap as well as supported BAU operations. I focused on using AI, automation, embedded support, and connected data to optimize both the customer and agent experience. Key projects included Embedded & Personalized Self-Service, Deterministic AI Case Classification & Article Recommendations, Application Data Integration for Embedded Channel Contacts, Incident Management Integration, and Remote Support.</p>
-          </div>
-          <div class="resume-date text-md-right">
-            <span class="text-primary">October 2020 - October 2021</span>
-          </div>
-        </div>
+        let botResponse = response.data.text;
+        messageArray.push({role: "assistant", content: botResponse});
         
-        <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-          <div class="resume-content">
-            <h3 class="mb-0">Customer Solutions Lead</h3>
-            <div class="subheading mb-3"><a href="https://www.wiley.com/en-us">Wiley</a></div>
-            <p>As a Certified Scrum Product Owner for the CRM agile team, I collaborated with both business and technology stakeholders and was responsible for executing key initiatives from problem definition to continuous improvement. These initiatives included launching several <a href="https://support.wiley.com/s/">self-service support communities</a>, integrating AI chat tools, and implementing chatbot and embedded chat services.</p>
-          </div>
-          <div class="resume-date text-md-right">
-            <span class="text-primary">July 2019 - September 2020</span>
-          </div>
-        </div>
-
-        <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-          <div class="resume-content">
-            <h3 class="mb-0">CS Technology Analyst</h3>
-            <div class="subheading mb-3"><a href="https://www.wiley.com/en-us">Wiley</a></div>
-            <p>As a part of my first corporate position, I enjoyed a variety of responsibilities including escalations handling, UAT design and execution, and business process improvement. In service of these responsibilities, I supported both internal and external platform launches as a super user and primary escalation point. Later in my tenure, I shifted towards project work and played a significant role in the delivery of our Omni-Channel chat and softphone implementations.</p>
-          </div>
-          <div class="resume-date text-md-right">
-            <span class="text-primary">October 2016 - June 2019</span>
-          </div>
-        </div>
-
-        <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-          <div class="resume-content">
-            <h3 class="mb-0">Founder</h3>
-            <div class="subheading mb-3"><a href="http://www.showerthoughts.net/">Shower Thoughts Development</a></div>
-            <p>Everyone starts somewhere, and during my time at The Innovation University ® I became the Founder and CEO of a game development startup. Our three-person crew worked with various outside partners on several projects, but ultimately focused on one mobile application for Android which offered challenging puzzles for players to conquer. The puzzles in our games were not the only challenging part of managing a startup, and today we are able to appreciate the lessons learned as we bring our experience to new places.</p>
-          </div>
-          <div class="resume-date text-md-right">
-            <span class="text-primary">November 2013 - Present (Inactive)</span>
-          </div>
-        </div>
-
-      </div>
-
-    </section>
-
-    <hr class="m-0">
-
-    <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="education">
-      <div class="w-100">
-        <h2 class="mb-5">Education</h2>
-
-        <div class="resume-item d-flex flex-column flex-md-row justify-content-between mb-5">
-          <div class="resume-content">
-            <h3 class="mb-0"><a href="https://www.stevens.edu/">Stevens Institute of Technology</a></h3>
-            <div class="subheading mb-3">Bachelor of Engineering, Computer Engineering</div>
-          </div>
-          <div class="resume-date text-md-right">
-            <span class="text-primary">August 2012 - May 2016</span>
-          </div>
-        </div>
-
-        <div class="resume-item d-flex flex-column flex-md-row justify-content-between">
-          <div class="resume-content">
-            <h3 class="mb-0"><a href="http://www.ocvts.org/htm/mates/mates-academy.html">Marine Academy of Technology and Environmental Science</a></h3>
-            <div class="subheading mb-3">STEM High School</div>
-          </div>
-          <div class="resume-date text-md-right">
-            <span class="text-primary">September 2008 - June 2012</span>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-
-    <hr class="m-0">
-
-    <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="awards">
-      <div class="w-100">
-        <h2 class="mb-5">Achievements</h2>
-        <ul class="fa-ul mb-0">
-          <li>
-            <i class="fa-li fa fa-certificate text-warning"></i>
-            9x <a href="https://www.cloudskillsboost.google/public_profiles/befe5f02-8545-4134-b995-01698d212252">Google Cloud Skills Boost Badges</a> focused on Generative AI</li>
-          <li>
-              <i class="fa-li fa fa-certificate text-warning"></i>
-              Certified Change Management Practitioner, <a href="https://www.prosci.com/">Prosci</a></li>
-          <li>
-            <i class="fa-li fa fa-certificate text-warning"></i>
-            <a href="https://bcert.me/bc/html/show-badge.html?b=siekddnv">Certified Scrum Product Owner (CSPO)</a>, <a href="https://www.scrumalliance.org/">Scrum Alliance</a> (Inactive)</li>
-          <li>
-            <i class="fa-li fa fa-certificate text-warning"></i>
-            <a href="https://trailhead.salesforce.com/credentials/verification">Certified Salesforce Administrator</a></li>
-          <li>
-            <i class="fa-li fa fa-certificate text-warning"></i>
-            Certified <a href="https://www.five9.com/">Five9</a> Contact Center Administrator</li>
-
-          <li>
-            <i class="fa-li fa fa-pencil-ruler text-warning"></i>
-            Six Sigma Green Belt, <a href="https://www1.villanova.edu/university.html">Villanova University</a></li>
-          <li>
-            <i class="fa-li fa fa-ribbon text-warning"></i>
-            Member of <a href="https://web.stevens.edu/khoda/">Khoda, the Senior Honor Society</a></li>
-          <li>
-            <i class="fa-li fa fa-ribbon text-warning"></i>
-            Eagle Scout, <a href="https://www.scouting.org/">Boy Scouts of America</a></li>
-        </ul>
-      </div>
-    </section>
-
-    <hr class="m-0">
-
-    <section class="resume-section p-3 p-lg-5 d-flex align-items-center" id="interests">
-      <div class="w-100">
-        <h2 class="mb-5">Projects</h2>
-        <p>In contrast to my day-job, I spend evenings working on side projects where I get to be both designer and developer. As the former President of the Stevens Game Development Club, I initially groomed my passion for programming through the unique lens of game design and later switched my focus to web development.</p>
+        // Clean up markdown
+        let cleaned = botResponse
+          .replace(/\n/g, "<br>")
+          .replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
+          .replace(/___(.*?)___/g, '<strong><em>$1</em></strong>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/__(.*?)__/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+          .replace(/_(.*?)_/g, '<em>$1</em>');
         
-        <button class="accordion"><b>Q AI Apps</b></button>
-        <div class="panel">
-          <p><b>Q AI Apps</b> is a collection of apps built on popular AI models. While <b>Q Web Designer</b> and <b>Q Product Owner</b> are focused on productivity by making it easy for anyone to draft UI concepts and user stories, <b>Q Chat Sim</b> and <b>Q Story Teller</b> highlight more entertaining applications of Generative AI. Check out my <b><a href="https://kevinquigley.net/demo/" target="_blank">Portfolio Assistant</a></b> and <b><a href="https://kevinquigley.net/mystery/" target="_blank">Mystery Game</a></b> demos to see how this technology can be used.</p>
-        </div>
+        document.getElementById("AIResponse").innerHTML = 
+          `<div class="bot-message-card">
+            <div class="sender-name">${prompt}</div>
+            <div class="message">${cleaned}</div>
+          </div>` + document.getElementById("AIResponse").innerHTML;
+        
+        document.getElementById('AIResponse').style.opacity = 1;
+        footer.style.display = "flex";
+        
+      } catch (error) {
+        console.error(error);
+        document.getElementById("AIResponse").innerHTML = `<div class="bot-message-card"><div class="message">Sorry, something went wrong. Please try again.</div></div>`;
+        footer.style.display = "flex";
+      }
+      
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>';
+      input.placeholder = "Ask a follow-up...";
+      input.disabled = false;
+    }
 
-        <button class="accordion"><b>Tweetalyze</b></button>
-        <div class="panel">
-          <p><b>Tweetalyze</b> was a set of data analysis and visualization tools developed using the Twitter API. Since Twitter (𝕏) has made substantial changes to their API offering, the Tweetalyze suite is essentially defunct.</p>
-          <img src="img/dashboard2.png" style="max-width: 100%;"><br><br>
-          <p><a href="https://tweetalyze.com/tweetle/"><b>Tweetle</b></a> - The final addition to the Tweetalyze suite, Tweetle is a Wordle-inspired, Twitter-themed guess-the-number game.
-          </p>
-          <p><a href="https://tweetalyze.com/dashboard/"><b>Tweetalyze Dashboard</b></a> - The third iteration of a long-term passion project, this tool allows users to query tweet data from Twitter to build and visualize their own pre-cleaned data sets.
-          </p>
-          <p><a href="https://tweetalyze.com/chart/"><b>Tweetalyze Chart Builder</b></a> - In scenarios where the pre-fabricated charts on Dashboard are not appropriate, Chart Builder enables approachable, visual analysis of tweet samples. You can pivot on several parameters and add insights like bell curves and regressive trend lines.
-          </p>
-          <p><a href="https://tweetalyze.com/quicktrend/"><b>Tweetalyze Quick Trend</b></a> - In recognition that some users may not need Dashboard's full feature suite, this page is a faster way to visualize and drill-down on Like and Retweet stats. Following this same philosophy, I also created an simple page to <a href="https://tweetalyze.com/sentiment/"><b>analyze and trend tweet sentiment</b></a>.
-          </p>
-          <p><a href="https://tweetalyze.com/search/"><b>Tweetalyze Search</b></a> - Unlike the numerically-focused tools in the Tweetalyze family, Search provides a simple interface for users to perform a fuzzy search on recent tweet text and displays results in order of relevance. Search was intended to be a more practical successor to <a href="https://tweetalyze.com/askauser/"><b>Ask a User</b></a>, a crude implementation of BERT NLP using Google's TensorFlow library. For users who are less familiar with Twitter, <a href="https://tweetalyze.com/newsboard/"><b>Newsboard</b></a> provides a pre-curated sample of tweets and topics from major media outlets to search.
-          </p>
-          <p><a href="https://tweetalyze.com/markov/"><b>Tweetalyze Fake Tweet Generator</b></a> - As a Computer Engineer, I never had the chance to learn about Markov chains like my Computer Science friends. To address this gap, I leveraged my existing Twitter API server and practiced implementing a probablistic Markov model. After some minor revisions, I created the <a href="https://tweetalyze.com/markov-multiple/"><b>Tweetalyze Bot</b></a>: a comical demonstration of model training that allows users to add multiple learning sources.
-          </p>
-        </div>
-
-      </div>
-    </section>
-
-  </div>
-
-  <!-- Bootstrap core JavaScript -->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Plugin JavaScript -->
-  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-  <!-- Custom scripts for this template -->
-  <script src="js/resume.min.js"></script>
-
-</body>
-
-<script>
-  var acc = document.getElementsByClassName("accordion");
-  var i;
-  
-  for (i = 0; i < acc.length; i++) {
-    acc[i].addEventListener("click", function() {
-      this.classList.toggle("accodionActive");
-      var panel = this.nextElementSibling;
-      if (panel.style.maxHeight) {
-        panel.style.maxHeight = null;
-      } else {
-        panel.style.maxHeight = panel.scrollHeight + "px";
-      } 
+    // Enter key handler
+    document.getElementById("userInput").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        document.getElementById("sendButton").click();
+      }
     });
-  }
-
   </script>
-
-<script src="chat.js"></script>
+</body>
 </html>
