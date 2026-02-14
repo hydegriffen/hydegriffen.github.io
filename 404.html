@@ -1,166 +1,856 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Page Not Found — Kevin Quigley</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #FDFBF7;
+      --color-bg-alt: #F5F1EA;
+      --color-text: #2C3E50;
+      --color-text-light: #5D6D7E;
+      --color-accent: #1A4A5E;
+      --color-accent-light: #2980B9;
+      --color-warm: #C4A77D;
+      --color-border: #E8E2D9;
+      --font-display: 'Instrument Serif', Georgia, serif;
+      --font-body: 'DM Sans', -apple-system, sans-serif;
+    }
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="The official website for Kevin Quigley.">
-    <meta name="author" content="Kevin Quigley">
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    <title>Kevin Quigley - 404</title>
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    body {
+      font-family: var(--font-body);
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+      -webkit-user-select: none;
+    }
 
-    <!-- Custom CSS -->
-    <link href="css/landing-page.css" rel="stylesheet">
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(253, 251, 247, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--color-border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 0.3s forwards;
+    }
 
-    <!-- Custom Fonts -->
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+    .nav-name {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      color: var(--color-text);
+      letter-spacing: -0.02em;
+      text-decoration: none;
+    }
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
 
-    <style type="text/css">
-    	.verticalCenter {
-    		height: 100%;
-    		display: inline-block;
-    		vertical-align: middle;
-    	}
-    	.verticalCenterImg {
-    		display: inline-block; vertical-align: middle;
-    	}
-    </style>
 
+    /* Page content */
+    .page-wrap {
+      width: 100%;
+      max-width: 1100px;
+      padding: 0 2rem;
+      margin-top: calc(60px + 8vh);
+      text-align: center;
+      opacity: 0;
+      animation: slideUp 0.8s ease 0.2s forwards;
+    }
+
+    .error-code {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 8vw, 6rem);
+      font-weight: 400;
+      letter-spacing: -0.03em;
+      color: var(--color-text);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .error-message {
+      font-size: 1.05rem;
+      color: var(--color-text-light);
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .back-link {
+      display: inline-block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-accent);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.6rem 1.5rem;
+      border: 1px solid var(--color-accent);
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .back-link:hover {
+      background: var(--color-accent);
+      color: white;
+    }
+
+    /* Game area */
+    .game-wrap {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 40vh;
+      min-height: 200px;
+      max-height: 320px;
+      opacity: 0;
+      animation: fadeIn 1s ease 0.8s forwards;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Game prompt */
+    .game-prompt {
+      position: fixed;
+      bottom: calc(20vh + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--color-warm);
+      font-weight: 500;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 1.5s forwards, subtlePulse 3s ease-in-out 2.1s infinite;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    /* Score display */
+    .score-display {
+      position: fixed;
+      top: calc(60px + 16px);
+      right: 2rem;
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--color-text-light);
+      font-weight: 400;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+
+    .score-display.visible { opacity: 1; }
+
+    .score-display span {
+      font-weight: 500;
+      color: var(--color-accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes subtlePulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      nav { padding: 0.75rem 1.25rem; }
+      .nav-links { gap: 1.25rem; }
+      .nav-links a { font-size: 0.7rem; }
+      .page-wrap { margin-top: calc(56px + 6vh); padding: 0 1.5rem; }
+      .error-message { font-size: 0.95rem; }
+      .score-display { right: 1.25rem; }
+      .game-prompt { bottom: calc(20vh + 4px); }
+    }
+  </style>
 </head>
-
 <body>
 
-    <div class="content-section-a">
+  <nav>
+    <a href="https://kevinquigley.net" class="nav-name">Kevin Quigley</a>
+  </nav>
 
-        <div class="container" style="color:black">
-            <div class="row">
-                <div class="col-lg-5 col-sm-6">
-                    <div class="clearfix"></div>
-                    <h1>Are you looking for <a href="https://kevinquigley.net">kevinquigley.net</a>?</h1>
-                    <h2 class="section-heading">404: Page Not Found</h2>
-                    <p class="lead">I can't seem to find the page you're looking for, but you're certainly welcome to see how far you can get on this one. Press <a href="https://kevinquigley.net/404_runner/">any key</a> to get started and then click/tap in the below frame to jump.</p>
-                </div>
-            </div>
-        </div>
-        <!-- /.container -->
-        
-    </div>
-    <!-- /.content-section-a -->
+  <div class="page-wrap">
+    <div class="error-code">404</div>
+    <p class="error-message">Page not found.</p>
+    <a href="https://kevinquigley.net" class="back-link">Back to Home</a>
+  </div>
 
-   <!-- Generated by GameMaker:Studio http://www.yoyogames.com/gamemaker/studio -->
-   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-   <meta http-equiv="pragma" content="no-cache"/>
-   <meta name="apple-mobile-web-app-capable" content="yes" />
-   <meta name ="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-   <meta charset="utf-8"/>
+  <div class="score-display" id="scoreDisplay">
+    Score <span id="scoreValue">0</span>
+    <span id="bestScore"></span>
+  </div>
 
-   <!-- Set the title bar of the page -->
-   <title>Kevin Quigley - 404</title>
+  <div class="game-prompt" id="gamePrompt">Tap or press space to play</div>
 
-   <!-- Set the background colour of the document -->
-   <style>
-       body {
-         background: ${BACKGROUND_COLOUR};
-         color:#cccccc;
-         margin: 0px;
-         padding: 0px;
-         border: 0px;
-       }
-       canvas {
-                 image-rendering: optimizeSpeed;
-                 -webkit-interpolation-mode: nearest-neighbor;
-                 -ms-touch-action: none;
-                 margin: 0px;
-                 padding: 0px;
-                 border: 0px;
-       }
-       :-webkit-full-screen #canvas {
-            width: 100%;
-            height: 100%;
-       }
-       div.gm4html5_div_class
-       {
-         margin: 0px;
-         padding: 0px;
-         border: 0px;
-       }
-       /* START - Login Dialog Box */
-       div.gm4html5_login
-       {
-            padding: 20px;
-            position: absolute;
-            border: solid 2px #000000;
-            background-color: #404040;
-            color:#00ff00;
-            border-radius: 15px;
-            box-shadow: #101010 20px 20px 40px;
-       }
-       div.gm4html5_cancel_button
-       {
-            float: right;
-       }
-       div.gm4html5_login_button
-       {
-            float: left;
-       }
-       div.gm4html5_login_header
-       {
-            text-align: center;
-       }
-       /* END - Login Dialog Box */
-       :-webkit-full-screen {
-          width: 100%;
-          height: 100%;
-       }
-   </style>
-</head>
+  <div class="game-wrap" id="gameWrap">
+    <canvas id="game"></canvas>
+  </div>
 
-<body>
-   <div class="gm4html5_div_class" id="gm4html5_div_id">
-       <!-- Create the canvas element the game draws to -->
-       <canvas id="canvas" width="704" height="360" >
-                <p>Your browser doesn't support HTML5 canvas.</p>
-       </canvas>
-   </div>
+<script>
+(() => {
+  // --- Constants ---
+  const COLORS = {
+    bg: '#FDFBF7',
+    ground: '#E8E2D9',
+    groundAccent: '#D5CFC5',
+    player: '#1A4A5E',
+    playerLight: '#2980B9',
+    obstacle: '#C4A77D',
+    obstacleDark: '#A8895F',
+    text: '#5D6D7E',
+    particle: '#C4A77D',
+    cloud: '#EDE8E0',
+  };
 
-   <!-- Run the game code -->
-   <script type="text/javascript" src="404_runner/404_runner.js?BXYXB=2128596432"></script>
-   <script>window.onkeydown = GameMaker_Init;</script>
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  const scoreEl = document.getElementById('scoreDisplay');
+  const scoreValEl = document.getElementById('scoreValue');
+  const bestScoreEl = document.getElementById('bestScore');
+  const promptEl = document.getElementById('gamePrompt');
 
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
+  let W, H, dpr;
+  let groundY;
+  const GROUND_HEIGHT = 2;
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
+  // --- Game state ---
+  let state = 'idle'; // idle | running | dead
+  let score = 0;
+  let bestScore = 0;
+  let frameCount = 0;
+  let speed = 4.5;
+  let lastTime = 0;
+  let accumulator = 0;
+  const FIXED_DT = 1000 / 60;
+
+  // --- Player ---
+  const player = {
+    x: 0, y: 0, w: 0, h: 0,
+    vy: 0, grounded: true,
+    squash: 1, // for squash/stretch
+    trailParticles: [],
+  };
+
+  const GRAVITY = 0.55;
+  const JUMP_FORCE = -11;
+  const MAX_FALL = 14;
+
+  // --- Obstacles ---
+  let obstacles = [];
+  let obstacleTimer = 0;
+  let obstacleInterval = 90;
+
+  // --- Clouds ---
+  let clouds = [];
+
+  // --- Ground details ---
+  let groundDots = [];
+
+  // --- Particles ---
+  let particles = [];
+
+  // --- Resize ---
+  function resize() {
+    const wrap = document.getElementById('gameWrap');
+    const rect = wrap.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = rect.width;
+    H = rect.height;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    groundY = H - 32;
+
+    // Player sizing
+    const unit = Math.min(W, H) * 0.065;
+    player.w = unit;
+    player.h = unit * 1.3;
+    player.x = W * 0.15;
+    if (state === 'idle' || state === 'dead') {
+      player.y = groundY - player.h;
+    }
+
+    // Regenerate clouds
+    if (clouds.length === 0) initClouds();
+
+    // Regenerate ground dots
+    initGroundDots();
+  }
+
+  function initClouds() {
+    clouds = [];
+    for (let i = 0; i < 5; i++) {
+      clouds.push({
+        x: Math.random() * W,
+        y: 10 + Math.random() * (groundY * 0.35),
+        w: 30 + Math.random() * 50,
+        h: 8 + Math.random() * 12,
+        speed: 0.15 + Math.random() * 0.25,
+      });
+    }
+  }
+
+  function initGroundDots() {
+    groundDots = [];
+    for (let i = 0; i < 40; i++) {
+      groundDots.push({
+        x: Math.random() * W,
+        size: 1 + Math.random() * 2,
+      });
+    }
+  }
+
+  // --- Input ---
+  let jumpBuffered = false;
+
+  function handleInput(e) {
+    if (e) e.preventDefault();
+
+    if (state === 'idle') {
+      startGame();
+      return;
+    }
+
+    if (state === 'dead') {
+      if (frameCount > 20) {
+        resetGame();
+        startGame();
+      }
+      return;
+    }
+
+    if (state === 'running') {
+      if (player.grounded) {
+        jump();
+      } else {
+        jumpBuffered = true;
+      }
+    }
+  }
+
+  // Keyboard
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' || e.code === 'ArrowUp') {
+      e.preventDefault();
+      handleInput();
+    }
+  });
+
+  // Touch — entire document, but let links work
+  document.addEventListener('touchstart', (e) => {
+    if (e.target.closest('a')) return;
+    handleInput(e);
+  }, { passive: false });
+
+  // Mouse — entire document
+  document.addEventListener('mousedown', (e) => {
+    // Don't intercept link clicks
+    if (e.target.closest('a')) return;
+    handleInput();
+  });
+
+  // --- Game logic ---
+  function startGame() {
+    state = 'running';
+    score = 0;
+    speed = 4.5;
+    frameCount = 0;
+    obstacles = [];
+    obstacleTimer = 0;
+    obstacleInterval = 90;
+    particles = [];
+    player.vy = 0;
+    player.grounded = true;
+    player.y = groundY - player.h;
+    player.squash = 1;
+    player.trailParticles = [];
+
+    promptEl.style.display = 'none';
+    scoreEl.classList.add('visible');
+
+    jump(); // initial jump to start
+  }
+
+  function resetGame() {
+    state = 'idle';
+    score = 0;
+    speed = 4.5;
+    obstacles = [];
+    particles = [];
+    player.vy = 0;
+    player.grounded = true;
+    player.y = groundY - player.h;
+    player.squash = 1;
+    player.trailParticles = [];
+  }
+
+  function jump() {
+    player.vy = JUMP_FORCE;
+    player.grounded = false;
+    player.squash = 0.7; // stretch tall on jump
+
+    // Jump dust
+    for (let i = 0; i < 5; i++) {
+      particles.push({
+        x: player.x + player.w * 0.5,
+        y: groundY,
+        vx: (Math.random() - 0.5) * 2,
+        vy: -Math.random() * 2.5,
+        life: 1,
+        decay: 0.03 + Math.random() * 0.02,
+        size: 2 + Math.random() * 3,
+      });
+    }
+  }
+
+  function die() {
+    state = 'dead';
+    frameCount = 0;
+
+    if (score > bestScore) {
+      bestScore = score;
+      try { localStorage.setItem('kq404best', bestScore); } catch(e) {}
+    }
+
+    // Death particles
+    for (let i = 0; i < 12; i++) {
+      const angle = (Math.PI * 2 / 12) * i;
+      particles.push({
+        x: player.x + player.w / 2,
+        y: player.y + player.h / 2,
+        vx: Math.cos(angle) * (1.5 + Math.random() * 2),
+        vy: Math.sin(angle) * (1.5 + Math.random() * 2),
+        life: 1,
+        decay: 0.015 + Math.random() * 0.015,
+        size: 2 + Math.random() * 4,
+        color: Math.random() > 0.5 ? COLORS.player : COLORS.playerLight,
+      });
+    }
+  }
+
+  // --- Update ---
+  function update() {
+    frameCount++;
+
+    if (state !== 'running') return;
+
+    // Speed ramp
+    if (frameCount % 120 === 0 && speed < 10) {
+      speed += 0.15;
+    }
+
+    // Score
+    if (frameCount % 4 === 0) {
+      score++;
+      scoreValEl.textContent = score;
+      if (bestScore > 0) {
+        bestScoreEl.textContent = ` · Best ${bestScore}`;
+      }
+    }
+
+    // Obstacle interval decreases
+    obstacleInterval = Math.max(50, 90 - (speed - 4.5) * 5);
+
+    // Player physics
+    player.vy += GRAVITY;
+    if (player.vy > MAX_FALL) player.vy = MAX_FALL;
+    player.y += player.vy;
+
+    if (player.y >= groundY - player.h) {
+      player.y = groundY - player.h;
+      player.vy = 0;
+
+      if (!player.grounded) {
+        player.squash = 1.3; // squash on land
+        // Landing dust
+        for (let i = 0; i < 3; i++) {
+          particles.push({
+            x: player.x + player.w * 0.5,
+            y: groundY,
+            vx: (Math.random() - 0.5) * 1.5,
+            vy: -Math.random() * 1.5,
+            life: 1,
+            decay: 0.04 + Math.random() * 0.02,
+            size: 1.5 + Math.random() * 2,
+          });
+        }
+      }
+
+      player.grounded = true;
+
+      if (jumpBuffered) {
+        jumpBuffered = false;
+        jump();
+      }
+    }
+
+    // Squash recovery
+    player.squash += (1 - player.squash) * 0.15;
+
+    // Trail particles (subtle)
+    if (frameCount % 3 === 0 && !player.grounded) {
+      player.trailParticles.push({
+        x: player.x + player.w * 0.3,
+        y: player.y + player.h * 0.5,
+        life: 1,
+        decay: 0.06,
+        size: 1.5 + Math.random(),
+      });
+    }
+
+    // Update trail
+    for (let i = player.trailParticles.length - 1; i >= 0; i--) {
+      player.trailParticles[i].life -= player.trailParticles[i].decay;
+      if (player.trailParticles[i].life <= 0) player.trailParticles.splice(i, 1);
+    }
+
+    // Spawn obstacles
+    obstacleTimer++;
+    if (obstacleTimer >= obstacleInterval) {
+      obstacleTimer = 0;
+      // Random gap between min and current interval
+      obstacleTimer = -Math.floor(Math.random() * 30);
+      spawnObstacle();
+    }
+
+    // Update obstacles
+    for (let i = obstacles.length - 1; i >= 0; i--) {
+      obstacles[i].x -= speed;
+      if (obstacles[i].x + obstacles[i].w < -20) {
+        obstacles.splice(i, 1);
+        continue;
+      }
+
+      // Collision (with generous forgiveness)
+      const o = obstacles[i];
+      const shrink = 4; // collision forgiveness
+      if (
+        player.x + shrink < o.x + o.w - shrink &&
+        player.x + player.w - shrink > o.x + shrink &&
+        player.y + shrink < o.y + o.h &&
+        player.y + player.h > o.y + shrink
+      ) {
+        die();
+      }
+    }
+
+    // Clouds
+    for (const c of clouds) {
+      c.x -= c.speed;
+      if (c.x + c.w < 0) {
+        c.x = W + 10;
+        c.y = 10 + Math.random() * (groundY * 0.35);
+      }
+    }
+
+    // Ground dots scroll
+    for (const d of groundDots) {
+      d.x -= speed * 0.5;
+      if (d.x < -5) d.x = W + Math.random() * 20;
+    }
+
+    // Particles
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += (p.vx || 0);
+      p.y += (p.vy || 0);
+      if (p.vy !== undefined) p.vy += 0.08;
+      p.life -= p.decay;
+      if (p.life <= 0) particles.splice(i, 1);
+    }
+  }
+
+  // --- Obstacle spawning ---
+  function spawnObstacle() {
+    const unit = player.w;
+    const type = Math.random();
+
+    if (type < 0.4) {
+      // Short, wide
+      obstacles.push({
+        x: W + 10,
+        y: groundY - unit * 0.7,
+        w: unit * 0.7,
+        h: unit * 0.7,
+        shape: 'rect',
+      });
+    } else if (type < 0.75) {
+      // Tall, narrow
+      const h = unit * (1 + Math.random() * 0.4);
+      obstacles.push({
+        x: W + 10,
+        y: groundY - h,
+        w: unit * 0.45,
+        h: h,
+        shape: 'rect',
+      });
+    } else {
+      // Double — short then tall with gap
+      const h1 = unit * 0.6;
+      obstacles.push({
+        x: W + 10,
+        y: groundY - h1,
+        w: unit * 0.5,
+        h: h1,
+        shape: 'rect',
+      });
+      const h2 = unit * (0.9 + Math.random() * 0.3);
+      obstacles.push({
+        x: W + 10 + unit * 1.2,
+        y: groundY - h2,
+        w: unit * 0.4,
+        h: h2,
+        shape: 'rect',
+      });
+    }
+  }
+
+  // --- Draw ---
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Background (already from CSS, but clear to it)
+    ctx.fillStyle = COLORS.bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Clouds
+    for (const c of clouds) {
+      ctx.fillStyle = COLORS.cloud;
+      ctx.beginPath();
+      roundRect(ctx, c.x, c.y, c.w, c.h, c.h * 0.4);
+      ctx.fill();
+    }
+
+    // Ground dots (subtle texture)
+    ctx.fillStyle = COLORS.groundAccent;
+    for (const d of groundDots) {
+      ctx.beginPath();
+      ctx.arc(d.x, groundY + 8 + (d.size * 3), d.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Ground line
+    ctx.fillStyle = COLORS.ground;
+    ctx.fillRect(0, groundY, W, GROUND_HEIGHT);
+
+    // Trail particles
+    for (const t of player.trailParticles) {
+      ctx.globalAlpha = t.life * 0.3;
+      ctx.fillStyle = COLORS.playerLight;
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, t.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Obstacles
+    for (const o of obstacles) {
+      drawObstacle(o);
+    }
+
+    // Player
+    drawPlayer();
+
+    // Particles
+    for (const p of particles) {
+      ctx.globalAlpha = p.life;
+      ctx.fillStyle = p.color || COLORS.particle;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Death overlay
+    if (state === 'dead') {
+      drawDeathOverlay();
+    }
+  }
+
+  function drawPlayer() {
+    const cx = player.x + player.w / 2;
+    const squashW = player.w * (1 / player.squash);
+    const squashH = player.h * player.squash;
+    const drawX = cx - squashW / 2;
+    const drawY = groundY - squashH - (player.y - (groundY - player.h)) * (player.grounded ? 1 : 1);
+    const actualY = player.y + player.h - squashH;
+
+    // Shadow
+    if (!player.grounded) {
+      const shadowDist = (groundY - player.y - player.h) / (groundY * 0.4);
+      const shadowAlpha = Math.max(0, 0.15 - shadowDist * 0.15);
+      const shadowScale = Math.max(0.3, 1 - shadowDist * 0.5);
+      ctx.globalAlpha = shadowAlpha;
+      ctx.fillStyle = COLORS.player;
+      ctx.beginPath();
+      ctx.ellipse(cx, groundY + 1, squashW * 0.5 * shadowScale, 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    // Body — rounded rectangle with slight character
+    ctx.fillStyle = COLORS.player;
+    ctx.beginPath();
+    roundRect(ctx, drawX, actualY, squashW, squashH, Math.min(squashW, squashH) * 0.22);
+    ctx.fill();
+
+    // Eye(s) — two small white dots give it personality
+    const eyeY = actualY + squashH * 0.28;
+    const eyeSize = Math.min(squashW, squashH) * 0.09;
+    const eyeGap = squashW * 0.18;
+
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(cx - eyeGap, eyeY, eyeSize, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx + eyeGap, eyeY, eyeSize, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Pupils — look in direction of movement, or down when falling
+    const pupilOff = eyeSize * 0.35;
+    const pupilSize = eyeSize * 0.55;
+    const pupilDx = pupilOff;
+    const pupilDy = player.vy > 2 ? pupilOff : player.vy < -2 ? -pupilOff * 0.5 : 0;
+
+    ctx.fillStyle = COLORS.player;
+    ctx.beginPath();
+    ctx.arc(cx - eyeGap + pupilDx, eyeY + pupilDy, pupilSize, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx + eyeGap + pupilDx, eyeY + pupilDy, pupilSize, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function drawObstacle(o) {
+    // Main shape
+    ctx.fillStyle = COLORS.obstacle;
+    ctx.beginPath();
+    const r = Math.min(o.w, o.h) * 0.15;
+    roundRect(ctx, o.x, o.y, o.w, o.h, r);
+    ctx.fill();
+
+    // Subtle top accent line
+    ctx.fillStyle = COLORS.obstacleDark;
+    ctx.beginPath();
+    roundRect(ctx, o.x, o.y, o.w, 3, r);
+    ctx.fill();
+
+    // Subtle inner line detail
+    ctx.fillStyle = COLORS.obstacleDark;
+    ctx.globalAlpha = 0.15;
+    ctx.fillRect(o.x + o.w * 0.35, o.y + 6, 1, o.h - 10);
+    ctx.fillRect(o.x + o.w * 0.65, o.y + 6, 1, o.h - 10);
+    ctx.globalAlpha = 1;
+  }
+
+  function drawDeathOverlay() {
+    const alpha = Math.min(1, frameCount / 30) * 0.6;
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = COLORS.bg;
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalAlpha = 1;
+
+    if (frameCount > 15) {
+      const textAlpha = Math.min(1, (frameCount - 15) / 20);
+      ctx.globalAlpha = textAlpha;
+
+      ctx.font = `${Math.min(W * 0.05, 22)}px 'DM Sans', sans-serif`;
+      ctx.fillStyle = COLORS.text;
+      ctx.textAlign = 'center';
+      ctx.fillText(`${score}`, W / 2, H * 0.4);
+
+      ctx.font = `300 ${Math.min(W * 0.03, 13)}px 'DM Sans', sans-serif`;
+      ctx.fillStyle = COLORS.text_light || COLORS.text;
+      ctx.globalAlpha = textAlpha * 0.6;
+      ctx.fillText('Tap to try again', W / 2, H * 0.4 + 28);
+
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // --- Helpers ---
+  function roundRect(ctx, x, y, w, h, r) {
+    r = Math.min(r, w / 2, h / 2);
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+  }
+
+  // --- Game loop ---
+  function loop(timestamp) {
+    if (!lastTime) lastTime = timestamp;
+    const delta = timestamp - lastTime;
+    lastTime = timestamp;
+
+    accumulator += delta;
+
+    // Fixed timestep updates
+    while (accumulator >= FIXED_DT) {
+      update();
+      accumulator -= FIXED_DT;
+    }
+
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  // --- Init ---
+  try {
+    bestScore = parseInt(localStorage.getItem('kq404best')) || 0;
+  } catch(e) {}
+
+  resize();
+  window.addEventListener('resize', resize);
+  requestAnimationFrame(loop);
+})();
+</script>
 
 </body>
-
 </html>
-
-<!--Analytics-->
-<script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-  
-    ga('create', 'UA-101729424-1', 'auto');
-    ga('send', 'pageview');
-  
-  </script>
-    
-  </html>
