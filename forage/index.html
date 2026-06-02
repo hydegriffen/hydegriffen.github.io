@@ -123,7 +123,7 @@ body{
   width:auto;height:100%;max-height:min(94vw,420px);max-width:100%;}
 .tile{aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:var(--tile-bg);
   border:1.5px solid var(--tile-border);border-radius:11px;font-family:'Fraunces',serif;font-weight:700;
-  font-size:clamp(15px,5.2vw,26px);color:var(--tile-text);cursor:pointer;position:relative;
+  font-size:clamp(15px,5.2vw,26px);color:var(--tile-text);cursor:pointer;position:relative;touch-action:manipulation;
   box-shadow:var(--shadow-sm);transition:transform .13s ease,background .13s ease,border-color .13s ease,color .13s ease;}
 .tile.sel{background:var(--tile-sel-bg);border-color:var(--tile-sel-border);color:var(--tile-sel-text);
   transform:scale(1.06);box-shadow:0 6px 16px var(--glow);z-index:2;}
@@ -343,10 +343,10 @@ const Q_MIN_LEN6  = 8;
 /* Tier bands as fraction of total possible score (§5.1) */
 const TIERS = [
   { key:'forage', name:'Scout',    leaf:'🌱', frac:0,    color:'var(--text-faint)' },
-  { key:'bronze', name:'Bronze',   leaf:'🥉', frac:0.15, color:'#B07A3C' },
-  { key:'silver', name:'Silver',   leaf:'🥈', frac:0.30, color:'#9AA1AC' },
-  { key:'gold',   name:'Gold',     leaf:'🏆', frac:0.50, color:'#C08A2E' },
-  { key:'genius', name:'Genius',   leaf:'🌟', frac:0.70, color:'#5B7A45' }
+  { key:'bronze', name:'Bronze',   leaf:'🥉', frac:0.05, color:'#B07A3C' },
+  { key:'silver', name:'Silver',   leaf:'🥈', frac:0.15, color:'#9AA1AC' },
+  { key:'gold',   name:'Gold',     leaf:'🏆', frac:0.30, color:'#C08A2E' },
+  { key:'genius', name:'Genius',   leaf:'🌟', frac:0.50, color:'#5B7A45' }
 ];
 /* Tiers that log a GA4 event + celebrate (everything past the start band) */
 const REWARD_TIERS = ['bronze','silver','gold','genius'];
