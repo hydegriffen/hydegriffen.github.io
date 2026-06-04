@@ -185,10 +185,6 @@ body{
 .how-list .ic{flex-shrink:0;width:30px;height:30px;border-radius:9px;background:var(--accent-soft);color:var(--accent-deep);
   display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem;}
 [data-theme="dark"] .how-list .ic{color:var(--accent);}
-.tier-legend{display:flex;flex-direction:column;gap:7px;margin-top:4px;}
-.tier-legend .row{display:flex;align-items:center;gap:9px;font-size:.86rem;color:var(--text-dim);}
-.tier-legend .dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
-.tier-legend b{color:var(--text);font-weight:700;}
 
 /* Stats */
 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:6px 0 4px;}
@@ -253,7 +249,7 @@ body{
 
   <div class="tier-panel">
     <div class="tier-top">
-      <div class="tier-name"><span class="leaf" id="tierLeaf">🌱</span><span id="tierName">Scout</span></div>
+      <div class="tier-name"><span class="leaf" id="tierLeaf">🧭</span><span id="tierName">Scout</span></div>
       <div class="tier-score"><b id="scoreNum">0</b> pts</div>
     </div>
     <div class="tier-track">
@@ -304,8 +300,7 @@ body{
       <!-- <li><span class="ic">Qu</span><span>The <b>Qu</b> tile counts as two letters, just like classic Big Boggle.</span></li> -->
     </ul>
     <h3>Tiers</h3>
-    <p>Your score is measured against everything hidden on today's board. Climb the tiers and share your results!</p>
-    <div class="tier-legend" id="tierLegend"></div>
+    <p>Your score is measured against every word hidden on today's board. Find more to climb from Scout all the way to Forage Master and share your results!</p>
     <!-- <p style="margin-top:14px;font-size:.82rem;">The board stays open all day. A word you think of an hour later still counts.</p> -->
   </div>
 </div>
@@ -342,14 +337,24 @@ const Q_MIN_LEN6  = 8;
 
 /* Tier bands as fraction of total possible score (§5.1) */
 const TIERS = [
-  { key:'forage', name:'Scout',    leaf:'🌱', frac:0,    color:'var(--text-faint)' },
-  { key:'bronze', name:'Bronze',   leaf:'🥉', frac:0.05, color:'#B07A3C' },
-  { key:'silver', name:'Silver',   leaf:'🥈', frac:0.15, color:'#9AA1AC' },
-  { key:'gold',   name:'Gold',     leaf:'🏆', frac:0.30, color:'#C08A2E' },
-  { key:'genius', name:'Genius',   leaf:'🌟', frac:0.50, color:'#5B7A45' }
+  { key:'forage',       name:'Scout',         leaf:'🧭', frac:0,     color:'var(--text-faint)' },
+  { key:'forager',      name:'Forager',       leaf:'🌱', frac:0.01,  color:'#7B8A5A' },
+  { key:'naturalist',   name:'Naturalist',    leaf:'🍃', frac:0.03,  color:'#6E9E5E' },
+  { key:'ranger',       name:'Ranger',        leaf:'🥾', frac:0.05,  color:'#8A6D4B' },
+  { key:'trailblazer',  name:'Trailblazer',   leaf:'🧗', frac:0.075, color:'#A8743C' },
+  { key:'bronze',       name:'Bronze',        leaf:'🥉', frac:0.10,  color:'#B07A3C' },
+  { key:'silver',       name:'Silver',        leaf:'🥈', frac:0.15,  color:'#9AA1AC' },
+  { key:'gold',         name:'Gold',          leaf:'🥇', frac:0.20,  color:'#C08A2E' },
+  { key:'platinum',     name:'Platinum',      leaf:'💎', frac:0.30,  color:'#5FA3B0' },
+  { key:'genius',       name:'Genius',        leaf:'🦉', frac:0.40,  color:'#5B7A45' },
+  { key:'forage_master',name:'Forage Master', leaf:'👑', frac:0.50,  color:'#B5912E' }
 ];
-/* Tiers that log a GA4 event + celebrate (everything past the start band) */
-const REWARD_TIERS = ['bronze','silver','gold','genius'];
+/* Rank lookup by position — single source of truth, replaces hard-coded orderIdx maps. */
+const TIER_RANK = Object.fromEntries(TIERS.map((t, i) => [t.key, i]));
+/* Every non-start tier logs a GA4 event. */
+const REWARD_TIERS = TIERS.slice(1).map(t => t.key);
+/* Only these celebrate with confetti (Bronze and up). Earlier tiers get a quiet toast. */
+const CELEBRATE_TIERS = ['bronze','silver','gold','platinum','genius','forage_master'];
 
 /* Big Boggle / Boggle Deluxe 25-dice set. The Q face is the "Qu" face. */
 const DICE = [
@@ -503,8 +508,10 @@ function saveDailyRecord(rec){
 function getDailyRecord(key){ const store = loadStore(); return store[key] || null; }
 
 function defaultStats(){
+  const tierCounts = {};
+  for (const t of REWARD_TIERS) tierCounts[t] = 0;
   return { daysPlayed:0, currentStreak:0, maxStreak:0, bestTier:null,
-           tierCounts:{ bronze:0, silver:0, gold:0, genius:0 }, lastPlayed:null };
+           tierCounts, lastPlayed:null };
 }
 function loadStats(){ try{ const r = localStorage.getItem(STATS_KEY); return r ? JSON.parse(r) : defaultStats(); }catch{ return defaultStats(); } }
 function saveStats(s){ try{ localStorage.setItem(STATS_KEY, JSON.stringify(s)); }catch{} }
@@ -535,9 +542,12 @@ function recountTierStats(){
     prev = k;
   }
   // Best tier overall
-  const orderIdx = { bronze:1, silver:2, gold:3, genius:4 };
   let best = null, bi = 0;
-  for (const k of keys){ const rec = store[k]; if (rec && rec.bestTier && orderIdx[rec.bestTier] > bi){ bi = orderIdx[rec.bestTier]; best = rec.bestTier; } }
+  for (const k of keys){
+    const rec = store[k];
+    const r = rec && rec.bestTier ? TIER_RANK[rec.bestTier] : undefined;
+    if (r !== undefined && r > bi){ bi = r; best = rec.bestTier; }
+  }
   s.bestTier = best;
   // current streak only valid if last played is today or yesterday
   if (s.lastPlayed){
@@ -570,7 +580,7 @@ function cache(){
   ['board','conn','curWord','curPts','current','chips','foundCount','scoreNum',
    'tierName','tierLeaf','tierFill','tierTicks','tierNext','clearBtn','submitBtn','shareBtn',
    'helpBtn','statsBtn','themeBtn','toast','confetti','puzzleNo','loader','loaderMsg',
-   'helpOverlay','statsOverlay','shareOverlay','statsModal','shareModal','tierLegend','metaTheme']
+   'helpOverlay','statsOverlay','shareOverlay','statsModal','shareModal','metaTheme']
    .forEach(id => el[id] = document.getElementById(id));
 }
 
@@ -629,7 +639,6 @@ async function init(){
   rec.words.forEach(w => game.foundSet.add(w));
 
   buildBoardUI();
-  buildTierLegend();
   setupListeners();
   renderChips();
   renderTier(true);
@@ -673,18 +682,6 @@ function buildBoardUI(){
     tile.textContent = game.board.tiles[idx].display;
     tile.dataset.row = r; tile.dataset.col = c; tile.dataset.idx = idx;
     el.board.appendChild(tile);
-  }
-}
-
-function buildTierLegend(){
-  el.tierLegend.innerHTML = '';
-  for (let i=1;i<game.thresholds.length;i++){
-    const t = game.thresholds[i];
-    const row = document.createElement('div');
-    row.className = 'row';
-    //row.innerHTML = `<span class="dot" style="background:${t.color}"></span><b>${t.name}</b>&nbsp;\u00b7 ${Math.round(t.frac*100)}% of the board`;
-    row.innerHTML = `<span class="dot" style="background:${t.color}"></span><b>${t.name}</b>`;
-    el.tierLegend.appendChild(row);
   }
 }
 
@@ -947,9 +944,10 @@ function renderTier(initial){
   }
 
   // Update best tier on the record.
-  const orderIdx = { forage:0, bronze:1, silver:2, gold:3, genius:4 };
-  if (!rec.bestTier || orderIdx[tier.key] > orderIdx[rec.bestTier]){
-    if (tier.key !== 'forage') rec.bestTier = tier.key;
+  const prevBestRank = (rec.bestTier !== undefined && TIER_RANK[rec.bestTier] !== undefined)
+    ? TIER_RANK[rec.bestTier] : -1;
+  if (TIER_RANK[tier.key] > prevBestRank && tier.key !== 'forage'){
+    rec.bestTier = tier.key;
   }
 
   // Tier-up: celebrate + log once per tier (§5.1, §9).
@@ -961,7 +959,7 @@ function renderTier(initial){
 function onTierReached(tier){
   const rec = game.record;
   toast(`${tier.leaf}  ${tier.name}!`);
-  launchConfetti();
+  if (CELEBRATE_TIERS.includes(tier.key)) launchConfetti();
   if (!rec.loggedTiers[tier.key]){
     rec.loggedTiers[tier.key] = true;
     gtag('event', 'forage_tier_reached', {
@@ -983,16 +981,18 @@ function saveProgress(){
 function openStats(){
   const s = recountTierStats();
   const tc = s.tierCounts;
-  const maxC = Math.max(1, tc.bronze, tc.silver, tc.gold, tc.genius);
+  const maxC = Math.max(1, ...Object.values(tc));
   const bestTier = s.bestTier ? game.thresholds.find(t => t.key === s.bestTier) : null;
 
-  const distRows = [
-    ['genius','Genius','🌟'], ['gold','Gold','🏆'], ['silver','Silver','🥈'], ['bronze','Bronze','🥉']
-  ].map(([k,label,leaf])=>{
-    const c = tc[k] || 0;
-    const w = Math.max(10, (c/maxC)*100);
-    return `<div class="dist-row"><span class="k">${leaf} ${label}</span><div class="bar-wrap"><div class="bar" style="width:${w}%">${c}</div></div></div>`;
-  }).join('');
+  // Rows for milestone tiers (Bronze+) or any tier actually reached, highest first.
+  const distRows = TIERS.slice(1)
+    .filter(t => CELEBRATE_TIERS.includes(t.key) || (tc[t.key] || 0) > 0)
+    .slice().reverse()
+    .map(t => {
+      const c = tc[t.key] || 0;
+      const w = Math.max(10, (c/maxC)*100);
+      return `<div class="dist-row"><span class="k">${t.leaf} ${t.name}</span><div class="bar-wrap"><div class="bar" style="width:${w}%">${c}</div></div></div>`;
+    }).join('');
 
   el.statsModal.innerHTML = `
     <button class="modal-close" data-close="statsOverlay">×</button>
