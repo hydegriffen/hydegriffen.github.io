@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Kevin Quigley - AI Solutions Director, Applied AI Expert, Data-Driven Leader">
+  <meta name="description" content="Kevin Quigley — Director, AI COE Product at Wiley. Computer engineer turned AI leader, delivering results with applied AI.">
   <meta name="author" content="Kevin Quigley">
   <title>Kevin Quigley</title>
   
@@ -510,6 +510,24 @@
       gap: 1.5rem;
     }
 
+    .press-card-featured {
+      grid-column: 1 / -1;
+    }
+
+    .press-card-tag {
+      display: inline-block;
+      align-self: flex-start;
+      font-size: 0.65rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--color-warm);
+      border: 1px solid var(--color-warm);
+      border-radius: 3px;
+      padding: 0.15rem 0.5rem;
+      margin-bottom: 0.875rem;
+    }
+
     .press-card {
       background: white;
       border: 1px solid var(--color-border);
@@ -570,6 +588,85 @@
       font-size: 0.85rem;
       color: rgba(255,255,255,0.5);
       text-align: center;
+    }
+
+    /* Speaking Section */
+    .speaking {
+      background: var(--color-bg);
+      padding: 5rem 2rem;
+    }
+
+    .speaking-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .speaking-list {
+      border-top: 1px solid var(--color-border);
+    }
+
+    .speaking-item {
+      display: grid;
+      grid-template-columns: 70px 220px 1fr;
+      gap: 1.5rem;
+      align-items: baseline;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .speaking-year {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--color-warm);
+      letter-spacing: 0.05em;
+    }
+
+    .speaking-event {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--color-text);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .speaking-talk {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      line-height: 1.4;
+      color: var(--color-text);
+    }
+
+    .speaking-talk a {
+      color: var(--color-text);
+      border-bottom: 1px solid var(--color-warm);
+    }
+
+    .speaking-talk a:hover {
+      color: var(--color-accent);
+    }
+
+    /* Still Building */
+    .building {
+      background: var(--color-bg-alt);
+      border-top: 1px solid var(--color-border);
+      padding: 4rem 2rem;
+    }
+
+    .building-inner {
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .building-inner p {
+      color: var(--color-text-light);
+      font-size: 1.05rem;
+      line-height: 1.8;
+    }
+
+    .building-inner a {
+      font-weight: 500;
+      border-bottom: 1px solid var(--color-warm);
     }
 
     /* Contact Section */
@@ -711,6 +808,20 @@
       .timeline-item::before {
         left: -1.5rem;
       }
+
+      .speaking-item {
+        grid-template-columns: 1fr;
+        gap: 0.2rem;
+        padding: 0.875rem 0;
+      }
+
+      .speaking, .building {
+        padding: 3.5rem 1.25rem;
+      }
+
+      .speaking-talk {
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
@@ -721,6 +832,7 @@
     <a href="#" class="nav-name">Kevin Quigley</a>
     <div class="nav-links">
       <a href="#press">Press</a>
+      <a href="#speaking">Speaking</a>
       <a href="#journey">Journey</a>
       <a href="#contact">Contact</a>
     </div>
@@ -733,7 +845,7 @@
       <img src="img/profile.jpg" alt="Kevin Quigley" class="hero-headshot" onerror="this.style.display='none'">
       <div class="hero-name-block">
         <div class="hero-name">Kevin Quigley</div>
-        <div class="hero-title">AI Product Director</div>
+        <div class="hero-title">Director, AI COE Product</div>
       </div>
     </div>
 
@@ -781,6 +893,16 @@
       <div class="section-label">Recognition</div>
       <h2>Press</h2>
       <div class="press-grid">
+      <div class="press-card press-card-featured">
+        <span class="press-card-tag">Featured — April 2025</span>
+        <img src="img/salesforce.svg" alt="Salesforce" class="press-card-logo">
+        <h3>The Agentic Maturity Model: A 4-Step Roadmap for CIOs</h3>
+        <p>Featured in Salesforce News on how enterprises progress through the agentic era — highlighting Wiley's approach.</p>
+        <a href="https://www.salesforce.com/news/stories/agentic-maturity-model/" target="_blank" class="press-card-link">
+          Read Article
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+        </a>
+      </div>
       <div class="press-card">
         <img src="img/diginomica.webp" alt="Diginomica" class="press-card-logo">
         <h3>AI Productivity Gains</h3>
@@ -822,6 +944,61 @@
     </div>
   </section>
 
+  <!-- Speaking Section -->
+  <section class="speaking" id="speaking">
+    <div class="speaking-inner">
+      <div class="section-label">Platform</div>
+      <h2>Speaking</h2>
+      <div class="speaking-list">
+        <div class="speaking-item">
+          <div class="speaking-year">2024</div>
+          <div class="speaking-event">Dreamforce</div>
+          <div class="speaking-talk"><a href="https://www.youtube.com/watch?v=5cHGtC_hjwE&t=1465s" target="_blank">Agentforce Keynote: Build the Future with AI Agents</a></div>
+        </div>
+        <div class="speaking-item">
+          <div class="speaking-year">2024</div>
+          <div class="speaking-event">Dreamforce</div>
+          <div class="speaking-talk">3 Ways AI Makes Service Frictionless and Fun (×2)</div>
+        </div>
+        <div class="speaking-item">
+          <div class="speaking-year">2024</div>
+          <div class="speaking-event">SOCAP Spring Symposium</div>
+          <div class="speaking-talk">AI in Customer Service</div>
+        </div>
+        <div class="speaking-item">
+          <div class="speaking-year">2024</div>
+          <div class="speaking-event">World Tour NYC</div>
+          <div class="speaking-talk"><a href="https://reg.salesforce.com/flow/plus/wtnyc24apr/sessioncatalog/page/Catalog?search=quigley" target="_blank">Salesforce Today: Put CRM + AI + Data + Trust to Work</a></div>
+        </div>
+        <div class="speaking-item">
+          <div class="speaking-year">2024</div>
+          <div class="speaking-event">World Tour NYC</div>
+          <div class="speaking-talk"><a href="https://reg.salesforce.com/flow/plus/wtnyc24apr/sessioncatalog/page/Catalog?search=quigley" target="_blank">Your Guide to Become a Salesforce Expert</a></div>
+        </div>
+        <div class="speaking-item">
+          <div class="speaking-year">2023</div>
+          <div class="speaking-event">Salesforce Webinar</div>
+          <div class="speaking-talk">The Next Frontier of Customer Service: Generative AI</div>
+        </div>
+        <div class="speaking-item">
+          <div class="speaking-year">2022</div>
+          <div class="speaking-event">World Tour NYC</div>
+          <div class="speaking-talk">Scale Service and Reduce Costs with Automation and AI</div>
+        </div>
+        <div class="speaking-item">
+          <div class="speaking-year">2022</div>
+          <div class="speaking-event">Dreamforce</div>
+          <div class="speaking-talk"><a href="https://reg.salesforce.com/flow/plus/dreamforce22/maincontentcatalog/page/Catalog/session/1657297469645001tRxy" target="_blank">Unlocking the Power of Conversational AI and Automation</a></div>
+        </div>
+        <div class="speaking-item">
+          <div class="speaking-year">2022</div>
+          <div class="speaking-event">Dreamforce</div>
+          <div class="speaking-talk"><a href="https://reg.salesforce.com/flow/plus/dreamforce22/maincontentcatalog/page/Catalog/session/1656082501360001w39t" target="_blank">Smarter, More Proactive Service with Service Cloud Einstein</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Journey Section -->
   <section class="journey" id="journey">
     <div class="journey-inner">
@@ -832,8 +1009,13 @@
       <div class="timeline">
         <div class="timeline-item highlight">
           <div class="timeline-year">Present</div>
-          <div class="timeline-title">AI Center of Excellence</div>
-          <div class="timeline-desc">Leading executive transformation priorities leveraging agentic systems.</div>
+          <div class="timeline-title">Director, AI COE Product</div>
+          <div class="timeline-desc">Leading a hybrid AI product and solutions team within Wiley's AI Center of Excellence. Driving a cross-functional roadmap co-sponsored by the CFO, CTO/COO, and CPO — including agentic systems for multiple departments — with ELT-approved priority initiatives. Co-established the COE's structure and operating model.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2025</div>
+          <div class="timeline-title">Flow Lab & Productivity Solutions</div>
+          <div class="timeline-desc">Built a global team under Process Excellence, launched the Flow Lab to prototype emerging methods, and deployed AI agents and automation solutions to production.</div>
         </div>
         <div class="timeline-item">
           <div class="timeline-year">2024</div>
@@ -860,6 +1042,14 @@
           <div class="timeline-title">Joined Wiley</div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Still Building -->
+  <section class="building" id="building">
+    <div class="building-inner">
+      <div class="section-label">Still Building</div>
+      <p>As my career evolved, my passion for engineering never stopped. Most recently, I created <a href="https://kevinquigley.net/forage" target="_blank">Forage</a>, a daily word game with its own progression system, deterministic puzzle generation, and analytics.</p>
     </div>
   </section>
 
@@ -974,7 +1164,7 @@ CS Technology Analyst | Oct 2016–Jun 2019
 - Eagle Scout
 
 === PERSONAL PROJECTS ===
-Kevin builds side projects in his spare time, focusing on web development and AI. He was president of the Stevens Game Development Club and founded a small game studio (Shower Thoughts Development) during college.
+Kevin builds side projects in his spare time, focusing on web development, games, and AI. He often designs and ships single-file HTML games end to end — no build step, vanilla JS. Current projects include a family of daily word puzzle games: Forage (a daily 5x5 word-hunt game at kevinquigley.net/forage with an 11-tier progression system) and Chains. He was president of the Stevens Game Development Club and founded a small game studio (Shower Thoughts Development) during college.
 
 === NARRATIVE GUIDANCE ===
 When describing Kevin's career arc:
