@@ -1047,6 +1047,23 @@ function buildShareText(){
   return `FORAGE #${rec.puzzleNo}\n${headline}\n\nWords by length:\n${hist}\n${countLine}\n${longLine}\n\nkevinquigley.net/forage`;
 }
 
+// Personal export (not the social share): the player's own found words,
+// grouped by length, alphabetised within each group. The "— my words"
+// header carries spoiler context so a pasted list never reads as the
+// spoiler-free social share.
+function buildWordListText(){
+  const rec = game.record;
+  const groups = {};
+  for (const w of rec.words){ (groups[w.length] = groups[w.length] || []).push(w); }
+  const lengths = Object.keys(groups).map(Number).sort((a,b)=> a-b);
+  let body = '';
+  for (const L of lengths){
+    const line = groups[L].slice().sort().join(', ');
+    body += `${L}: ${line}\n`;
+  }
+  return `FORAGE #${rec.puzzleNo} \u2014 my words (${rec.words.length})\n\n${body}`;
+}
+
 function openShare(){
   const rec = game.record;
   const tier = game.thresholds[currentTierIndex(rec.score)];
@@ -1066,11 +1083,22 @@ function openShare(){
         Share result
       </button>
     </div>
+    ${rec.words.length ? `<div class="controls" style="margin-top:9px;">
+      <button class="btn btn-clear" id="copyWords">Copy found words</button>
+    </div>` : ''}
     <div class="next-timer">Next board in <b class="timer">--:--:--</b></div>
   `;
   el.shareModal.querySelector('#sharePre').textContent = text;
   el.shareModal.querySelector('[data-close]').addEventListener('click', ()=> closeOverlay('shareOverlay'));
   el.shareModal.querySelector('#doShare').addEventListener('click', ()=> doShare(text));
+  const copyWordsBtn = el.shareModal.querySelector('#copyWords');
+  if (copyWordsBtn){
+    copyWordsBtn.addEventListener('click', ()=> {
+      // Always copy (never the native share sheet) — this is a personal export.
+      fallbackCopy(buildWordListText());
+      gtag('event', 'forage_copy_words', { tier: tier.key, board_id: rec.dateKey, puzzle_no: rec.puzzleNo, score: rec.score, words: rec.words.length });
+    });
+  }
   openOverlay('shareOverlay');
   updateTimers();
 }
