@@ -191,12 +191,14 @@ body{
 .stat-box{background:var(--bg-slot);border-radius:13px;padding:11px 4px;text-align:center;}
 .stat-box .v{font-family:'Fraunces',serif;font-weight:700;font-size:1.45rem;color:var(--text);}
 .stat-box .l{font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-faint);margin-top:3px;font-weight:600;}
-.dist{display:flex;flex-direction:column;gap:6px;margin-top:6px;}
-.dist-row{display:flex;align-items:center;gap:8px;font-size:.8rem;}
-.dist-row .k{width:60px;flex-shrink:0;color:var(--text-dim);font-weight:600;text-align:right;}
-.dist-row .bar-wrap{flex:1;background:var(--dist-track);border-radius:6px;height:22px;overflow:hidden;}
-.dist-row .bar{height:100%;min-width:24px;background:var(--accent);border-radius:6px;display:flex;align-items:center;
-  justify-content:flex-end;padding-right:7px;color:var(--dist-text);font-weight:700;font-size:.72rem;transition:width .5s ease;}
+.dist{display:flex;flex-direction:column;gap:10px;margin-top:8px;}
+.dist-row{display:flex;flex-direction:column;gap:4px;}
+.dist-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
+.dist-head .k{font-size:.82rem;color:var(--text-dim);font-weight:600;}
+.dist-head .ct{font-family:'Fraunces',serif;font-weight:700;font-size:.92rem;color:var(--text);font-variant-numeric:tabular-nums;}
+.dist-row.zero .k,.dist-row.zero .ct{color:var(--text-faint);}
+.dist-row .bar-wrap{width:100%;background:var(--dist-track);border-radius:5px;height:8px;overflow:hidden;}
+.dist-row .bar{height:100%;background:var(--accent);border-radius:5px;transition:width .5s ease;}
 .next-timer{text-align:center;font-size:.82rem;color:var(--text-dim);margin-top:16px;font-weight:500;}
 .next-timer b{font-family:'Fraunces',serif;color:var(--text);font-weight:700;letter-spacing:.04em;}
 .share-block{margin-top:16px;}
@@ -985,14 +987,16 @@ function openStats(){
   const maxC = Math.max(1, ...Object.values(tc));
   const bestTier = s.bestTier ? game.thresholds.find(t => t.key === s.bestTier) : null;
 
-  // Rows for milestone tiers (Bronze+) or any tier actually reached, highest first.
-  const distRows = TIERS.slice(1)
-    .filter(t => CELEBRATE_TIERS.includes(t.key) || (tc[t.key] || 0) > 0)
-    .slice().reverse()
+  // Every earnable tier (Forager → Forage Master), highest first. Scout stays
+  // out — it's the frac:0 base state, not an earned tier. Showing the full
+  // ladder (including tiers never reached) removes the old "some zeros show,
+  // some hide" ambiguity and turns the empty lower tiers into a quiet
+  // "never finished this low" signal.
+  const distRows = TIERS.slice(1).reverse()
     .map(t => {
       const c = tc[t.key] || 0;
-      const w = Math.max(10, (c/maxC)*100);
-      return `<div class="dist-row"><span class="k">${t.leaf} ${t.name}</span><div class="bar-wrap"><div class="bar" style="width:${w}%">${c}</div></div></div>`;
+      const w = c > 0 ? Math.max(5, (c/maxC)*100) : 0;
+      return `<div class="dist-row${c===0?' zero':''}"><div class="dist-head"><span class="k">${t.leaf} ${t.name}</span><span class="ct">${c}</span></div><div class="bar-wrap"><div class="bar" style="width:${w}%"></div></div></div>`;
     }).join('');
 
   el.statsModal.innerHTML = `
