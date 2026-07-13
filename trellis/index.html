@@ -24,6 +24,7 @@
   --berry:#9A4034;--gold:#C08A2E;
   --tile-bg:#F5E9CF;--tile-bg-2:#EAD8B4;--tile-border:#CBB587;--tile-text:#4A3D28;
   --tile-shadow:rgba(90,66,26,.22);
+  --tile-hi:.10;--slot-alpha:.5;--rack-alpha:.42;   /* light: warm shadow works, so keep the wood gradient */
   --line:#3E8B6A;--glow:rgba(62,139,106,.35);
   --modal-bg:#FFFDF7;--overlay-bg:rgba(46,42,32,.45);
   --toast-bg:#2E2A20;--toast-text:#F4EFE4;
@@ -31,12 +32,17 @@
   --shadow-sm:0 1px 3px rgba(60,50,30,.07);--shadow-md:0 6px 22px rgba(60,50,30,.10);--shadow-lg:0 14px 44px rgba(60,50,30,.16);
 }
 [data-theme="dark"]{
-  --bg:#15170F;--bg-2:#1B1E13;--bg-raised:#222518;--bg-slot:#2A2E1D;
-  --border:#343825;--text:#E9E6D6;--text-dim:#9A9778;--text-faint:#666347;
+  --bg:#12140D;--bg-2:#181B11;--bg-raised:#1E2116;--bg-slot:#2C3220;
+  --border:#3C4229;--text:#E9E6D6;--text-dim:#9A9778;--text-faint:#666347;
   --accent:#6FC79A;--accent-deep:#8FD9B4;--accent-soft:#1E3328;
   --berry:#D2685A;--gold:#D9AF55;
-  --tile-bg:#3A3320;--tile-bg-2:#2E2917;--tile-border:#554A2E;--tile-text:#EAD9B0;
-  --tile-shadow:rgba(0,0,0,.45);
+  --tile-bg:#4E442A;--tile-bg-2:#4E442A;--tile-border:#6E603A;--tile-text:#F2E4BE;
+  --tile-shadow:rgba(0,0,0,.55);
+  /* Dark mode has no working shadow channel — black shadow on a near-black board is nothing.
+     So elevation is carried by LIGHTNESS instead: tiles sit above the board, cells above that.
+     tile-bg-2 == tile-bg flattens the gradient (a 4/255 delta read as mud, not depth), and
+     --tile-hi:0 kills the 3.5% white wash. Both stay ON in light mode. */
+  --tile-hi:0;--slot-alpha:1;--rack-alpha:1;
   --line:#6FC79A;--glow:rgba(111,199,154,.4);
   --modal-bg:#1B1E13;--overlay-bg:rgba(8,9,5,.78);
   --toast-bg:#E9E6D6;--toast-text:#15170F;
@@ -701,6 +707,8 @@ function readPalette(){
     raised:g('--bg-raised'), slot:g('--bg-slot'), border:g('--border'),
     tileBg:g('--tile-bg'), tileBg2:g('--tile-bg-2'), tileBorder:g('--tile-border'),
     tileText:g('--tile-text'), tileShadow:g('--tile-shadow'),
+    tileHi:parseFloat(g('--tile-hi'))||0,
+    slotAlpha:parseFloat(g('--slot-alpha'))||1, rackAlpha:parseFloat(g('--rack-alpha'))||1,
     accent:g('--accent'), accentDeep:g('--accent-deep'), accentSoft:g('--accent-soft'),
     warn:g('--berry'), textFaint:g('--text-faint'), glow:g('--glow')
   };
@@ -828,7 +836,9 @@ function drawTile(x,y,s,letter,opts){
   roundRect(x+ctx.lineWidth/2, y+ctx.lineWidth/2, s-ctx.lineWidth, s-ctx.lineWidth, r); ctx.stroke();
 
   // top highlight (wooden warmth), scaled by depth — vanishes when flat
-  const hi = lifted ? 0.14 : 0.10*depth;
+  // Pickup highlight is kept at 0.14 in BOTH themes on purpose: the lift shadow is invisible
+  // in dark, so this white wash is the only thing left saying "this tile is in your hand."
+  const hi = lifted ? 0.14 : PAL.tileHi*depth;
   if (hi > 0.004){
     ctx.save(); roundRect(x,y,s,s,r); ctx.clip();
     ctx.fillStyle = `rgba(255,255,255,${hi})`; ctx.fillRect(x, y, s, s*0.4); ctx.restore();
@@ -848,12 +858,12 @@ function draw(ts){
   for (let r=0;r<game.box.h;r++) for (let c=0;c<game.box.w;c++){
     const rc = cellRect(r,c);
     roundRect(rc.x+1.5, rc.y+1.5, rc.s-3, rc.s-3, Math.max(4, cell*0.13));
-    ctx.fillStyle = PAL.slot; ctx.globalAlpha = 0.5; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.fillStyle = PAL.slot; ctx.globalAlpha = PAL.slotAlpha; ctx.fill(); ctx.globalAlpha = 1;
   }
   // rack tray (hidden once the day is complete — the board becomes the trophy)
   if (!game.fullVine){
     roundRect(PAD*0.5, rackTop-2, W-PAD, rackH+4, 14);
-    ctx.fillStyle = PAL.slot; ctx.globalAlpha = 0.42; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.fillStyle = PAL.slot; ctx.globalAlpha = PAL.rackAlpha; ctx.fill(); ctx.globalAlpha = 1;
   }
 
   // drag placement highlight (drawn under floating tiles)
