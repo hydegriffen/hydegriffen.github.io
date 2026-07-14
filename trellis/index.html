@@ -18,13 +18,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Spline+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root,[data-theme="light"]{
-  --bg:#F4EFE4;--bg-2:#EFE8D8;--bg-raised:#FFFDF7;--bg-slot:#E7DEC9;
+  --bg:#F4EFE4;--bg-2:#EFE8D8;--bg-raised:#FFFDF7;--bg-slot:#E2DAC5;
+  --board-bg:#F1EBDC;   /* the MAT. Scoped to .board-wrap only — cards stay --bg-raised. */
   --border:#DAD0B8;--text:#2E2A20;--text-dim:#7B7259;--text-faint:#ADA488;
   --accent:#3E8B6A;--accent-deep:#2C6A50;--accent-soft:#DBEAE1;
   --berry:#9A4034;--gold:#C08A2E;
-  --tile-bg:#F5E9CF;--tile-bg-2:#EAD8B4;--tile-border:#CBB587;--tile-text:#4A3D28;
-  --tile-shadow:rgba(90,66,26,.22);
-  --tile-hi:.10;--slot-alpha:.5;--rack-alpha:.42;   /* light: warm shadow works, so keep the wood gradient */
+  /* PLASTIC, not wood. Bananagrams tiles are pale ivory — which makes the tile LIGHTER than
+     the mat it sits on, matching FORAGE/CHAINS where the interactive object is the brightest
+     thing on screen. The old tan-on-white inverted that: tiles receded INTO the board. */
+  --tile-bg:#FFFCF3;--tile-bg-2:#F7F1E1;--tile-border:#D9CDAE;--tile-text:#3A3220;
+  --tile-shadow:rgba(90,66,26,.20);
+  --tile-hi:.05;--tile-lift-hi:0;--slot-alpha:1;--rack-alpha:.70;   /* light: the lift SHADOW carries pickup (cream mat), so no wash needed */
   --line:#3E8B6A;--glow:rgba(62,139,106,.35);
   --modal-bg:#FFFDF7;--overlay-bg:rgba(46,42,32,.45);
   --toast-bg:#2E2A20;--toast-text:#F4EFE4;
@@ -32,7 +36,8 @@
   --shadow-sm:0 1px 3px rgba(60,50,30,.07);--shadow-md:0 6px 22px rgba(60,50,30,.10);--shadow-lg:0 14px 44px rgba(60,50,30,.16);
 }
 [data-theme="dark"]{
-  --bg:#12140D;--bg-2:#181B11;--bg-raised:#1E2116;--bg-slot:#2C3220;
+  --bg:#12140D;--bg-2:#181B11;--bg-raised:#222518;--bg-slot:#2F3623;
+  --board-bg:#1E2116;   /* mat sits BELOW the cards — same rule as light */
   --border:#3C4229;--text:#E9E6D6;--text-dim:#9A9778;--text-faint:#666347;
   --accent:#6FC79A;--accent-deep:#8FD9B4;--accent-soft:#1E3328;
   --berry:#D2685A;--gold:#D9AF55;
@@ -42,7 +47,7 @@
      So elevation is carried by LIGHTNESS instead: tiles sit above the board, cells above that.
      tile-bg-2 == tile-bg flattens the gradient (a 4/255 delta read as mud, not depth), and
      --tile-hi:0 kills the 3.5% white wash. Both stay ON in light mode. */
-  --tile-hi:0;--slot-alpha:1;--rack-alpha:1;
+  --tile-hi:0;--tile-lift-hi:.10;--slot-alpha:1;--rack-alpha:.70;   /* dark: shadow is invisible, so pickup = a uniform BRIGHTEN */
   --line:#6FC79A;--glow:rgba(111,199,154,.4);
   --modal-bg:#1B1E13;--overlay-bg:rgba(8,9,5,.78);
   --toast-bg:#E9E6D6;--toast-text:#15170F;
@@ -105,7 +110,7 @@ body{
 .status-msg.bad{color:var(--berry);}
 
 /* Board = single canvas (grid + rack) */
-.board-wrap{flex:1 1 auto;position:relative;min-height:0;background:var(--bg-raised);border:1px solid var(--border);
+.board-wrap{flex:1 1 auto;position:relative;min-height:0;background:var(--board-bg);border:1px solid var(--border);
   border-radius:20px;box-shadow:var(--shadow-md);overflow:hidden;}
 #board{display:block;width:100%;height:100%;touch-action:none;}
 
@@ -261,8 +266,8 @@ body{
     <p class="lead">Each day you get the same set of letter tiles as everyone else. What differs is how you arrange them.</p>
     <ul class="how-list">
       <li><span class="ic">🌱</span><span>Drag every tile from the rack onto the trellis to build one connected crossword. Every set of 2+ connected letters, across or down, must form a real word.</span></li>
-      <li><span class="ic">✓</span><span>When the rack is empty, tap <b>Submit</b>. If the board is valid, the trellis puts out a <b>sprout</b> — a few new tiles land on the rack.</span></li>
-      <li><span class="ic">✋</span><span>Long-press a placed tile to grab its whole <b>word</b> and move it as one piece. Keep holding to grab the <b>whole vine</b> and reposition everything at once. Drag a tile back to the rack to un-plant it.</span></li>
+      <li><span class="ic">✓</span><span>When the rack is empty, tap <b>Submit</b>. If the board is valid, you get a <b>sprout</b> — a few new tiles to work in.</span></li>
+      <li><span class="ic">✋</span><span>Long-press a placed tile to grab its whole <b>word</b>, or keep holding to grab the <b>whole connected vine</b> and reposition everything at once. Drag a tile back to the rack to un-plant it.</span></li>
       <li><span class="ic">🌿</span><span>Work each new sprout into your board and submit again. There are 5 sprouts a day; each one you grow is a point. Stuck? <b>Recall</b> and rebuild. Your board is saved, so come and go all day.</span></li>
     </ul>
   </div>
@@ -699,6 +704,7 @@ function persist(immediate){
 let ctx, dpr = 1;
 let W=0, H=0, cell=0, gridX=0, gridY=0, gridW=0, gridH=0, rackTop=0, rackH=0, rackTileSize=0;
 const PAD = 8;
+const CELL_INSET_FRAC = 0.10;   // empty-cell inset as a fraction of cell size (see draw())
 let PAL = {};
 function readPalette(){
   const cs = getComputedStyle(document.documentElement);
@@ -707,7 +713,7 @@ function readPalette(){
     raised:g('--bg-raised'), slot:g('--bg-slot'), border:g('--border'),
     tileBg:g('--tile-bg'), tileBg2:g('--tile-bg-2'), tileBorder:g('--tile-border'),
     tileText:g('--tile-text'), tileShadow:g('--tile-shadow'),
-    tileHi:parseFloat(g('--tile-hi'))||0,
+    tileHi:parseFloat(g('--tile-hi'))||0, tileLiftHi:parseFloat(g('--tile-lift-hi'))||0,
     slotAlpha:parseFloat(g('--slot-alpha'))||1, rackAlpha:parseFloat(g('--rack-alpha'))||1,
     accent:g('--accent'), accentDeep:g('--accent-deep'), accentSoft:g('--accent-soft'),
     warn:g('--berry'), textFaint:g('--text-faint'), glow:g('--glow')
@@ -722,46 +728,96 @@ function setupCanvas(){
   if (window.visualViewport) window.visualViewport.addEventListener('resize', ()=>{ layout(); requestDraw(); });
   requestDraw();
 }
+const RACK_GAP = 6;        // between rack tiles
+const RESERVE_ROWS = 2;    // rack rows reserved when sizing the board (see planLayout)
+// Rack tiles are FULL board-cell size and shrink ONLY when they physically must (a 22-tile
+// Recall). A permanent 70% scale was tried and REVERTED: it optimised a state that lasts
+// seconds and degraded the state that lasts the whole game. Shrink-on-demand is correct.
+const RACK_INNER_PAD = 6;  // inside the rack tray, above/below the tiles
+
+/* Pure geometry — no DOM, so `layout.js` can test it at real device sizes.
+   jsdom returns a 0x0 boardWrap rect, so nothing else exercises this code. */
+function planLayout(W, H, cols, rows, nRack, nTotal, fullVine){
+  // Reserve TWO rack rows, not the worst case. A full Recall (22 tiles) needs three — but
+  // reserving three made the grid HEIGHT-limited, so it shrank and wasted device width every
+  // single day for a state that lasts seconds. At capacity the rack shrinks its tiles instead.
+  // The reserve is a CONSTANT, which is what keeps `cell` fixed all day (no board reflow).
+  const cw = (W - PAD*2) / cols;
+  // Everything that lives BELOW the board: the rows themselves, their gaps, the tray's inner
+  // padding, the PAD gap above the tray, and the bottom margin. The old reserve counted only
+  // the first three, so the tray came up ~24px short of two full-size rows — and layoutRack
+  // "fixed" that by shrinking the tiles. Pay for the whole thing up front instead.
+  const reserve = fullVine ? 0
+    : RESERVE_ROWS*cw + (RESERVE_ROWS-1)*RACK_GAP + RACK_INNER_PAD*2 + PAD + cw*CELL_INSET_FRAC;
+
+  const ch = (H - PAD*2 - reserve) / rows;
+  const cell = Math.max(22, Math.floor(Math.min(cw, ch)));
+  const gridW = cell*cols, gridH = cell*rows;
+  const gridX = Math.round((W - gridW)/2);
+
+  if (fullVine) return { cell, gridW, gridH, gridX, gridY: Math.round((H-gridH)/2),
+                         rackTop: H, rackH: 0, trayX: gridX, trayW: gridW, rackMax: 0 };
+
+  const gridY = PAD;
+  // Pack the rack inside the TRAY (gridW), never the canvas. layoutRack used to pack into
+  // W - PAD*2; whenever the grid wasn't width-limited that was WIDER than the tray, so rack
+  // rows visibly hung off both ends of their own tray.
+  const rackMax = cell;   // a rack tile is a board tile until the tray runs out of room
+  const perRow = Math.max(1, Math.floor((gridW + RACK_GAP) / (rackMax + RACK_GAP)));
+  const liveRows = Math.max(1, Math.ceil(Math.max(nRack,1) / perRow));
+  const wantH = liveRows*rackMax + (liveRows-1)*RACK_GAP + RACK_INNER_PAD*2;
+
+  const margin = PAD + Math.round(cell*CELL_INSET_FRAC);   // matches the grid's optical top margin
+  const roomBelowBoard = H - margin - (gridY + gridH + PAD);
+  const oneRow = rackMax + RACK_INNER_PAD*2;
+  const rackH = Math.max(Math.min(oneRow, roomBelowBoard), Math.min(wantH, roomBelowBoard));
+  const rackTop = H - margin - rackH;
+  return { cell, gridW, gridH, gridX, gridY, rackTop, rackH, trayX: gridX, trayW: gridW, rackMax };
+}
+
+// Every tile the day will ever have: the start rack plus one batch per sprout. Knowable at
+// setup, so nothing downstream ever depends on how many tiles have been DEALT so far.
+function maxTiles(){ return game.startTiles.length + N_SPROUTS*SPROUT_SIZE; }
+
 function layout(){
   const rect = el.boardWrap.getBoundingClientRect();
   W = Math.max(1, rect.width); H = Math.max(1, rect.height);
   el.board.width = Math.round(W*dpr); el.board.height = Math.round(H*dpr);
   el.board.style.width = W+'px'; el.board.style.height = H+'px';
   ctx.setTransform(dpr,0,0,dpr,0,0);
-  const cols = game.box.w, rows = game.box.h;
-  // reserve enough rack height for wrapped rows once the tile count grows;
-  // on a completed day the rack is gone, so the trophy board takes the whole panel
   const nRack = game.tiles.filter(t=>!t.onGrid).length;
-  const rackRows = nRack > 12 ? 2 : 1;
-  const rackReserve = game.fullVine ? 0
-    : Math.max(58, Math.min(H*0.30, H*0.19 * rackRows + (rackRows>1 ? 10 : 0)));
-  const cw = (W - PAD*2) / cols;
-  const ch = (H - PAD*2 - rackReserve) / rows;
-  cell = Math.max(22, Math.floor(Math.min(cw, ch)));
-  gridW = cell*cols; gridH = cell*rows;
-  gridX = Math.round((W - gridW)/2);
-  if (game.fullVine){
-    gridY = Math.round((H - gridH)/2);          // trophy sits centred in the panel
-    rackTop = H; rackH = 0;                      // no rack
-  } else {
-    gridY = PAD;
-    rackTop = gridY + gridH + PAD;
-    rackH = Math.max(40, H - rackTop - PAD);
-  }
+  const L = planLayout(W, H, game.box.w, game.box.h, nRack, maxTiles(), game.fullVine);
+  cell=L.cell; gridW=L.gridW; gridH=L.gridH; gridX=L.gridX; gridY=L.gridY;
+  rackTop=L.rackTop; rackH=L.rackH;
   layoutRack();
 }
 function layoutRack(){
+  // The tray follows the rack population. layout() only runs on setup / resize / sprout —
+  // a RECALL (3 -> 13 tiles) went through here alone, leaving rackH sized for the OLD count,
+  // so the fit loop crammed 13 tiles into a one-row tray by shrinking them to 18px.
+  // Count tiles in hand (isDragging) too: otherwise the tray would shrink the instant you
+  // lift a tile out of a full rack, jumping under your finger mid-drag.
+  if (W > 1 && H > 1){
+    const nAll = game.tiles.filter(t => !t.onGrid).length;
+    const L = planLayout(W, H, game.box.w, game.box.h, nAll, maxTiles(), game.fullVine);
+    rackTop = L.rackTop; rackH = L.rackH;
+  }
   const tiles = rackTiles().filter(t => !isDragging(t.id));
   const n = tiles.length;
   rackSlots = [];
   if (n === 0 || game.fullVine || rackH <= 0){ rackTileSize = cell; return; }
-  const gap = 6;
-  const availW = W - PAD*2;
-  const availH = rackH - 6;
-  // Choose the LARGEST tile size that fits all n tiles inside the rack box,
-  // wrapping onto as many rows as needed. Never exceeds board cell size.
-  let best = { size: 18, rows: 1, perRow: n };
-  for (let size = Math.floor(Math.min(cell, availH)); size >= 18; size--){
+  const gap = RACK_GAP;
+  const availW = cell*game.box.w;          // the TRAY, not the canvas
+  const availH = rackH - RACK_INNER_PAD*2;
+  // Largest tile that fits all n tiles inside the tray, wrapping as needed. Capped at
+  // RACK_TILE_SCALE of a board cell — a tile in hand is smaller than a tile on the board.
+  // The old fallback was `{size:18, rows:1, perRow:n}`, which ASSUMED n tiles fit in one row;
+  // when they didn't, the rack overflowed its own tray. Pack the fallback by width instead.
+  const capSize = cell;    // full board-cell size; the loop shrinks only if it has to
+  const floorSize = 12;
+  let best = (()=>{ const s=floorSize, pr=Math.max(1, Math.floor((availW+gap)/(s+gap)));
+                    return { size:s, rows:Math.ceil(n/pr), perRow:pr }; })();
+  for (let size = Math.floor(Math.min(capSize, availH)); size >= floorSize; size--){
     const perRow = Math.max(1, Math.floor((availW + gap) / (size + gap)));
     const rows = Math.ceil(n / perRow);
     const needH = rows*size + (rows-1)*gap;
@@ -776,7 +832,7 @@ function layoutRack(){
     const count = Math.min(perRow, n - start);
     if (count <= 0) break;
     const rowW = count*size + (count-1)*gap;
-    let x = Math.round((W - rowW)/2);
+    let x = Math.round(gridX + (availW - rowW)/2);   // centred in the tray
     const y = y0 + r*(size+gap);
     for (let i=0; i<count; i++){
       rackSlots.push({ id: tiles[start+i].id, x, y, size });
@@ -835,13 +891,19 @@ function drawTile(x,y,s,letter,opts){
   ctx.strokeStyle = opts.selected ? PAL.accent : PAL.tileBorder;
   roundRect(x+ctx.lineWidth/2, y+ctx.lineWidth/2, s-ctx.lineWidth, s-ctx.lineWidth, r); ctx.stroke();
 
-  // top highlight (wooden warmth), scaled by depth — vanishes when flat
-  // Pickup highlight is kept at 0.14 in BOTH themes on purpose: the lift shadow is invisible
-  // in dark, so this white wash is the only thing left saying "this tile is in your hand."
-  const hi = lifted ? 0.14 : PAL.tileHi*depth;
+  // Pickup feedback. NOT a gradient — the old code painted a hard-edged white band across the
+  // top 40% of the tile ("wooden warmth"). The wood is gone, and one hardcoded 0.14 was wrong
+  // in both themes at once: invisible on near-white light tiles, a legible gloss stripe on dark.
+  //   light -> lift SHADOW + 1.06 scale carry it (the cream mat gives the shadow something to
+  //            land on), so --tile-lift-hi is 0.
+  //   dark  -> the shadow is invisible, so pickup is a UNIFORM brighten of the whole tile.
+  // Resting gloss (--tile-hi) stays a top band; it's a whisper in light and 0 in dark.
+  const hi = lifted ? PAL.tileLiftHi : PAL.tileHi * depth;
   if (hi > 0.004){
     ctx.save(); roundRect(x,y,s,s,r); ctx.clip();
-    ctx.fillStyle = `rgba(255,255,255,${hi})`; ctx.fillRect(x, y, s, s*0.4); ctx.restore();
+    ctx.fillStyle = `rgba(255,255,255,${hi})`;
+    ctx.fillRect(x, y, s, lifted ? s : s*0.4);   // lifted = whole tile; resting = top band
+    ctx.restore();
   }
 
   // letter
@@ -854,15 +916,21 @@ function drawTile(x,y,s,letter,opts){
 function draw(ts){
   if (!ctx) return;
   ctx.clearRect(0,0,W,H);
-  // trellis grid (empty cells) — clean rounded slots
+  // Trellis grid (empty cells). Inset ~10% so the cell is SMALLER than a tile: a placed tile
+  // then OVERHANGS its slot and reads as an object resting ON the board, rather than a square
+  // that got filled in. Tone alone (1.36:1) is one channel; the size difference is a second.
+  const CELL_INSET = Math.max(1.5, cell*CELL_INSET_FRAC);
   for (let r=0;r<game.box.h;r++) for (let c=0;c<game.box.w;c++){
     const rc = cellRect(r,c);
-    roundRect(rc.x+1.5, rc.y+1.5, rc.s-3, rc.s-3, Math.max(4, cell*0.13));
+    roundRect(rc.x+CELL_INSET, rc.y+CELL_INSET, rc.s-CELL_INSET*2, rc.s-CELL_INSET*2, Math.max(3, cell*0.10));
     ctx.fillStyle = PAL.slot; ctx.globalAlpha = PAL.slotAlpha; ctx.fill(); ctx.globalAlpha = 1;
   }
-  // rack tray (hidden once the day is complete — the board becomes the trophy)
+  // Rack tray, aligned to the GRID (not the canvas) so the mat reads as one composed object.
+  // NB: the rack HIT region is still the full canvas width below rackTop (see hitEval) — the
+  // drop target stays forgiving on purpose; only the painted tray is narrowed.
+  const trayX = gridX, trayW = cell*game.box.w;
   if (!game.fullVine){
-    roundRect(PAD*0.5, rackTop-2, W-PAD, rackH+4, 14);
+    roundRect(trayX, rackTop, trayW, rackH, 14);
     ctx.fillStyle = PAL.slot; ctx.globalAlpha = PAL.rackAlpha; ctx.fill(); ctx.globalAlpha = 1;
   }
 
@@ -872,13 +940,14 @@ function draw(ts){
       const [r,c] = cellKey.split(',').map(Number);
       if (r<0||c<0||r>=game.box.h||c>=game.box.w) continue;
       const rc = cellRect(r,c);
-      roundRect(rc.x+1.5, rc.y+1.5, rc.s-3, rc.s-3, Math.max(4, cell*0.13));
+      // full cell + tile radius: previews where the TILE lands, not the (smaller) empty slot
+      roundRect(rc.x, rc.y, rc.s, rc.s, Math.max(4, cell*0.16));
       ctx.fillStyle = drag.eval.valid ? PAL.accent : PAL.warn;
       ctx.globalAlpha = 0.28; ctx.fill(); ctx.globalAlpha = 1;
     }
   }
   if (drag && drag.overRack){
-    roundRect(PAD*0.5, rackTop-2, W-PAD, rackH+4, 14);
+    roundRect(trayX, rackTop, trayW, rackH, 14);
     ctx.strokeStyle = PAL.accent; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.7; ctx.stroke(); ctx.globalAlpha = 1;
   }
 
@@ -1347,6 +1416,11 @@ function openStats(){
    Share (§11): silhouette — show structure, hide letters
    ============================================================ */
 function buildSilhouette(){
+  // The GREEN square is the figure — it means "grown", and it's the brand signal in a group
+  // chat. Keep it. The EMPTY square is the ground, so it should recede, and it should follow
+  // the player's theme rather than being a hard black on a cream-and-green game. (Wordle does
+  // exactly this.) White ground in light, black ground in dark.
+  const EMPTY_SQ = getTheme() === 'dark' ? '⬛' : '⬜';
   const cells = gridCells();
   const bb = cells.size ? bboxOf(cells) : { minR:0,minC:0,w:0,h:0 };
   // NOTE: no sprout row, no streak line. The score is already stated in the header, and a
@@ -1355,7 +1429,7 @@ function buildSilhouette(){
   let grid = '';
   if (cells.size){
     for (let r=0;r<bb.h;r++){
-      for (let c=0;c<bb.w;c++){ grid += cells.has(K(r+bb.minR, c+bb.minC)) ? '🟩' : '⬛'; }
+      for (let c=0;c<bb.w;c++){ grid += cells.has(K(r+bb.minR, c+bb.minC)) ? '🟩' : EMPTY_SQ; }
       grid += '\n';
     }
   }
