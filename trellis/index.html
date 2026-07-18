@@ -72,7 +72,7 @@ body{
 [data-theme="dark"] .brand h1{color:var(--accent);}
 .brand .sub{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--text-faint);margin-top:3px;font-weight:600;}
 .head-actions{display:flex;gap:6px;}
-.icon-btn{width:38px;height:38px;border-radius:11px;border:1px solid var(--border);background:var(--bg-raised);color:var(--text-dim);
+.icon-btn{width:38px;height:38px;border-radius:11px;border:1px solid var(--border);background:var(--bg-raised);color:var(--text-dim);touch-action:manipulation;
   display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .15s ease,color .2s;}
 .icon-btn:hover{transform:translateY(-1px);color:var(--accent);}
 .icon-btn:active{transform:translateY(0);}
@@ -120,7 +120,7 @@ body{
 .controls.done #recallBtn,.controls.done #submitBtn{display:none;}
 .controls.done #doneShareBtn{display:flex;flex:1;}
 .btn{flex:1;padding:14px;border:none;border-radius:14px;font-family:'Spline Sans',sans-serif;font-size:1rem;
-  font-weight:700;cursor:pointer;transition:transform .15s ease,opacity .2s;box-shadow:var(--shadow-sm);letter-spacing:.01em;}
+  font-weight:700;cursor:pointer;transition:transform .15s ease,opacity .2s;box-shadow:var(--shadow-sm);letter-spacing:.01em;touch-action:manipulation;}
 .btn-recall{flex:0 0 auto;padding:14px 16px;background:var(--bg-raised);color:var(--text-dim);border:1.5px solid var(--border);}
 .btn-recall:hover:not(:disabled){transform:translateY(-1px);}
 .btn-submit{background:linear-gradient(135deg,var(--accent),var(--accent-deep));color:#fff;}
@@ -1555,6 +1555,11 @@ function setupListeners(){
   el.board.addEventListener('pointerup', onPointerUp);
   el.board.addEventListener('pointercancel', onPointerUp);
   el.board.addEventListener('contextmenu', e => e.preventDefault());
+  // iOS double-tap-zoom guard: the gesture is recognized at the touch layer, which
+  // touch-action:none does not reliably suppress on iOS Safari. Game logic runs
+  // entirely on pointer events, so swallowing touchend here has no side effects.
+  // (Same fix that resolved the identical bug in Forage.)
+  el.board.addEventListener('touchend', e => e.preventDefault(), { passive:false });
   el.submitBtn.addEventListener('click', onSubmit);
   el.recallBtn.addEventListener('click', onRecall);
   el.shareBtn.addEventListener('click', openShare);
