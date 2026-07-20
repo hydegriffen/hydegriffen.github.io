@@ -80,12 +80,9 @@ body{
 
 /* Progress panel (N discrete sprout segments) */
 .prog-panel{background:var(--bg-raised);border:1px solid var(--border);border-radius:16px;padding:11px 14px;box-shadow:var(--shadow-sm);}
-.prog-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
-.prog-name{font-family:'Fraunces',serif;font-weight:700;font-size:1.28rem;display:flex;align-items:center;gap:7px;color:var(--accent-deep);transition:color .3s;}
-[data-theme="dark"] .prog-name{color:var(--accent);}
-.prog-name .leaf{font-size:1.02rem;}
-.prog-score{font-size:.9rem;color:var(--text-dim);font-weight:600;}
-.prog-score b{color:var(--text);font-weight:700;}
+.prog-top{display:flex;align-items:baseline;justify-content:flex-start;gap:10px;}
+.prog-score{font-size:1rem;color:var(--text-dim);font-weight:600;}
+.prog-score b{color:var(--text);font-weight:700;font-size:1.15rem;}
 .seg-track{display:flex;gap:5px;margin-top:10px;}
 .seg{flex:1;height:10px;border-radius:5px;background:var(--bg-slot);position:relative;overflow:hidden;}
 .seg .fill{position:absolute;inset:0;transform:scaleX(0);transform-origin:left;border-radius:5px;
@@ -94,15 +91,12 @@ body{
 .seg.pending{box-shadow:0 0 0 2px var(--accent) inset;background:transparent;}
 .seg.pending.arrive{animation:segPop .55s cubic-bezier(.22,1,.36,1);}
 @keyframes segPop{0%{transform:scale(1);}35%{transform:scale(1.14);box-shadow:0 0 0 3px var(--accent) inset,0 0 10px var(--glow);}100%{transform:scale(1);}}
-.leaf.germinate{display:inline-block;animation:germ .7s cubic-bezier(.22,1,.36,1);}
+.germinate{display:inline-block;animation:germ .7s cubic-bezier(.22,1,.36,1);}
 @keyframes germ{0%{transform:scale(1) rotate(0);}30%{transform:scale(1.4) rotate(-9deg);}60%{transform:scale(1.15) rotate(6deg);}100%{transform:scale(1) rotate(0);}}
-.prog-hint{margin-top:8px;font-size:.78rem;color:var(--text-dim);text-align:center;font-weight:500;min-height:1em;}
-.prog-hint b{color:var(--accent);font-weight:700;}
 
-/* Status / feedback line */
-.status{background:var(--bg-raised);border:1px solid var(--border);border-radius:16px;min-height:46px;flex:0 0 auto;
-  display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;padding:6px 14px;text-align:center;}
-.status.shake{animation:shake .42s ease;}
+/* Feedback line (absorbed the old status card) */
+.prog-status{margin-top:9px;min-height:1.25em;display:flex;align-items:center;justify-content:center;text-align:center;}
+.prog-status.shake{animation:shake .42s ease;}
 @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-7px);}40%{transform:translateX(7px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
 .status-msg{font-size:.92rem;font-weight:600;color:var(--text-dim);line-height:1.3;}
 .status-msg.ok{color:var(--accent-deep);}
@@ -230,15 +224,12 @@ body{
 
   <div class="prog-panel">
     <div class="prog-top">
-      <div class="prog-name"><span class="leaf" id="vineLeaf">🌱</span><span id="vineName">Seedling</span></div>
-      <div class="prog-score"><b id="scoreNum">0</b><span id="scoreDenom"> / 5 sprouts</span></div>
+      <div class="prog-score"><b id="scoreNum">0</b><span id="scoreDenom"> / 5 sprouts completed</span></div>
     </div>
     <div class="seg-track" id="segTrack"></div>
-    <div class="prog-hint" id="progHint">Arrange the tiles to begin</div>
-  </div>
-
-  <div class="status" id="status">
-    <span class="status-msg" id="statusMsg">Build a crossword from every tile, then submit.</span>
+    <div class="prog-status" id="status">
+      <span class="status-msg" id="statusMsg">Build one crossword from every tile.</span>
+    </div>
   </div>
 
   <div class="board-wrap" id="boardWrap">
@@ -267,8 +258,8 @@ body{
     <ul class="how-list">
       <li><span class="ic">🌱</span><span>Drag every tile from the rack onto the trellis to build one connected crossword. Every set of 2+ connected letters, across or down, must form a real word.</span></li>
       <li><span class="ic">✓</span><span>When the rack is empty, tap <b>Submit</b>. If the board is valid, you get a <b>sprout</b> — a few new tiles to work in.</span></li>
-      <li><span class="ic">✋</span><span>Long-press a placed tile to grab its whole <b>word</b>, or keep holding to grab the <b>whole connected vine</b> and reposition everything at once. Drag a tile back to the rack to un-plant it.</span></li>
-      <li><span class="ic">🌿</span><span>Work each new sprout into your board and submit again. There are 5 sprouts a day; each one you grow is a point. Stuck? <b>Recall</b> and rebuild. Your board is saved, so come and go all day.</span></li>
+      <li><span class="ic">✋</span><span>Long-press a placed tile to grab its whole <b>word</b>, or keep holding to grab the <b>whole connected vine</b> and reposition everything at once.</span></li>
+      <li><span class="ic">🌿</span><span>Work each new sprout into your board and submit again. There are 5 sprouts a day; each one you complete is a point. Stuck? <b>Recall</b> and rebuild. Your board is saved, so come and go all day.</span></li>
     </ul>
   </div>
 </div>
@@ -591,7 +582,7 @@ function START_TILE_COUNT(){ return game.startTiles.length; }
 /* ---------- DOM cache ---------- */
 const el = {};
 function cache(){
-  ['boardWrap','board','segTrack','scoreNum','scoreDenom','vineName','vineLeaf','progHint',
+  ['boardWrap','board','segTrack','scoreNum','scoreDenom',
    'status','statusMsg','controls','recallBtn','submitBtn','doneShareBtn','shareBtn','helpBtn','statsBtn','themeBtn',
    'toast','confetti','puzzleNo','loader','loaderMsg','helpOverlay','statsOverlay','shareOverlay',
    'statsModal','shareModal','metaTheme'].forEach(id => el[id] = document.getElementById(id));
@@ -1245,7 +1236,7 @@ function updateControls(){
   if (game.fullVine){
     el.submitBtn.disabled = true;   // hidden by CSS, but also inert (keyboard Enter, a11y)
     el.recallBtn.disabled = true;
-    setStatus('Full Vine — all five sprouts grown. 🌿', 'ok');
+    setStatus('Full Vine — a perfect day 🌿', 'ok');
     return;
   }
 
@@ -1254,13 +1245,13 @@ function updateControls(){
   el.recallBtn.disabled = !anyOnGrid;
 
   if (rackEmpty && anyOnGrid && !connected){
-    setStatus('Some tiles are off on their own — connect everything into one crossword.', '');
+    setStatus('Connect all your tiles into one crossword.', '');
   } else if (rackEmpty && connected){
-    setStatus('All tiles placed — submit to check your vine.', '');
+    setStatus('All tiles placed. Submit your vine.', '');
   } else if (remaining > 0){
-    setStatus(`Plant the ${remaining} tile${remaining===1?'':'s'} on your rack, then submit.`, '');
+    setStatus(`Plant the ${remaining} tile${remaining===1?'':'s'} on your rack.`, '');
   } else {
-    setStatus('Build a crossword from every tile, then submit.', '');
+    setStatus('Build one crossword from every tile.', '');
   }
 }
 function setStatus(msg, kind){
@@ -1293,13 +1284,11 @@ function onSubmit(){
     persist(true);
     const s = game.sprouts[game.deliveredCount-1];
     if (firstEver){
-      setStatus(`Seeded! First sprout on your rack: ${s.join(' ')} — work it in.`, 'ok');
-      toast('Seeded 🌱 first sprout is up');
-      el.vineLeaf.classList.add('germinate');
-      setTimeout(()=> el.vineLeaf.classList.remove('germinate'), 750);
+      setStatus(`First sprout: ${s.join(' ')} — work it in.`, 'ok');
+      el.scoreNum.classList.add('germinate');
+      setTimeout(()=> el.scoreNum.classList.remove('germinate'), 750);
     } else {
-      setStatus(`${game.resolvedCount}/${N_SPROUTS} sprouts grown! New sprout: ${s.join(' ')} — work it in.`, 'ok');
-      toast('New sprout 🌱');
+      setStatus(`New sprout: ${s.join(' ')} — work it in.`, 'ok');
     }
     pulseSegment(game.deliveredCount-1);
     requestDraw();
@@ -1313,7 +1302,7 @@ function onSubmit(){
     layout();          // rack is gone → trophy board reclaims the space
     requestDraw();
     launchConfetti();
-    setStatus(`Full Vine! All ${N_SPROUTS} sprouts grown. 🌿`, 'ok');
+    setStatus('Full Vine — a perfect day 🌿', 'ok');
     fireFullVine();
   }
 }
@@ -1334,7 +1323,6 @@ function onRecall(){
   if (el.recallBtn.disabled) return;
   for (const t of game.tiles){ if (t.onGrid){ t.onGrid=false; t.r=null; t.c=null; if(!game.rackOrder.includes(t.id)) game.rackOrder.push(t.id); } }
   layoutRack(); updateControls(); persist(false); requestDraw();
-  toast('Recalled to rack');
 }
 function shakeStatus(msg){
   setStatus(msg, 'bad');
@@ -1345,11 +1333,9 @@ function shakeStatus(msg){
 /* ============================================================
    Progress panel (N discrete sprout segments, §8)
    ============================================================ */
-const VINE_NAMES = ['Seedling','Sprig','Tendril','Climber','Bloom','Full Vine'];
-const VINE_LEAVES = ['🌱','🌿','🍃','🪴','🌸','🌿'];
 function buildSegments(){
   el.segTrack.innerHTML = '';
-  el.scoreDenom.textContent = ` / ${N_SPROUTS} sprouts`;
+  el.scoreDenom.textContent = ` / ${N_SPROUTS} sprouts completed`;
   for (let i=0;i<N_SPROUTS;i++){
     const seg = document.createElement('div'); seg.className='seg';
     const fill = document.createElement('div'); fill.className='fill';
@@ -1358,18 +1344,11 @@ function buildSegments(){
 }
 function renderProgress(initial){
   el.scoreNum.textContent = game.resolvedCount;
-  const idx = Math.min(game.resolvedCount, VINE_NAMES.length-1);
-  el.vineName.textContent = game.fullVine ? 'Full Vine' : VINE_NAMES[idx];
-  el.vineLeaf.textContent = game.fullVine ? '🌿' : VINE_LEAVES[idx];
   const segs = el.segTrack.children;
   for (let i=0;i<segs.length;i++){
     segs[i].classList.toggle('on', i < game.resolvedCount);
     segs[i].classList.toggle('pending', i === game.resolvedCount && game.deliveredCount > game.resolvedCount && !game.fullVine);
   }
-  if (game.fullVine) el.progHint.innerHTML = 'A perfect day — <b>Full Vine</b> 🌿';
-  else if (game.deliveredCount > game.resolvedCount) el.progHint.innerHTML = `Sprout <b>${game.deliveredCount}</b> is on your rack`;
-  else if (game.resolvedCount === 0) el.progHint.textContent = 'Arrange the tiles to begin';
-  else el.progHint.innerHTML = `<b>${game.resolvedCount}</b> of ${N_SPROUTS} sprouts grown`;
 }
 function pulseSegment(i){
   const segs = el.segTrack.children;
@@ -1433,7 +1412,7 @@ function buildSilhouette(){
       grid += '\n';
     }
   }
-  const head = `🌿 TRELLIS #${game.puzzleNo} — ${game.resolvedCount}/${N_SPROUTS} sprouts`;
+  const head = `🌿 TRELLIS #${game.puzzleNo} — ${game.resolvedCount}/${N_SPROUTS} sprouts completed`;
   return `${head}\n${grid ? '\n'+grid+'\n' : ''}kevinquigley.net/trellis`;
 }
 function openShare(){
