@@ -124,16 +124,16 @@ html[data-theme="dark"] .modal h2{color:var(--moss);}
 .rule-ex .mini.hot{border-color:var(--heather); color:var(--heather); background:var(--heather-tint);}
 
 /* reveal */
-.result-line{font-size:17px; font-weight:700; margin:2px 0 10px;}
+.result-line{font-size:17px; font-weight:700; margin:2px 0 12px;}
 .result-line .delta{color:var(--text-dim); font-weight:600;}
-.path-block{margin:10px 0;}
+.path-block{margin:14px 0;}
 .path-block h3{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-dim); margin:0 0 6px; font-weight:700;}
 .path-words{display:flex; flex-wrap:wrap; gap:5px; align-items:center;}
 .path-word{font-size:13.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; background:var(--tile-hist); border:1px solid var(--line); border-radius:7px; padding:4px 8px;}
 .path-word.ep{background:var(--moss-tint); border-color:var(--moss); color:var(--moss-deep);}
 html[data-theme="dark"] .path-word.ep{color:var(--moss);}
 .path-sep{color:var(--text-dim); font-size:12px;}
-.share-pips{font-size:15px; letter-spacing:1px; margin:10px 0 2px; word-break:break-all;}
+.share-pips{font-size:15px; letter-spacing:1px; line-height:1.15; margin:14px 0 4px; word-break:break-all;}
 .btn{width:100%; border:none; border-radius:11px; padding:13px; font-size:16px; font-weight:700; margin-top:10px;}
 .btn-share{background:var(--moss); color:#fff;}
 .btn-quiet{background:var(--tile-hist); color:var(--text); border:1px solid var(--line);}
@@ -812,7 +812,7 @@ function shareText(){
     return r;
   });
   const score = game.solved ? movesUsed()+'/'+BUDGET : 'X/'+BUDGET;
-  return '🥾 RAMBLE #'+puzzleNo+' — '+score+'\n'+rows.join('\n')+'\nkevinquigley.net/ramble';
+  return '🥾 RAMBLE #'+puzzleNo+' — '+score+'\n\n'+rows.join('\n')+'\n\nkevinquigley.net/ramble';
 }
 function doShare(){
   const text=shareText();
@@ -851,7 +851,7 @@ function showReveal(){
     +'<h2>'+(game.solved?'You made it':'End of the ramble')+'</h2>'
     +'<div class="result-line">'+head+'</div>'
     +pathBlock('Your path', game.path)
-    +pathBlock('A scenic route', SCENIC)
+    +pathBlock('A par route', SCENIC)
     +'<div class="share-pips">'+shareTextHtml()+'</div>'
     +'<button class="btn btn-share" id="shareBtn">Share</button>'
     +'<div class="next-line">Next ramble in <b id="nextTimer">--:--:--</b></div>';
@@ -862,7 +862,7 @@ function showReveal(){
 }
 function shareTextHtml(){
   const L=shareText().split('\n');
-  return L.slice(0,-1).join('<br>');   // header + all rows, minus URL
+  return L.slice(0,-2).join('<br>');   // header, blank, grid — URL omitted in preview
 }
 
 /* ---- stats modal ---- */
