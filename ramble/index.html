@@ -87,9 +87,10 @@ html[data-theme="dark"] .row.endrow .tile{color:var(--moss);}
 .board.squeeze2 .row.hist .tile{height:19px; width:19px; font-size:9px; border-radius:4px;}
 .board.squeeze .board-gap,.board.squeeze2 .board-gap{display:none;}
 .board.squeeze .row{gap:4px;} .board.squeeze2 .row{gap:3px;}
-.board.squeeze{gap:4px;} .board.squeeze2{gap:3px;}
+.board.squeeze{gap:4px;} .board.squeeze2{gap:2px;}
 .board.squeeze2 .row.current .tile{width:44px; height:44px; font-size:20px;}
-.board.squeeze2 .row.endpoint .tile,.board.squeeze2 .row.endrow .tile{width:36px; height:36px; font-size:15px;}
+.board.squeeze2 .row.endpoint .tile{width:36px; height:36px; font-size:15px;}
+.board.squeeze2 .row.endrow .tile{width:44px; height:44px; font-size:18px;}
 .row.current .tile{cursor:pointer; box-shadow:var(--shadow);}
 .row.current .tile.sel{border-color:var(--heather); border-width:2.5px;}
 .row.current .tile.pending{background:var(--heather-tint); border-color:var(--heather); color:var(--heather); border-width:2.5px;}
@@ -97,7 +98,15 @@ html[data-theme="dark"] .row.endrow .tile{color:var(--moss);}
 .row.arrive .tile{background:var(--moss-tint); border-color:var(--moss); color:var(--moss-deep); animation:arrive .45s ease;}
 html[data-theme="dark"] .row.arrive .tile{color:var(--moss);}
 @keyframes arrive{0%{transform:translateY(6px); opacity:.3;}100%{transform:translateY(0); opacity:1;}}
-.commit-btns{display:flex; gap:5px; margin-left:7px;}
+.commit-btns{display:flex; gap:5px; position:absolute; left:calc(50% + 110px);}
+.board.squeeze .commit-btns{left:calc(50% + 109px);}
+.board.squeeze2 .commit-btns{left:calc(50% + 100px);}
+@media (max-width:379px){
+  .commit-btns{gap:4px; left:calc(50% + 106px);}
+  .board.squeeze .commit-btns{left:calc(50% + 105px);}
+  .board.squeeze2 .commit-btns{left:calc(50% + 97px);}
+  .commit-btn{width:34px; height:34px; font-size:15px;}
+}
 .commit-btn{width:38px; height:38px; border-radius:9px; border:none; font-size:17px; font-weight:700; display:flex; align-items:center; justify-content:center;}
 .commit-yes{background:var(--moss); color:#fff;}
 .commit-yes:disabled{background:var(--line); color:var(--text-dim);}
