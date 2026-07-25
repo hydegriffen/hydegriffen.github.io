@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Play — daily word puzzles</title>
+<meta name="description" content="Four daily word puzzles. A new one in each, every day.">
+<meta name="theme-color" content="#F4EFE4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- GA4 — shared family property -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DGZKT3KB1J"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DGZKT3KB1J');
+</script>
+
+<style>
+/* ============================================================
+   PLAY — the hub for the daily word puzzles.
+
+   Design rule, enforced throughout: the hub owns no color.
+   Page chrome is paper, ink, and hairlines only. Every
+   saturated pixel on this page belongs to one of the games,
+   carried in via --accent on each card. If you ever find
+   yourself reaching for a hub accent, don't.
+   ============================================================ */
+
+:root{
+  /* paper + ink (neutral; no hue of its own) */
+  --bg:#F4EFE4;
+  --card:#FFFCF5;
+  --line:#DFD6C2;
+  --line-soft:#EBE3D2;
+  --text:#2E2A20;
+  --text-dim:#7B7259;
+  --text-faint:#A79E86;
+  --track:#E7DEC9;
+  --shadow-sm:0 1px 3px rgba(60,50,30,.07);
+  --shadow-md:0 6px 22px rgba(60,50,30,.10);
+  --focus:#2E2A20;
+}
+html[data-theme="dark"]{
+  --bg:#15170F;
+  --card:#1E2117;
+  --line:#3A3F2A;
+  --line-soft:#2C3121;
+  --text:#E9E6D6;
+  --text-dim:#9A9778;
+  --text-faint:#6E6B51;
+  --track:#2A2E1D;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.3);
+  --shadow-md:0 6px 22px rgba(0,0,0,.4);
+  --focus:#E9E6D6;
+}
+
+/* per-game accents — the only color in the building */
+.card[data-game="chains"]  { --accent:#B8860B; --accent-soft:#F0E4C4; }
+.card[data-game="forage"]  { --accent:#5B7A45; --accent-soft:#E3EAD6; }
+.card[data-game="trellis"] { --accent:#3E8B6A; --accent-soft:#DBEAE1; }
+.card[data-game="ramble"]  { --accent:#8B6FA3; --accent-soft:#EFE9F4; }
+html[data-theme="dark"] .card[data-game="chains"]  { --accent:#D4A843; --accent-soft:#3A3220; }
+html[data-theme="dark"] .card[data-game="forage"]  { --accent:#9CC06B; --accent-soft:#2A301B; }
+html[data-theme="dark"] .card[data-game="trellis"] { --accent:#6FC79A; --accent-soft:#1E3328; }
+html[data-theme="dark"] .card[data-game="ramble"]  { --accent:#A78BC4; --accent-soft:#3A3244; }
+
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+[hidden]{display:none !important;}
+html,body{margin:0; padding:0;}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'Spline Sans',system-ui,-apple-system,sans-serif;
+  font-size:16px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  transition:background .3s, color .3s;
+  padding:0 20px env(safe-area-inset-bottom) 20px;
+}
+a{color:inherit; text-decoration:none;}
+:focus-visible{outline:2px solid var(--focus); outline-offset:3px; border-radius:4px;}
+
+.wrap{max-width:760px; margin:0 auto; padding:28px 0 26px;}
+
+/* ---------- header: the date is the hero ---------- */
+.top{display:flex; align-items:flex-start; justify-content:space-between; gap:16px;}
+.date{
+  font-family:'Fraunces',Georgia,serif;
+  font-weight:600; font-size:clamp(30px,7vw,44px);
+  line-height:1.08; letter-spacing:-.015em; margin:0;
+  font-variation-settings:'opsz' 96;
+}
+.date .dow{display:block; color:var(--text-dim); font-weight:400; font-size:.52em; letter-spacing:.02em; margin-bottom:2px;}
+.summary{margin:12px 0 0; font-size:15px; color:var(--text-dim);}
+.summary strong{color:var(--text); font-weight:500;}
+
+.themebtn{
+  flex:none; width:38px; height:38px; margin-top:4px;
+  border:1px solid var(--line); border-radius:10px;
+  background:var(--card); color:var(--text-dim);
+  cursor:pointer; display:grid; place-items:center;
+  transition:border-color .2s, color .2s;
+}
+.themebtn:hover{border-color:var(--text-faint); color:var(--text);}
+.themebtn svg{width:17px; height:17px;}
+
+.rule{height:1px; background:var(--line); margin:20px 0 18px; border:0;}
+/* No summary line — the date needs a touch more room before the rule. */
+.rule.airy{margin-top:26px;}
+
+/* ---------- cards ---------- */
+.grid{display:grid; gap:12px; grid-template-columns:1fr;}
+@media(min-width:640px){ .grid{grid-template-columns:1fr 1fr; gap:16px;} }
+
+.card{
+  position:relative; display:block;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:17px 18px 14px;
+  box-shadow:var(--shadow-sm);
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.card::before{
+  content:''; position:absolute; left:0; top:14px; bottom:14px; width:3px;
+  border-radius:0 3px 3px 0; background:var(--accent);
+}
+.card:hover{transform:translateY(-2px); box-shadow:var(--shadow-md); border-color:var(--accent);}
+.card:active{transform:translateY(0);}
+
+.name{
+  font-family:'Fraunces',Georgia,serif;
+  font-weight:600; font-size:22px; letter-spacing:.01em;
+  margin:0; color:var(--accent);
+  font-variation-settings:'opsz' 48;
+}
+
+/* One text slot under the name. It holds the description for a game you've
+   never played, and today's status once you have. Never both. */
+.line{
+  margin:5px 0 0; font-size:14px; line-height:1.45;
+  color:var(--text-dim); font-variant-numeric:tabular-nums;
+}
+.line.done{color:var(--accent); font-weight:500;}
+
+/* The glyph is present in both states — it's the page's signature, and an
+   empty one teaches a newcomer the shape of the game. */
+.glyph{display:flex; align-items:center; gap:5px; min-height:20px; margin:13px 0 0;}
+
+/* check mark for a finished game */
+.tick{
+  position:absolute; top:16px; right:16px;
+  width:19px; height:19px; border-radius:50%;
+  background:var(--accent); display:none; place-items:center;
+}
+.card.is-done .tick{display:grid;}
+.tick svg{width:11px; height:11px; stroke:var(--card); stroke-width:2.6; fill:none;}
+
+/* --- glyph primitives, each in its game's own vocabulary --- */
+
+/* Chains: three link slots */
+.link-slot{
+  width:26px; height:20px; border-radius:5px;
+  border:1.5px solid var(--track); background:transparent;
+}
+.link-slot.filled{background:var(--accent); border-color:var(--accent);}
+.link-join{width:7px; height:1.5px; background:var(--track); border-radius:2px;}
+.link-join.filled{background:var(--accent);}
+
+/* Forage: a progress bar toward the top tier, with the earned leaf */
+.leaf{font-size:15px; line-height:1; filter:saturate(.9);}
+.bar{flex:1; height:6px; border-radius:4px; background:var(--track); overflow:hidden; max-width:180px;}
+.bar > i{display:block; height:100%; background:var(--accent); border-radius:4px; width:0; transition:width .5s ease;}
+
+/* Trellis: five sprout dots */
+.sprout{width:11px; height:11px; border-radius:50%; border:1.5px solid var(--track); background:transparent;}
+.sprout.filled{background:var(--accent); border-color:var(--accent);}
+
+/* Ramble: twelve waymark pips */
+.pip{width:9px; height:9px; transform:rotate(45deg); border-radius:2px; border:1.5px solid var(--track); background:transparent;}
+.pip.spent{background:var(--accent); border-color:var(--accent);}
+.glyph.pips{gap:4px; flex-wrap:wrap;}
+
+/* ---------- footer ---------- */
+.foot{margin:18px 0 0; text-align:center; font-size:12.5px; color:var(--text-faint); font-variant-numeric:tabular-nums;}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important; animation:none !important;}
+  .card:hover{transform:none;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <h1 class="date"><span class="dow" id="dow">&nbsp;</span><span id="mday">&nbsp;</span></h1>
+      <p class="summary" id="summary">&nbsp;</p>
+    </div>
+    <button class="themebtn" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+      </svg>
+    </button>
+  </header>
+
+  <hr class="rule">
+
+  <main class="grid" id="grid"></main>
+
+  <p class="foot" id="foot">&nbsp;</p>
+
+</div>
+
+<script>
+/* ============================================================
+   PLAY — hub logic.
+
+   Hard rule: this page NEVER writes to a game's storage. It
+   reads, and it reads defensively. The only key it owns is
+   'play_theme'. Any game may bump its schema without warning
+   (Trellis already went v1 -> v2), so every read is wrapped and
+   every failure degrades that one card to its plain state
+   rather than throwing and blanking the page.
+   ============================================================ */
+
+/* ---------- date helpers (must match each game's local-day logic) ----------
+   These are re-derived on every render, not frozen at load, so a page left
+   open across midnight rolls over on its own instead of showing yesterday. */
+const dashKey = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const flatKey = d => `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+let NOW = new Date();
+let TODAY_DASH = dashKey(NOW);   // chains, forage, ramble
+let TODAY_FLAT = flatKey(NOW);   // trellis
+function refreshClock(){
+  NOW = new Date();
+  TODAY_DASH = dashKey(NOW);
+  TODAY_FLAT = flatKey(NOW);
+}
+
+/* ---------- safe storage read ---------- */
+function readJSON(key){
+  try{
+    const raw = localStorage.getItem(key);
+    if(raw === null || raw === undefined) return null;
+    const v = JSON.parse(raw);
+    return (v && typeof v === 'object') ? v : null;
+  }catch(e){ return null; }
+}
+function readRaw(key){
+  try{ return localStorage.getItem(key); }catch(e){ return null; }
+}
+
+/* ---------- theme ----------
+   Own key first. Failing that, take a vote across the four games:
+   if you've chosen dark almost everywhere, open dark here too. */
+const THEME_KEY = 'play_theme';
+const GAME_THEME_KEYS = ['chain_theme','forage_theme','trellis_theme','ramble_theme'];
+
+function initialTheme(){
+  const mine = readRaw(THEME_KEY);
+  if(mine === 'dark' || mine === 'light') return mine;
+  let dark = 0, light = 0;
+  for(const k of GAME_THEME_KEYS){
+    const v = readRaw(k);
+    if(v === 'dark') dark++; else if(v === 'light') light++;
+  }
+  if(dark || light) return dark >= light && dark > 0 ? 'dark' : 'light';
+  try{ return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }catch(e){ return 'light'; }
+}
+let theme = initialTheme();
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  const m = document.querySelector('meta[name="theme-color"]');
+  if(m) m.setAttribute('content', t === 'dark' ? '#15170F' : '#F4EFE4');
+}
+applyTheme(theme);
+document.getElementById('themeBtn').addEventListener('click', () => {
+  theme = theme === 'dark' ? 'light' : 'dark';
+  try{ localStorage.setItem(THEME_KEY, theme); }catch(e){}
+  applyTheme(theme);
+});
+
+/* ---------- per-game readers ----------
+   Each returns { state, label, glyph } where
+     state : 'fresh' | 'active' | 'done'   ('done' = nothing left to do today)
+     label : the status line
+     glyph : a render function for the progress row
+   A reader that hits anything unexpected returns the fresh
+   fallback for its own game and nothing else is affected. */
+
+const el = (tag, cls) => { const n = document.createElement(tag); if(cls) n.className = cls; return n; };
+
+/* Has this person ever played this game, on any day?
+   Deliberately NOT just the stats counter: Chains and Ramble only increment
+   'played' when a day finishes, so someone who has poked at a game three times
+   without completing it still reads as played:0. Each check therefore falls
+   back to looking for real evidence of engagement in the day records. */
+const anyRecord = (store, test) => {
+  if(!store || typeof store !== 'object') return false;
+  for(const k in store){
+    if(!Object.prototype.hasOwnProperty.call(store, k)) continue;
+    const rec = store[k];
+    if(rec && typeof rec === 'object'){ try{ if(test(rec)) return true; }catch(e){} }
+  }
+  return false;
+};
+const statCount = (key, field) => {
+  const s = readJSON(key);
+  const n = s ? s[field] : 0;
+  return Number.isFinite(n) && n > 0;
+};
+
+/* --- CHAINS: chain_game_v2 → { 'YYYY-MM-DD': {solved[5], guessesUsed, won, gameOver} } --- */
+const CHAINS_MAX_GUESSES = 10;
+const CHAINS_HIDDEN = [1,2,3];
+function readChains(){
+  const store = readJSON('chain_game_v2');
+  // chain_stats_v3.played only moves on a win or a loss.
+  const ever = statCount('chain_stats_v3','played')
+            || anyRecord(store, r => r.guessesUsed > 0 || r.won === true || r.gameOver === true);
+  const fresh = { state:'fresh', label:'Not started today', found:0, ever };
+  if(!store) return fresh;
+  const rec = store[TODAY_DASH];
+  if(!rec || typeof rec !== 'object') return fresh;
+
+  const solved = Array.isArray(rec.solved) ? rec.solved : [];
+  const found = CHAINS_HIDDEN.filter(i => solved[i] === true).length;
+  const used = Number.isFinite(rec.guessesUsed) ? rec.guessesUsed : 0;
+
+  if(used === 0 && found === 0) return fresh;
+  if(rec.won === true) return { state:'done', label:`Solved in ${used} ${used===1?'guess':'guesses'}`, found:3, ever:true };
+  if(rec.gameOver === true) return { state:'done', label:`Out of guesses · ${found} of 3 found`, found, ever:true };
+  const left = Math.max(0, CHAINS_MAX_GUESSES - used);
+  return { state:'active', label:`${found} of 3 found · ${left} ${left===1?'guess':'guesses'} left`, found, ever:true };
+}
+function glyphChains(d){
+  const row = el('div','glyph');
+  for(let i=0;i<3;i++){
+    if(i>0){ const j = el('div','link-join'); if(d.found>i) j.classList.add('filled'); row.appendChild(j); }
+    const s = el('div','link-slot'); if(i < d.found) s.classList.add('filled'); row.appendChild(s);
+  }
+  return row;
+}
+
+/* --- FORAGE: forage_game_v1 → { 'YYYY-MM-DD': {score, totalScore, words[], started} } --- */
+const FORAGE_TIERS = [
+  { name:'Scout',        leaf:'🧭', frac:0     },
+  { name:'Forager',      leaf:'🌱', frac:0.01  },
+  { name:'Naturalist',   leaf:'🍃', frac:0.03  },
+  { name:'Ranger',       leaf:'🥾', frac:0.05  },
+  { name:'Trailblazer',  leaf:'🧗', frac:0.075 },
+  { name:'Bronze',       leaf:'🥉', frac:0.10  },
+  { name:'Silver',       leaf:'🥈', frac:0.15  },
+  { name:'Gold',         leaf:'🥇', frac:0.20  },
+  { name:'Platinum',     leaf:'💎', frac:0.30  },
+  { name:'Genius',       leaf:'🦉', frac:0.40  },
+  { name:'Forage Master',leaf:'👑', frac:0.50  }
+];
+const FORAGE_TOP = 0.50;
+function readForage(){
+  const store = readJSON('forage_game_v1');
+  // Forage's aggregate calls the field daysPlayed, not played.
+  // A record is seeded with started:false on load, so presence alone proves nothing.
+  const ever = statCount('forage_stats_v1','daysPlayed')
+            || anyRecord(store, r => r.started === true || (Array.isArray(r.words) && r.words.length > 0));
+  const fresh = { state:'fresh', label:'Not started today', leaf:'🧭', pct:0, ever };
+  if(!store) return fresh;
+  const rec = store[TODAY_DASH];
+  if(!rec || typeof rec !== 'object') return fresh;
+
+  const words = Array.isArray(rec.words) ? rec.words.length : 0;
+  const score = Number.isFinite(rec.score) ? rec.score : 0;
+  const total = Number.isFinite(rec.totalScore) && rec.totalScore > 0 ? rec.totalScore : 0;
+  if(rec.started !== true && words === 0) return fresh;
+
+  const frac = total ? score / total : 0;
+  let tier = FORAGE_TIERS[0];
+  for(const t of FORAGE_TIERS){ if(frac >= t.frac) tier = t; }
+  const pct = Math.max(0, Math.min(100, (frac / FORAGE_TOP) * 100));
+
+  // Forage has no end — it stays open all day. Top tier is the natural stopping point.
+  const maxed = frac >= FORAGE_TOP;
+  return {
+    state: maxed ? 'done' : 'active',
+    label: `${words} ${words===1?'word':'words'} · ${tier.name}`,
+    leaf: tier.leaf,
+    pct,
+    ever: true
+  };
+}
+function glyphForage(d){
+  const row = el('div','glyph');
+  const leaf = el('span','leaf'); leaf.textContent = d.leaf; leaf.setAttribute('aria-hidden','true');
+  const bar = el('div','bar'); const fill = el('i'); bar.appendChild(fill);
+  row.appendChild(leaf); row.appendChild(bar);
+  requestAnimationFrame(() => { fill.style.width = d.pct + '%'; });
+  return row;
+}
+
+/* --- TRELLIS: trellis_game_v2 → { 'YYYYMMDD': {resolvedCount, fullVine, started, completedAt} } --- */
+const TRELLIS_SPROUTS = 5;
+function readTrellis(){
+  const store = readJSON('trellis_game_v2');
+  // Trellis seeds a record with started:false the moment the page opens.
+  const ever = statCount('trellis_stats_v2','played')
+            || anyRecord(store, r => r.started === true || r.resolvedCount > 0);
+  const fresh = { state:'fresh', label:'Not started today', done:0, ever };
+  if(!store) return fresh;
+  const rec = store[TODAY_FLAT];
+  if(!rec || typeof rec !== 'object') return fresh;
+
+  const done = Number.isFinite(rec.resolvedCount) ? Math.max(0, Math.min(TRELLIS_SPROUTS, rec.resolvedCount)) : 0;
+  if(rec.started !== true && done === 0) return fresh;
+
+  if(rec.completedAt || done >= TRELLIS_SPROUTS){
+    return { state:'done', label: rec.fullVine === true ? 'Full Vine' : `${done} of ${TRELLIS_SPROUTS} sprouts completed`, done, ever:true };
+  }
+  return { state:'active', label:`${done} of ${TRELLIS_SPROUTS} sprouts completed`, done, ever:true };
+}
+function glyphTrellis(d){
+  const row = el('div','glyph');
+  for(let i=0;i<TRELLIS_SPROUTS;i++){
+    const s = el('div','sprout'); if(i < d.done) s.classList.add('filled'); row.appendChild(s);
+  }
+  return row;
+}
+
+/* --- RAMBLE: ramble_game_v1 → { day:{date, path[], done, solved}, stats:{} } --- */
+const RAMBLE_BUDGET = 12;
+function readRamble(){
+  const store = readJSON('ramble_game_v1');
+  const day = (store && typeof store.day === 'object') ? store.day : null;
+  const path = (day && Array.isArray(day.path)) ? day.path : [];
+  // Ramble keeps only one day record, so history lives entirely in stats —
+  // and stats.played only moves in finish(). Today's own moves are the fallback.
+  const stats = (store && typeof store.stats === 'object') ? store.stats : null;
+  const ever = !!(stats && Number.isFinite(stats.played) && stats.played > 0)
+            || path.length > 1 || (day && day.done === true);
+  const fresh = { state:'fresh', label:'Not started today', used:0, ever };
+  if(!day || day.date !== TODAY_DASH) return fresh;
+
+  const used = Math.max(0, Math.min(RAMBLE_BUDGET, path.length - 1));
+  // Ramble seeds a record on page load, so a bare path is still "not started".
+  if(used === 0 && day.done !== true) return fresh;
+
+  if(day.solved === true) return { state:'done', label:`Solved in ${used} ${used===1?'move':'moves'}`, used, ever:true };
+  if(day.done === true)   return { state:'done', label:'Ran out of moves', used:RAMBLE_BUDGET, ever:true };
+  return { state:'active', label:`${used} of ${RAMBLE_BUDGET} moves used`, used, ever:true };
+}
+function glyphRamble(d){
+  const row = el('div','glyph pips');
+  for(let i=0;i<RAMBLE_BUDGET;i++){
+    const p = el('div','pip'); if(i < d.used) p.classList.add('spent'); row.appendChild(p);
+  }
+  return row;
+}
+
+/* ---------- the family ----------
+   Canonical order is launch order. Never renamed, never reordered
+   here — the sort below handles presentation.
+
+   Descriptions are held to one line at 14px Spline Sans in a 284px
+   column (a 360px-wide phone, the tightest in circulation). Measured
+   widths: 248 / 245 / 254 / 246px. If you add a game, keep its
+   description under ~42 characters or the card grows a line and the
+   newcomer view stops fitting one screen. */
+const GAMES = [
+  { id:'chains',  name:'Chains',  href:'/chains',
+    desc:'Fill three gaps in a chain of compounds.',
+    read:readChains,  glyph:glyphChains },
+  { id:'forage',  name:'Forage',  href:'/forage',
+    desc:'Find every word in one board of letters.',
+    read:readForage,  glyph:glyphForage },
+  { id:'trellis', name:'Trellis', href:'/trellis',
+    desc:'Grow a crossword from five sets of tiles.',
+    read:readTrellis, glyph:glyphTrellis },
+  { id:'ramble',  name:'Ramble',  href:'/ramble',
+    desc:'Walk word to word, one letter at a time.',
+    read:readRamble,  glyph:glyphRamble }
+];
+
+/* ---------- render ---------- */
+function safeRead(g){
+  try{ return g.read(); }
+  catch(e){ return { state:'fresh', label:'Not started today', ever:false, found:0, done:0, used:0, pct:0, leaf:'🧭' }; }
+}
+
+function buildCard(g, data){
+  const a = el('a','card');
+  a.href = g.href;
+  a.setAttribute('data-game', g.id);
+  if(data.state === 'done') a.classList.add('is-done');
+
+  const tick = el('div','tick');
+  tick.innerHTML = '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+  a.appendChild(tick);
+
+  const h = el('h2','name'); h.textContent = g.name; a.appendChild(h);
+
+  /* One slot, two possible sentences. Never played → what the game is.
+     Played before → where you stand today. A newcomer is not "not started
+     today"; they've never started at all, and that sentence would be a lie. */
+  const line = el('p','line');
+  if(data.ever){
+    line.textContent = data.label;
+    if(data.state === 'done') line.classList.add('done');
+    a.setAttribute('aria-label', `${g.name} — ${data.label}`);
+  }else{
+    line.textContent = g.desc;
+    a.setAttribute('aria-label', `${g.name} — ${g.desc} Not played yet.`);
+  }
+  a.appendChild(line);
+
+  let row;
+  try{ row = g.glyph(data); }catch(e){ row = el('div','glyph'); }
+  a.appendChild(row);
+
+  a.addEventListener('click', () => {
+    try{ gtag('event','play_hub_open_game',{ game:g.id, game_state:data.state, first_time:!data.ever }); }catch(e){}
+  });
+  return a;
+}
+
+function renderDate(){
+  const dows = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const mons = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('dow').textContent = dows[NOW.getDay()];
+  document.getElementById('mday').textContent = `${mons[NOW.getMonth()]} ${NOW.getDate()}`;
+}
+
+function renderSummary(results){
+  const total = results.length;
+  const done  = results.filter(r => r.state === 'done').length;
+  const active= results.filter(r => r.state === 'active').length;
+  const s = document.getElementById('summary');
+  const rule = document.querySelector('.rule');
+  if(!s) return;
+
+  /* One rule: this line reports progress, so it appears only when there is
+     some. With nothing started, four cards already say so and a fifth
+     sentence would only restate them — the same redundancy that killed the
+     old tagline. A first-time visitor falls under this automatically, since
+     they can't have progress either.
+     Toggled rather than removed: it has to be able to come back the moment
+     something is started. */
+  if(done === 0 && active === 0){
+    s.hidden = true;
+    if(rule) rule.classList.add('airy');
+    return;
+  }
+  s.hidden = false;
+  if(rule) rule.classList.remove('airy');
+
+  if(done === total){ s.innerHTML = '<strong>All clear today.</strong> Nothing left until midnight.'; return; }
+  const left = total - done;
+  const parts = [`<strong>${left} of ${total}</strong> left today`];
+  if(active) parts.push(`${active} in progress`);
+  s.innerHTML = parts.join(' · ') + '.';
+}
+
+function renderFooter(){
+  const f = document.getElementById('foot');
+  function tick(){
+    // Cheap no-op unless something actually changed — this is also what
+    // rolls the page over at midnight without a manual refresh.
+    try{ render(); }catch(e){}
+    const now = new Date();
+    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+    const ms = midnight - now;
+    if(ms <= 0){ f.textContent = 'New puzzles are up.'; return; }
+    const h = Math.floor(ms/3600000), m = Math.floor((ms%3600000)/60000);
+    f.textContent = `New puzzles in ${h}h ${String(m).padStart(2,'0')}m`;
+  }
+  tick();
+  setInterval(tick, 30000);
+}
+
+/* ---------- render ----------
+   Re-runnable. A signature of everything visible is compared first, so
+   repeated calls from tab switches and storage events cost almost nothing
+   and never churn the DOM (or reset a hover) without cause. */
+let lastSignature = null;
+let lastResults = [];
+
+function render(force){
+  refreshClock();
+
+  const results = GAMES.map(g => ({ g, data: safeRead(g) }));
+  const sig = TODAY_DASH + '§' + results
+    .map(r => `${r.g.id}|${r.data.state}|${!!r.data.ever}|${r.data.label}|${r.data.found ?? ''}${r.data.done ?? ''}${r.data.used ?? ''}${Math.round(r.data.pct ?? 0)}`)
+    .join('§');
+  if(!force && sig === lastSignature) return false;
+  lastSignature = sig;
+  lastResults = results;
+
+  renderDate();
+
+  // Unfinished first, each group in canonical order. Stable within a day.
+  const rank = st => (st === 'active' ? 0 : st === 'fresh' ? 1 : 2);
+  const ordered = results
+    .map((r,i) => ({ g:r.g, data:r.data, i }))
+    .sort((a,b) => rank(a.data.state) - rank(b.data.state) || a.i - b.i);
+
+  const grid = document.getElementById('grid');
+  const frag = document.createDocumentFragment();
+  ordered.forEach(r => frag.appendChild(buildCard(r.g, r.data)));
+  grid.innerHTML = '';
+  grid.appendChild(frag);
+
+  renderSummary(results.map(r => r.data));
+  return true;
+}
+
+/* ---------- staying honest ----------
+   The hub reads storage once per render, so anything that brings a stale
+   copy of this page back in front of someone has to trigger a fresh read.
+   Mobile browsers restore back-navigations from the bfcache without re-running
+   scripts, which would otherwise show "Not started today" for a game you just
+   finished and came back from — the exact failure that makes a hub look broken. */
+const WATCHED_KEYS = /^(chain|forage|trellis|ramble)_/;
+const refresh = () => { try{ render(); }catch(e){} };
+
+window.addEventListener('pageshow', e => { if(e && e.persisted) refresh(); });
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible') refresh();
+});
+window.addEventListener('focus', refresh);
+// Another tab playing a game writes to the same origin; keep this one current.
+window.addEventListener('storage', e => { if(!e || !e.key || WATCHED_KEYS.test(e.key)) refresh(); });
+
+function main(){
+  render(true);
+  renderFooter();
+
+  // Fired once per real page load, not on every re-render.
+  try{
+    gtag('event','play_hub_view',{
+      games_total: lastResults.length,
+      games_done:  lastResults.filter(r => r.data.state === 'done').length,
+      games_active:lastResults.filter(r => r.data.state === 'active').length,
+      games_new:   lastResults.filter(r => !r.data.ever).length
+    });
+  }catch(e){}
+}
+
+try{ main(); }
+catch(e){
+  // Absolute last resort: never show a blank page. Plain links, no state.
+  const grid = document.getElementById('grid');
+  if(grid && !grid.children.length){
+    GAMES.forEach(g => {
+      const a = el('a','card'); a.href = g.href; a.setAttribute('data-game', g.id);
+      const h = el('h2','name'); h.textContent = g.name;
+      const p = el('p','line');  p.textContent = g.desc;
+      a.appendChild(h); a.appendChild(p); grid.appendChild(a);
+    });
+  }
+}
+</script>
+</body>
+</html>
