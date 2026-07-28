@@ -40,7 +40,7 @@ html[data-theme="dark"]{
   --danger:#C96A5C;
   --shadow:0 1px 3px rgba(0,0,0,.35);
 }
-*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent; touch-action:manipulation;}
 html,body{margin:0; padding:0; height:100%;}
 body{
   background:var(--bg); color:var(--text);
@@ -57,11 +57,11 @@ button{font-family:inherit; cursor:pointer;}
 .wordmark{font-family:"Fraunces",Georgia,serif; font-weight:700; font-size:24px; letter-spacing:.14em; color:var(--heather-wm);}
 .dayno{font-size:14px; color:var(--text-dim); font-weight:600;}
 .hdr-btns{margin-left:auto; display:flex; gap:4px;}
-.icon-btn{background:var(--card); border:1px solid var(--line); padding:5px; border-radius:9px; color:var(--slate-mid); display:flex; box-shadow:var(--shadow);}
+.icon-btn{background:var(--card); border:1px solid var(--line); padding:5px; border-radius:9px; color:var(--slate-mid); display:flex; box-shadow:var(--shadow); touch-action:manipulation;}
 .icon-btn:hover{background:var(--tile-hist);}
 .icon-btn svg{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;}
 /* waymark pips: trail-blaze diamonds — the game's icon (§3) */
-.pips{display:flex; gap:6px; margin:8px 0 6px;}
+.pips{display:flex; gap:6px; margin:8px 0 6px; touch-action:manipulation;}
 .pip{width:13px; height:13px; transform:rotate(45deg); border-radius:3px; border:1.5px solid var(--slate-mid); background:transparent; transition:background .25s,border-color .25s;}
 .pip.spent{background:var(--moss); border-color:var(--moss);}
 .pip.fail{background:var(--danger); border-color:var(--danger);}
@@ -78,7 +78,7 @@ html[data-theme="dark"] .feedback.good{color:var(--moss);}
 .row{display:flex; align-items:center; justify-content:center; gap:5px;}
 .row-label{position:absolute; left:14px; font-size:10.5px; font-weight:700; letter-spacing:.1em; color:var(--text-dim);}
 .row{position:relative;}
-.tile{width:48px; height:48px; border-radius:9px; border:1.5px solid var(--tile-line); background:var(--tile-bg); display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700; text-transform:uppercase; color:var(--text); transition:width .18s,height .18s,font-size .18s,background .15s,border-color .15s,color .15s; user-select:none;}
+.tile{width:48px; height:48px; border-radius:9px; border:1.5px solid var(--tile-line); background:var(--tile-bg); display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700; text-transform:uppercase; color:var(--text); transition:width .18s,height .18s,font-size .18s,background .15s,border-color .15s,color .15s; user-select:none; -webkit-user-select:none; touch-action:manipulation;}
 .row.endpoint .tile{background:var(--tile-hist); border-color:var(--line); color:var(--text); height:40px; width:40px; font-size:17px;}
 .row.endrow .tile{border-style:dashed; border-color:var(--moss); background:transparent; color:var(--moss-deep);}
 html[data-theme="dark"] .row.endrow .tile{color:var(--moss);}
@@ -107,7 +107,7 @@ html[data-theme="dark"] .row.arrive .tile{color:var(--moss);}
   .board.squeeze2 .commit-btns{left:calc(50% + 97px);}
   .commit-btn{width:34px; height:34px; font-size:15px;}
 }
-.commit-btn{width:38px; height:38px; border-radius:9px; border:none; font-size:17px; font-weight:700; display:flex; align-items:center; justify-content:center;}
+.commit-btn{width:38px; height:38px; border-radius:9px; border:none; font-size:17px; font-weight:700; display:flex; align-items:center; justify-content:center; touch-action:manipulation;}
 .commit-yes{background:var(--moss); color:#fff;}
 .commit-yes:disabled{background:var(--line); color:var(--text-dim);}
 .commit-no{background:var(--tile-hist); color:var(--text-dim); border:1px solid var(--line);}
@@ -116,7 +116,7 @@ html[data-theme="dark"] .row.arrive .tile{color:var(--moss);}
 /* ---- keyboard ---- */
 .kbd{padding:4px 0 2px;}
 .krow{display:flex; justify-content:center; gap:5px; margin-bottom:6px;}
-.key{flex:0 1 34px; height:46px; border-radius:7px; border:none; background:var(--key-bg); color:var(--key-text); font-size:15px; font-weight:600; text-transform:uppercase;}
+.key{flex:0 1 34px; height:46px; border-radius:7px; border:none; background:var(--key-bg); color:var(--key-text); font-size:15px; font-weight:600; text-transform:uppercase; touch-action:manipulation; -webkit-user-select:none; user-select:none;}
 .key:active{background:var(--heather-soft); color:#fff;}
 .key:disabled{opacity:.4;}
 
@@ -143,7 +143,7 @@ html[data-theme="dark"] .modal h2{color:var(--moss);}
 html[data-theme="dark"] .path-word.ep{color:var(--moss);}
 .path-sep{color:var(--text-dim); font-size:12px;}
 .share-pips{font-size:15px; letter-spacing:1px; line-height:1.15; margin:14px 0 4px; word-break:break-all;}
-.btn{width:100%; border:none; border-radius:11px; padding:13px; font-size:16px; font-weight:700; margin-top:10px;}
+.btn{width:100%; border:none; border-radius:11px; padding:13px; font-size:16px; font-weight:700; margin-top:10px; touch-action:manipulation;}
 .btn-share{background:var(--moss); color:#fff;}
 .btn-quiet{background:var(--tile-hist); color:var(--text); border:1px solid var(--line);}
 .done-bar{display:none; gap:8px; padding:8px 0 6px;}
@@ -650,6 +650,48 @@ function defaultHint(){
   return 'Commit with ✓ — or pick another letter';
 }
 
+/* ---- activation layer (iOS double-tap-zoom, §touch) ----
+   Touch/pen activate on pointerup so the touchend guard below can call
+   preventDefault() without swallowing the interaction. Mouse, physical
+   keyboard (Enter/Space) and assistive tech still arrive as click, which
+   is de-duped by timestamp in case a synthetic click slips through.
+
+   The de-dup stamp is GLOBAL, not per-element: activating a tile re-renders
+   the board, so the synthetic click lands on a freshly-created element whose
+   own state would be empty. A shared stamp catches it either way.
+
+   pointerup alone would activate whatever the finger is lifted over, losing
+   click's requirement that press and release share an element — so sliding
+   ✕ -> ✓ would spend a move. The latch below restores that requirement. It
+   is keyed by pointerId so multi-touch stays independent. */
+let lastTouchActivation = 0;
+const pointerDownEls = new Map();   // pointerId -> element the press started on
+function onActivate(el, fn){
+  el.addEventListener('pointerdown', e=>{
+    if(e.pointerType === 'mouse') return;
+    pointerDownEls.set(e.pointerId, el);
+  });
+  el.addEventListener('pointercancel', e=> pointerDownEls.delete(e.pointerId));
+  el.addEventListener('pointerup', e=>{
+    if(e.pointerType === 'mouse') return;      // mouse handled by click
+    const startedOn = pointerDownEls.get(e.pointerId);
+    pointerDownEls.delete(e.pointerId);
+    if(startedOn !== el) return;               // slid on from elsewhere — ignore
+    if(el.disabled) return;
+    lastTouchActivation = Date.now();
+    fn(e);
+  });
+  /* Bound to the element itself, not just the container: the re-render fired
+     above detaches this node before touchend dispatches, so a container-level
+     guard would never see the event. */
+  el.addEventListener('touchend', e=> e.preventDefault(), { passive:false });
+  el.addEventListener('click', e=>{
+    if(Date.now() - lastTouchActivation < 500) return; // synthetic click, already handled
+    if(el.disabled) return;
+    fn(e);
+  });
+}
+
 /* ---- board ---- */
 const boardEl = document.getElementById('board');
 function renderBoard(opts){
@@ -684,7 +726,7 @@ function renderBoard(opts){
       let shown = ch;
       if(r.isCurrent){
         if(pi===game.selPos){ t.classList.add('sel'); if(game.pendingLetter!==null){ t.classList.add('pending'); shown=game.pendingLetter; } }
-        t.addEventListener('click', ()=> selectPos(pi));
+        onActivate(t, ()=> selectPos(pi));
         t.setAttribute('role','button');
         t.setAttribute('aria-label','Letter '+(pi+1)+': '+shown);
       }
@@ -695,9 +737,9 @@ function renderBoard(opts){
       const cb=document.createElement('div'); cb.className='commit-btns';
       const yes=document.createElement('button'); yes.className='commit-btn commit-yes'; yes.textContent='✓'; yes.id='commitBtn';
       yes.disabled = game.pendingLetter===null; yes.setAttribute('aria-label','Commit word');
-      yes.addEventListener('click', commit);
+      onActivate(yes, commit);
       const no=document.createElement('button'); no.className='commit-btn commit-no'; no.textContent='✕';
-      no.setAttribute('aria-label','Clear'); no.addEventListener('click', clearPending);
+      no.setAttribute('aria-label','Clear'); onActivate(no, clearPending);
       cb.appendChild(yes); cb.appendChild(no);
       row.appendChild(cb);
       row.id='currentRow';
@@ -725,12 +767,21 @@ KROWS.forEach(r=>{
   const kr=document.createElement('div'); kr.className='krow';
   r.split('').forEach(k=>{
     const b=document.createElement('button'); b.className='key'; b.textContent=k; b.dataset.k=k;
-    b.addEventListener('click', ()=> letterInput(k.toUpperCase()));
+    onActivate(b, ()=> letterInput(k.toUpperCase()));
     kr.appendChild(b);
   });
   kbdEl.appendChild(kr);
 });
 function setKbdEnabled(on){ kbdEl.querySelectorAll('.key').forEach(b=> b.disabled=!on); }
+
+/* Non-passive touchend guard — the layer that actually suppressed iOS
+   double-tap-zoom in Forage and Trellis. Safe here only because the
+   activation layer above routes touch through pointerup, which fires
+   before touchend and is unaffected by preventDefault(). Bound to the two
+   persistent containers, so it survives every board re-render. */
+[boardEl, kbdEl].forEach(container=>{
+  container.addEventListener('touchend', e=> e.preventDefault(), { passive:false });
+});
 
 /* ---- input model (§2) ---- */
 function selectPos(p){
