@@ -5,14 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>RAMBLE — a daily word ladder</title>
 <meta name="description" content="RAMBLE: cross from one word to another, changing one letter at a time. A short daily walk. New puzzle every day.">
-<!-- Google tag (gtag.js) — family shared property -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DGZKT3KB1J"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-DGZKT3KB1J');
-</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
@@ -610,10 +602,6 @@ const game = {
 const movesUsed = () => game.path.length - 1;
 const currentWord = () => game.path[game.path.length-1];
 
-/* ---- GA4 (§8) ---- */
-const fire = (name, params) => { try{ gtag('event', name, Object.assign({ board_id: todayStamp, puzzle_no: puzzleNo }, params||{})); }catch(e){} };
-fire('ramble_session_start');
-
 /* ---- theme ---- */
 function applyTheme(t){ document.documentElement.setAttribute('data-theme', t); }
 let theme = localStorage.getItem(LS_THEME) || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -826,7 +814,6 @@ function commit(){
   game.path.push(w);
   game.selPos=-1; game.pendingLetter=null;
   const mv = movesUsed();
-  fire('ramble_move', { move_no: mv });
   store.day.path = game.path.slice();
   if(w===END){ finish(true); return; }
   if(mv>=BUDGET){ finish(false); return; }
@@ -851,10 +838,8 @@ function finish(solved){
     st.solves++;
     const delta=Math.min(mv-PAR,5);
     st.histo[Math.max(0,delta)]++;
-    fire('ramble_solve', { moves:mv, par:PAR, delta:mv-PAR });
   } else {
     st.fails++; st.histo[6]++;
-    fire('ramble_fail', { par:PAR });
   }
   saveStore(store);
   feedback(solved ? 'You made it.' : 'End of the ramble.', solved?'good':'');
@@ -876,7 +861,6 @@ function shareText(){
 }
 function doShare(){
   const text=shareText();
-  fire('ramble_share', { score: game.solved ? movesUsed() : -1 });
   if(navigator.share){ navigator.share({text}).catch(()=>copyText(text)); }
   else copyText(text);
 }

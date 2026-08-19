@@ -5,14 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" id="metaTheme" content="#F4EFE4">
 <title>FORAGE</title>
-<!-- Google Tag Manager (mirrors CHAINS GA4 setup) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DGZKT3KB1J"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-DGZKT3KB1J');
-</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Spline+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -864,11 +856,8 @@ function acceptWord(value, display){
   rec.score += calculatePoints(value.length);
   rec.count = rec.words.length;
 
-  // First word of the day → session-start event (fires once, §9).
-  if (!rec.started){
-    rec.started = true;
-    gtag('event', 'forage_session_start', { board_id: rec.dateKey, puzzle_no: rec.puzzleNo });
-  }
+  // First word of the day marks this board as started (used by history).
+  if (!rec.started) rec.started = true;
 
   addChip(display, value);
   saveProgress();
@@ -965,16 +954,12 @@ function renderTier(initial){
 }
 
 function onTierReached(tier){
-  const rec = game.record;
   toast(`${tier.leaf}  ${tier.name}!`);
   if (CELEBRATE_TIERS.includes(tier.key)) launchConfetti();
-  if (!rec.loggedTiers[tier.key]){
-    rec.loggedTiers[tier.key] = true;
-    gtag('event', 'forage_tier_reached', {
-      tier: tier.key, board_id: rec.dateKey, puzzle_no: rec.puzzleNo, score: rec.score
-    });
-    saveProgress();
-  }
+  // renderTier() has just updated rec.tier / rec.bestTier, which happens after
+  // acceptWord()'s save. Persist again so a tier earned on the last word of a
+  // session isn't lost when the tab closes.
+  saveProgress();
 }
 
 /* ---------- Save: single live record + refreshed history ---------- */
@@ -1078,9 +1063,6 @@ function openShare(){
   const tier = game.thresholds[currentTierIndex(rec.score)];
   const text = buildShareText();
 
-  // Secondary event — share (§9). Carries current tier + score.
-  gtag('event', 'forage_share', { tier: tier.key, board_id: rec.dateKey, puzzle_no: rec.puzzleNo, score: rec.score });
-
   el.shareModal.innerHTML = `
     <button class="modal-close" data-close="shareOverlay">×</button>
     <h2>Share your forage</h2>
@@ -1105,7 +1087,6 @@ function openShare(){
     copyWordsBtn.addEventListener('click', ()=> {
       // Always copy (never the native share sheet) — this is a personal export.
       fallbackCopy(buildWordListText());
-      gtag('event', 'forage_copy_words', { tier: tier.key, board_id: rec.dateKey, puzzle_no: rec.puzzleNo, score: rec.score, words: rec.words.length });
     });
   }
   openOverlay('shareOverlay');

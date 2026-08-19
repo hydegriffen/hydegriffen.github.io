@@ -10,14 +10,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
-<!-- GA4 — shared family property -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DGZKT3KB1J"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-DGZKT3KB1J');
-</script>
 
 <style>
 /* ============================================================
@@ -518,10 +510,6 @@ function buildCard(g, data){
   let row;
   try{ row = g.glyph(data); }catch(e){ row = el('div','glyph'); }
   a.appendChild(row);
-
-  a.addEventListener('click', () => {
-    try{ gtag('event','play_hub_open_game',{ game:g.id, game_state:data.state, first_time:!data.ever }); }catch(e){}
-  });
   return a;
 }
 
@@ -635,16 +623,6 @@ window.addEventListener('storage', e => { if(!e || !e.key || WATCHED_KEYS.test(e
 function main(){
   render(true);
   renderFooter();
-
-  // Fired once per real page load, not on every re-render.
-  try{
-    gtag('event','play_hub_view',{
-      games_total: lastResults.length,
-      games_done:  lastResults.filter(r => r.data.state === 'done').length,
-      games_active:lastResults.filter(r => r.data.state === 'active').length,
-      games_new:   lastResults.filter(r => !r.data.ever).length
-    });
-  }catch(e){}
 }
 
 try{ main(); }

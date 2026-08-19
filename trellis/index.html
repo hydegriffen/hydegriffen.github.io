@@ -5,14 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" id="metaTheme" content="#F4EFE4">
 <title>TRELLIS</title>
-<!-- Google Tag Manager (shared FORAGE property, trellis_ events) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DGZKT3KB1J"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-DGZKT3KB1J');
-</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Spline+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1205,7 +1197,7 @@ draw = function(ts){
 };
 
 function afterMutation(){
-  if (!game.record.started){ game.record.started = true; fireSessionStart(); }
+  if (!game.record.started){ game.record.started = true; }
   layoutRack();
   updateControls();
   persist(false);
@@ -1275,11 +1267,10 @@ function onSubmit(){
     else shakeStatus('That board isn\u2019t valid yet.');
     return;
   }
-  if (!game.record.started){ game.record.started = true; fireSessionStart(); }
+  if (!game.record.started){ game.record.started = true; }
   // valid board — train the most recently delivered sprout, if any
   if (game.deliveredCount > game.resolvedCount){
     game.resolvedCount = game.deliveredCount;
-    fireSproutGrown(game.resolvedCount);
   }
   if (game.deliveredCount < N_SPROUTS){
     const firstEver = (game.deliveredCount === 0);
@@ -1308,7 +1299,6 @@ function onSubmit(){
     requestDraw();
     launchConfetti();
     setStatus('Full Vine — a perfect day 🌿', 'ok');
-    fireFullVine();
   }
 }
 function deliverSprout(){
@@ -1422,7 +1412,6 @@ function buildSilhouette(){
 }
 function openShare(){
   const text = buildSilhouette();
-  fireShare();
   el.shareModal.innerHTML = `
     <button class="modal-close" data-close="shareOverlay">×</button>
     <h2>Share your vine</h2>
@@ -1491,14 +1480,6 @@ function fallbackCopy(text){
   if (legacyCopy(text)) toast('Copied to clipboard!');
   else showCopyFallback(text);
 }
-
-/* ============================================================
-   GA4 (§13)
-   ============================================================ */
-function fireSessionStart(){ gtag('event','trellis_session_start',{ board_id:game.date, puzzle_no:game.puzzleNo }); }
-function fireSproutGrown(n){ gtag('event','trellis_sprout_grown',{ board_id:game.date, puzzle_no:game.puzzleNo, sprout_number:n }); }
-function fireFullVine(){ gtag('event','trellis_full_vine',{ board_id:game.date, puzzle_no:game.puzzleNo }); }
-function fireShare(){ gtag('event','trellis_share',{ board_id:game.date, puzzle_no:game.puzzleNo, score:game.resolvedCount }); }
 
 /* ============================================================
    Overlays, toast, confetti, timers, help, listeners
